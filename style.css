@@ -1,0 +1,198 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Sevillana&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Quicksand:wght@300..700&family=Sedan+SC&family=Sevillana&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lilita+One&family=Quicksand:wght@300..700&family=Sedan+SC&family=Sevillana&display=swap");
+
+:root {
+  --background-color: transparent;
+  --text-color: rgb(255, 255, 255);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Quicksand", sans-serif;
+  font-weight: 200;
+  font-size: 18px;
+  font-style: normal;
+  /* background: url(Drawables/Images/body-updated.png); */
+  /* background-color: hsl(219deg 100% 63% / 61%);
+   */
+  /* background-color: green; */
+  background-attachment: fixed;
+  background-size: cover;
+  line-height: 1.6;
+  padding-bottom: 100px;
+  /* padding: 20px; */
+  /* background:linear-gradient( rgb(16, 23, 35), rgb(13, 18, 24)); */
+}
+
+p {
+  display: inline;
+  .header {
+    /* Header styles go here */
+    width: 100%;
+    height: 50px;
+    background-color: rgb(255, 219, 175);
+  }
+}
+.wrapper {
+  display: grid;
+  place-content: center;
+  background-color: var(--background-color);
+  min-height: 10vh;
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(1.5rem, 1rem + 2vw, 15rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-color);
+}
+.main-wrapper {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(rgb(22, 31, 45), rgb(14, 20, 27), rgb(5, 12, 23));
+  position: fixed;
+}
+
+.wrapper > div {
+  grid-area: 1/1/-1/-1;
+  text-shadow: 1px 1px 14px #1b1616, 3px 3px 5px rgba(252, 252, 252, 0.377);
+}
+.top {
+  z-index: 11;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 48%, 0% 58%);
+  margin-top: 80px;
+  margin-left: 300px;
+}
+.bottom {
+  margin-left: 300px;
+  clip-path: polygon(0% 60%, 100% 50%, 100% 100%, 0% 100%);
+  color: transparent;
+  background: -webkit-linear-gradient(177deg, black 53%, var(--text-color) 65%);
+  background: linear-gradient(177deg, black 53%, var(--text-color) 65%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  transform: translateX(-0.02em);
+  z-index: 11;
+  margin-top: 80px;
+}
+a {
+  color: rgb(154, 226, 255);
+  text-decoration: none;
+}
+article {
+  padding: 80px;
+  max-width: 900px;
+  /* width: 900px; */
+  margin: 20px 20px 0 calc(40% - 90px);
+  border-radius: 8px;
+  color: white;
+  font-size: 16px;
+  /* glass here */
+  background: hsl(214, 39%, 11%);
+  border-radius: 6px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(6.3px);
+  border: 1px solid rgb(255, 255, 255, 0.2);
+
+  /* box s.hadow */
+
+  /* box-shadow: 0px 3px 150px -80px var(--text-color); */
+}
+@media (max-width: 767px) {
+  article {
+    padding: 30px;
+    margin: 30px;
+  }
+
+  .top,
+  .bottom {
+    margin-left: 0;
+  }
+  .logo {
+    transform: translateX(20px);
+  }
+  .nav1 {
+    font-size: 12px;
+    height: 50px;
+  }
+  .nav-container .nav-toggle {
+    width: 20px;
+  }
+  .nav-container .nav-items {
+    background-color: hsla(213, 39%, 11%, 0.808);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(6.3px);
+    width: 100vw;
+    /* position: fixed; */
+    top: 0;
+  }
+}
+header > h1 {
+  text-align: center;
+  font-family: "Lilita One", sans-serif;
+  font-weight: 100;
+}
+
+h1,
+h2 {
+  font-family: "Lilita One", sans-serif;
+  font-weight: 100;
+  font-size: 30px;
+  color: rgb(255, 255, 255);
+}
+
+.reciepe-log {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+.ingredients ul,
+.instructions ol {
+  margin: 20px 0;
+}
+li {
+  margin-bottom: 10px;
+}
+footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid#ddd;
+}
+section ul {
+  list-style-type: none;
+}
+
+input[type="checkbox"]:checked + p {
+  transition: all 0.1s ease-in;
+  text-decoration: line-through;
+  opacity: 0.3;
+  color: grey;
+}
+input[type="checkbox"]:hover {
+  cursor: pointer;
+  /* -webkit-box-direction: reverse; */
+}
+.test {
+  display: none;
+}
+.html-code {
+  background-color: rgb(17, 23, 31);
+  border: 1px solid grey;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 10px;
+}
+.img {
+  color: rgb(212, 212, 255);
+}
+.src {
+  color: rgb(255, 0, 43);
+}
+.img-name {
+  color: green;
+}
