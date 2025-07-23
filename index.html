@@ -1,304 +1,829 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Roadmap for</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="nav.css" />
-    <link rel="stylesheet" href="footer.css" />
-    <link rel="stylesheet" href="sidebar.css" />
-  </head>
-  <body>
-    <div class="nav-container is-active" tabindex="0">
-      <div class="nav-toggle"></div>
-      <nav class="nav-items">
-        <a class="nav-item" href="index.html" id="current">Week-1</a>
-        <a class="nav-item" href="week-2.html">Week-2</a>
-        <a class="nav-item" href="week-3.html">Week-3</a>
-        <a class="nav-item" href="week-4.html">Week-4</a>
-        <a class="nav-item" href="week-5.html">Week-5</a>
 
-        <!-- <a class="nav-item" href="#"></a> -->
-      </nav>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fution - Week 01</title>
+  <!-- tailwindcss CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("-XBrVlizt4Jkdh9W-"); // Emailjs public key
+  </script>
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+  <!-- external stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="h-dvh overflow-hidden flex font-sans text-white bluue scrollbar-thin-gray lg:pb-0 pb-5  ">
+  <div id="page-loader"
+    class="fixed inset-0 bg-gray-900/10 backdrop-blur-sm z-50 flex flex-col items-center justify-center transition-opacity duration-500 opacity-100">
+    <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <p class="mt-4 text-gray-300 text-xs uppercase tracking-widest">Loading Fution...</p>
+  </div>
+  <!-- mobile overlay for menu -->
+  <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+
+  <!-- top header for mobile -->
+  <div class="fixed top-0 left-0 right-0 z-50 flex lg:hidden">
+    <!-- mobile menu toggle button -->
+    <button id="mobile-menu-toggle"
+      class="w-12 h-16 bg-gradient-to-t from-gray-800 to-gray-900 border-b border-gray-700 flex items-center justify-center hover:bg-gray-700/50 transition-all duration-200 bg-gray-800">
+      <div class="w-6 h-6 flex flex-col justify-center space-y-1">
+        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar1"></span>
+        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar2"></span>
+        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar3"></span>
+      </div>
+    </button>
+    <!-- mobile header content -->
+    <header
+      class="flex-1 bg-gradient-to-t from-gray-800 to-gray-900 h-16 border-b border-gray-700 border-opacity-70 flex items-center justify-between px-4 rounded-r-lg">
+      <div class="flex items-center gap-2">
+        <img src="logo.png" alt="Fution Logo" class="w-10 h-10 rounded-lg" />
+        <h2 class="text-lg font-bold">Fution - Week 01</h2>
+      </div>
+  </div>
+  </header>
+  </div>
+
+
+  <!-- Modal Wrapper -->
+  <div id="requestModal"
+    class="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[9999] opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
+
+    <div
+      class="bg-gradient-to-br from-gray-900/90 to-gray-800/90 text-white rounded-2xl w-full max-w-lg shadow-2xl border border-blue-500/20 p-6 relative transform scale-95 transition-all duration-300 ease-out animate-fade-in">
+
+      <!-- Close Button -->
+      <button id="closeModal"
+        class="absolute top-3 right-3 text-gray-400 hover:text-red-400 text-2xl transition-all duration-200">&times;</button>
+
+      <!-- Modal Title -->
+      <h2 class="text-2xl font-bold  text-blue-400 tracking-wide">Request to add a New Pending</h2>
+      <p class="text-gray-400 mb-6">Please fill out the form below to request a new pending topic.</p>
+
+      <!-- Form -->
+      <form id="topicRequestForm" class="space-y-5">
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Your Email</label>
+          <input type="email" id="email" name="email" required
+            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 transition placeholder:text-gray-500"
+            placeholder="gandhiji@nehru.com">
+        </div>
+
+        <div>
+          <label for="topic" class="block text-sm font-medium text-gray-300 mb-1">Pending Title</label>
+          <input type="text" id="topic" name="topic" required
+            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 transition placeholder:text-gray-500"
+            placeholder="e.g., Responsive Grid Systems">
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-300 mb-1">Description (HTML
+            allowed)</label>
+          <textarea id="description" name="description" rows="4" required
+            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 transition placeholder:text-gray-500"
+            placeholder="<p>A responsive grid system is a layout structure that adapts its columns and rows to different screen sizes, ensuring content remains well-organized and visually appealing across various devices</p>"></textarea>
+        </div>
+
+        <button type="submit"
+          class="w-full px-5 py-2.5 rounded-lg border border-gray-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-500/40 transition font-semibold text-white tracking-wide">
+          Submit Request
+        </button>
+      </form>
     </div>
-    <nav class="nav1">
-      <ul>
-        <li class="logo">
-          <a href="#">ryhu<span class="mini"></span></a>
-        </li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Skills</a></li>
-        <li><a href="#">Portfolio</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </nav>
-    <div class="main-wrapper"></div>
-    <header>
-      <section class="wrapper">
-        <div class="top">WEEK--01</div>
-        <div class="bottom" aria-hidden="true">WEEK--01</div>
-      </section>
-    </header>
-    <article>
-      <header class="header">
-        <h1>HTML & CSS</h1>
-        <!-- <img src="images/cookies.jpeg" alt="CHoco" class="recipe-img" /> -->
-      </header>
-      <section class="ingredients">
-        <h2>Topics</h2>
-        <ul>
-          <li>
-            <input type="checkbox" id="a" />
-            <p>Understand what HTML stands for (Hypertext Markup Language)</p>
-          </li>
-          <div class="test">HElloo</div>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Learn about the basic structure of an HTML document (DOCTYPE,
-              &lt;html&gt;, &lt;head&gt;, and &lt;body&gt;)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Explore self-closing tags (e.g., &lt;img&gt;, &lt;input&gt;)</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Familiarize yourself with different input types (text, password,
-              checkbox, radio, etc.)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Understand the concept of content, padding, border, and margin in
-              the CSS Box Model
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Learn how to calculate the total width and height of an element
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Study various selectors (class, ID, element, attribute,
-              pseudo-class, pseudo-element)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Differentiate between position: absolute, position: relative,
-              position: fixed, and position: sticky
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Explore the z-index property</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Know about different units (px, em, rem, %, vh, vw)</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Understand how specificity affects style application in CSS</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Learn about the universal selector " * "</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Understand when and how to use the CSS !important Rule (sparingly)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Practice using margin shorthand (e.g., margin: 10px;, margin: 10px
-              5px 15px;, etc.)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Explore the opacity property</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Combine selectors for efficient styling</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Learn about display: flex and its properties (justify-content,
-              align-items, etc.)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Understand the importance of the alt attribute in &lt;img&gt; tags
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Create links using &lt;a&gt; tags</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Understand the target="_blank" attribute</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Learn how to add a favicon to your website</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Explore common meta tags (e.g., &lt;meta charset="UTF-8"&gt;,
-              &lt;meta name="viewport" content="width=device-width,
-              initial-scale=1.0"&gt;)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Use semantic tags like &lt;header&gt;, &lt;nav&gt;, &lt;main&gt;,
-              &lt;article&gt;, etc.
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Understand the differences between inline, block, and inline-block
-              display types
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Set the character encoding in your HTML to UTF-8</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Learn about combinators like descendant ( ), child (>), and
-              adjacent sibling (+)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Explore CSS transformations (e.g., rotate, scale, translate, etc.)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Create tables using &lt;table&gt;, &lt;tr&gt;, &lt;td&gt;, etc.
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Understand form elements (&lt;form&gt;, &lt;input&gt;,
-              &lt;textarea&gt;, &lt;select&gt;, etc.)
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Embed multimedia content using iframes, videos, and audio</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Optimize for different screen sizes with the viewport meta tag
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Use comments to explain your code</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Achieve aligning two items in a row using flexbox or other
-              techniques
-            </p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Understand the importance of accessibility and semantic HTML</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Learn about responsive web design principles</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>Explore CSS grid layout for advanced page structuring</p>
-          </li>
-          <li>
-            <input type="checkbox" />
-            <p>
-              Stay updated with the latest web development trends and
-              technologies
-            </p>
-          </li>
+  </div>
+
+
+  <!-- toast -->
+  <div id="fusionToast"
+    class="fixed top-5 right-5 z-50 hidden px-6 py-4 rounded-2xl shadow-lg text-white bg-gradient-to-r from-blue-900/60 to-black animate-slide-in">
+    <p id="toastMessage" class="font-sans"></p>
+  </div>
+
+  <!-- main content area -->
+  <main class="lg:ml-96 flex-1 relative overflow-hidden">
+
+    <div class="p-2 lg:p-8 pt-20 lg:pt-2 lg:pb-2 overflow-y-auto h-full">
+      <!-- week header section -->
+      <div class="grid lg:grid-cols-3 gap-6 text-center mb-8 sm:mt-10 fade-up lg:pr-24">
+  <!-- Week Header - takes 2 columns on large screens -->
+  <div class="lg:col-span-2">
+    <div
+      class="inline-flex items-center space-x-4 border border-gray-700 border-opacity-70 px-6 py-4 rounded-2xl mb-6">
+      <div
+        class="w-16 h-16 bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-70 rounded-xl flex items-center justify-center">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+        </svg>
+      </div>
+      <div class="text-left">
+        <h1 class="text-3xl lg:text-4xl font-bold">WEEK 01</h1>
+        <p class="text-gray-400 text-lg">HTML & CSS Fundamentals</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Tracker - takes 1 column on large screens -->
+  <div class="flex items-center pr-12 justify-center gap-6">
+    <div class="relative">
+      <svg class="w-24 h-24" viewBox="0 0 96 96">
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25" />
+            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+          </radialGradient>
+        </defs>
+        <g transform="rotate(-90 48 48)">
+          <circle cx="48" cy="48" r="40" fill="url(#glow)" />
+          <circle cx="48" cy="48" r="44" stroke="currentColor" stroke-width="1" fill="transparent"
+            class="text-gray-700/10" />
+          <circle cx="48" cy="48" r="34" stroke="currentColor" stroke-width="1.5" fill="transparent"
+            class="text-gray-700/30" />
+          <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent"
+            class="text-gray-700/60" />
+          <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent"
+            stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-500" id="main-progress"
+            style="transition: stroke-dashoffset 0.6s cubic-bezier(.4,2,.6,1);" stroke-linecap="round" />
+        </g>
+      </svg>
+      <div class="absolute inset-0 flex flex-col items-center justify-center">
+        <span class="text-2xl font-extrabold text-white drop-shadow" id="progress-text">0%</span>
+        <span class="text-xs text-gray-400 mt-1 tracking-wide" id="progress-count">0 / 0</span>
+      </div>
+    </div>
+    <div class="flex flex-col justify-center">
+      <div class="text-lg font-semibold text-white/90 tracking-tight flex items-center gap-2">
+        Progress Tracker
+      </div>
+      <div class="text-sm text-gray-400 mt-1">Track your weekly mastery</div>
+      <div class="flex items-center gap-2 mt-2">
+        <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+        <span class="text-xs text-gray-500">Auto-saves progress</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- content grid layout -->
+      <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
+        <div class="lg:col-span-2 space-y-6">
+          <div
+            class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-260px)] lg:w-full w-[calc(100vw-10px)]">
+
+            <!-- Header Row -->
+            <div class="flex items-center justify-between mb-6">
+              <!-- Icon and Title -->
+              <div class="flex items-center space-x-3">
+                <div
+                  class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 border-opacity-40 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <h2 class="text-xl lg:text-2xl font-bold">Learning Topics</h2>
+              </div>
+
+              <!-- Request Topic Button -->
+              <button id="requestTopicBtn"
+                class="text-sm px-4 py-2 rounded-lg bg-transparent border border-gray-700 hover:bg-blue-700 transition text-white font-medium">
+                Add Pending
+              </button>
+            </div>
+
+            <!-- Topics Container -->
+            <div id="topicsContainer"
+              class="lg:overflow-y-auto lg:h-[calc(100vh-350px)] lg:px-4 space-y-3 scrollbar-thin-gray">
+            </div>
+          </div>
+        </div>
+
+        <!-- pro tips  -->
+
+        <div class="space-y-6">
+          <div
+            class="border border-gray-700 border-opacity-70 rounded-2xl p-6 slide-right lg:overflow-y-auto h-[calc(100vh-260px)] scrollbar-thin-gray ">
+            <div class="flex items-center space-x-3 mb-6">
+              <div
+                class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 border-opacity-40 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                  </path>
+                </svg>
+              </div>
+              <h2 class="text-xl font-bold">Pro Tips</h2>
+            </div>
+            <div id="pro-tips-list" class="space-y-4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Fusion Themed Modal -->
+
+
+
+  <!-- global JS variables and data -->
+  <script>
+    window.weekKey = "week1";
+    window.topics = [
+  {
+    title: "Understand what HTML stands for (Hypertext Markup Language)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: HTML is used to build the structure of webpages. It is the first thing we learn in web development.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>HTML is the <span class="text-blue-400 font-semibold">skeleton of the web</span>. It defines the structure of a webpage using <span class="text-yellow-400">tags</span>.</p>
+        <p class="text-green-400">Hypertext</p> refers to text that links to other content.
+        <p class="text-pink-400">Markup</p> is how we describe structure and layout using tags.
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;My First Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Hello World&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Learn about the basic structure of an HTML document (DOCTYPE, <html>, <head>, and <body>)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: The HTML structure helps browser understand our webpage. DOCTYPE tells it's HTML5, head holds info, body shows visible content.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>An HTML document starts with a <span class="text-yellow-300">DOCTYPE</span> declaration, which tells the browser you're writing HTML5.</p>
+        <p>Inside the <span class="text-blue-400">&lt;html&gt;</span> tag, you’ll find two core sections:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li><span class="text-green-400">&lt;head&gt;</span> - metadata, links to CSS, title, etc.</li>
+          <li><span class="text-green-400">&lt;body&gt;</span> - the visible part of your webpage</li>
         </ul>
-      </section>
-      <section class="instructions">
-        <h2>Tips</h2>
-        <ol>
-          <li>Don't forgot to add comments to your code</li>
-          <li>Give importance to theory over than Practcal in this week.</li>
-          <li>
-            Dont use more styles in your website. Like Carousel, hover effects,
-            Tooltips etc.
-          </li>
-          <li>
-            It is the very simple week in our whole journey. Try to get Green
-            badge for this week.
-          </li>
-        </ol>
-      </section>
-    </article>
-    <!-- 
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Fution Project&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body class="bg-gray-950 text-white"&gt;
+    &lt;h1&gt;Let’s Learn HTML!&lt;/h1&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Explore self-closing tags (e.g., <img>, <input>)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Some tags don't need closing. They are used alone like img or input. Very common in forms and UI.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Some HTML tags don't need a closing tag. They're like <span class="text-pink-400 font-bold">solo players</span>.</p>
+        <ul class="list-disc list-inside ml-4">
+          <li><span class="text-yellow-300">&lt;img&gt;</span> - Displays an image</li>
+          <li><span class="text-yellow-300">&lt;input&gt;</span> - Used in forms</li>
+          <li><span class="text-yellow-300">&lt;br&gt;</span> - Line break</li>
+        </ul>
+        <p>Self-closing format:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">&lt;img src="fution-logo.png" alt="Fution Logo" /&gt;
+&lt;input type="text" placeholder="Type here..." class="p-2 rounded" /&gt;</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Familiarize yourself with different input types (text, password, checkbox, radio, etc.)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Input types allow us to take different types of user data. Very useful when building login or form pages.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Input types define what kind of data users can enter. Let’s look at some:</p>
+        <div class="space-y-2">
+          <input type="text" placeholder="Text" class="p-2 rounded bg-gray-800 text-white w-full" />
+          <input type="password" placeholder="Password" class="p-2 rounded bg-gray-800 text-white w-full" />
+          <div>
+            <label><input type="checkbox" class="mr-2" />Accept Terms</label>
+          </div>
+          <div>
+            <label><input type="radio" name="gender" class="mr-2" />Male</label>
+            <label class="ml-4"><input type="radio" name="gender" class="mr-2" />Female</label>
+          </div>
+        </div>
+        <p class="text-sm text-gray-400">Each input type gives users a different interaction method. Style with Tailwind for consistency.</p>
+      </div>`
+  },
+  {
+    title: "Understand the concept of content, padding, border, and margin in the CSS Box Model",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: CSS box model explains the full size of any element. It includes content, padding, border and margin.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>The Box Model is how elements are structured on the page:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li><span class="text-yellow-300">Content</span> - the actual text/image</li>
+          <li><span class="text-yellow-300">Padding</span> - space around content</li>
+          <li><span class="text-yellow-300">Border</span> - the border around padding</li>
+          <li><span class="text-yellow-300">Margin</span> - space outside the border</li>
+        </ul>
+        <div class="bg-gray-800 rounded-xl p-6 w-fit mx-auto">
+          <div class="bg-white p-8 border-4 border-yellow-400 m-4 text-black text-center">
+            <p class="text-sm">This is content</p>
+          </div>
+        </div>
+        <p class="text-sm text-gray-400">Visualized using Tailwind: <code>p-8 border-4 m-4</code></p>
+      </div>`
+  },
+  {
+    title: "Learn how to calculate the total width and height of an element",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: We calculate total size using content, padding, border and margin. It's needed when layout breaks.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>To get the full size of an element:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Total Width = content width + left/right padding + left/right border + left/right margin</li>
+          <li>Total Height = content height + top/bottom padding + top/bottom border + top/bottom margin</li>
+        </ul>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">width: 100px;
+            padding: 10px;
+            border: 2px solid;
+            margin: 5px;
+            Total Width = 100 + 20 + 4 + 10 = 134px</code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Use <code>box-sizing: border-box;</code> to simplify this.</p>
+      </div>`
+  },
+  {
+    title: "Study various selectors in CSS",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: CSS selectors help us target specific elements efficiently to apply styles. We choose based on type, class, id, or even state.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <ul class="list-disc list-inside ml-4">
+          <li><code class="text-yellow-400">.class</code>: Targets elements with a class</li>
+          <li><code class="text-yellow-400">#id</code>: Targets an element with a specific ID</li>
+          <li><code class="text-yellow-400">element</code>: Targets HTML tags like <code>div</code>, <code>p</code></li>
+          <li><code class="text-yellow-400">[attribute]</code>: Targets elements with specific attributes</li>
+          <li><code class="text-yellow-400">:hover</code>, <code>:nth-child</code>: Pseudo-classes</li>
+          <li><code class="text-yellow-400">::before</code>, <code>::after</code>: Pseudo-elements</li>
+        </ul>
+      </div>`
+  },
+  {
+    title: "Differentiate position values in CSS",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Positioning defines how elements behave in the layout and relative to other elements or the viewport.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <ul class="list-disc list-inside ml-4">
+          <li><code>static</code>: Default, flows normally</li>
+          <li><code>relative</code>: Moves relative to itself</li>
+          <li><code>absolute</code>: Relative to nearest positioned ancestor</li>
+          <li><code>fixed</code>: Stays fixed in viewport</li>
+          <li><code>sticky</code>: Sticks when scrolling past a threshold</li>
+        </ul>
+      </div>`
+  },
+  {
+    title: "Explore the z-index property",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: z-index decides stack order. Only works with positioned elements like relative or absolute.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Higher z-index means element appears on top.</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">.box {
+  position: absolute;
+  z-index: 10;
+}</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Know about different CSS units",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Choosing the right unit matters for responsive and consistent design.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <ul class="list-disc list-inside ml-4">
+          <li><code>px</code>: Absolute pixel</li>
+          <li><code>em</code>: Relative to parent font-size</li>
+          <li><code>rem</code>: Relative to root (html) font-size</li>
+          <li><code>%</code>: Relative to parent dimensions</li>
+          <li><code>vh/vw</code>: Relative to viewport height/width</li>
+        </ul>
+      </div>`
+  },
+  {
+    title: "Understand CSS specificity",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Specificity controls which rule wins when multiple rules target the same element.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Hierarchy of power:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Inline styles (highest)</li>
+          <li>ID selectors: <code>#id</code></li>
+          <li>Class, attributes, pseudo-classes</li>
+          <li>Element and pseudo-elements</li>
+        </ul>
+      </div>`
+  },
+  {
+    title: "Universal Selector (*) in CSS",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Universal selector targets all elements, useful for resetting or applying global styles.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Example usage:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Use of !important rule (sparingly!)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: !important overrides everything. It's a nuclear option — use only when absolutely needed.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Example:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">.text {
+  color: red !important;
+}</code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Avoid overusing it — it can break maintainability.</p>
+      </div>`
+  },
+  {
+    title: "Practice margin shorthand",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Margin shorthand simplifies spacing declarations, useful for cleaner code.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <ul class="list-disc list-inside ml-4">
+          <li><code>margin: 10px</code> → All sides</li>
+          <li><code>margin: 10px 5px</code> → Top/bottom 10px, left/right 5px</li>
+          <li><code>margin: 10px 5px 15px 0</code> → Top, Right, Bottom, Left</li>
+        </ul>
+      </div>`
+  },
+  {
+    title: "Explore the opacity property",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Opacity controls element transparency. Useful for hover effects, fade-ins, etc.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Range: <code>0 (fully transparent)</code> to <code>1 (fully visible)</code></p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">.box {
+  opacity: 0.5;
+}</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Combine selectors for efficient styling",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Combining selectors increases control and efficiency when styling related elements.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <ul class="list-disc list-inside ml-4">
+          <li><code>.nav li</code>: Targets <code>li</code> inside <code>.nav</code></li>
+          <li><code>h1, h2, h3</code>: Multiple tags together</li>
+          <li><code>button:hover</code>: State-based styling</li>
+          <li><code>.box.red</code>: Element with both classes</li>
+        </ul>
+      </div>`
+  },
+  {
 
- -->
-    <!-- footer goes here -->
+  title: "Learn about display: flex and its properties (justify-content, align-items, etc.)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Flexbox makes aligning items easy. We use Flexbox for managing complex UI to simple maintainable structures. We use justify-content and align-items for control.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Flexbox arranges items in a row or column:</p>
+        <div class="flex justify-between items-center bg-gray-800 p-4 rounded-xl">
+          <div class="bg-blue-500 text-white p-2 rounded">1</div>
+          <div class="bg-blue-500 text-white p-2 rounded">2</div>
+        </div>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}</code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Key properties: <code>justify-content</code>, <code>align-items</code>, <code>flex-direction</code>.</p>
+      </div>`
+  },
+  {
+    title: "Understand the importance of the alt attribute in <img> tags",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Alt attribute describes images for accessibility. It helps screen readers and SEO.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>The <code>alt</code> attribute explains what an image shows:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><img src="logo.png" alt="Company Logo"></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">It appears if the image fails to load.</p>
+      </div>`
+  },
+  {
+    title: "Create links using <a> tags",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: The <a> tag makes links. Use href to set the destination.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Links connect pages or resources:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><a href="https://example.com">Visit Example</a></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Use <code>href</code> for the URL.</p>
+      </div>`
+  },
+  {
+    title: "Understand the target='_blank' attribute",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Target="_blank" opens links in a new tab. Good for external sites.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Opens a link in a new browser tab:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><a href="https://example.com" target="_blank">Open in New Tab</a></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Use it for external links, but sparingly.</p>
+      </div>`
+  },
+  {
+    title: "Learn how to add a favicon to your website",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Favicon is the small icon in browser tabs. Add it in the head tag.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>A favicon shows in the browser tab:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><link rel="icon" href="favicon.ico" type="image/x-icon"></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Place it in the <code><head></code> section.</p>
+      </div>`
+  },
+  {
+    title: "Explore common meta tags (e.g., <meta charset='UTF-8'>, <meta name='viewport' content='width=device-width, initial-scale=1.0'>)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Meta tags give browser instructions. Charset and viewport are key.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Meta tags provide page metadata:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Charset sets encoding; viewport helps responsiveness.</p>
+      </div>`
+  },
+  {
+    title: "Use semantic tags like <header>, <nav>, <main>, <article>, etc.",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Semantic tags make HTML clear. They improve structure and accessibility.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Semantic tags describe content purpose:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><header>Header</header>
+<nav>Menu</nav>
+<main>Main Content</main>
+<article>Article</article></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">They help screen readers and SEO.</p>
+      </div>`
+  },
+  {
+    title: "Understand the differences between inline, block, and inline-block display types",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Inline, block, and inline-block change element layout. Each has unique behavior.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <ul class="list-disc list-inside ml-4">
+          <li><code>inline</code>: Side by side, no width/height</li>
+          <li><code>block</code>: Full width, stacks vertically</li>
+          <li><code>inline-block</code>: Inline with block features</li>
+        </ul>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">span { display: inline; }
+div { display: block; }
+button { display: inline-block; }</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Set the character encoding in your HTML to UTF-8",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: UTF-8 supports many characters. Set it in the head for proper text.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>UTF-8 ensures proper text display:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><meta charset="UTF-8"></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Add it in <code><head></code> for compatibility.</p>
+      </div>`
+  },
+  {
+    title: "Learn about combinators like descendant ( ), child (>), and adjacent sibling (+)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Combinators target elements precisely. Use space, >, or + for relationships.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <ul class="list-disc list-inside ml-4">
+          <li><code>descendant ( )</code>: All nested elements</li>
+          <li><code>child (>)</code>: Direct children only</li>
+          <li><code>adjacent (+)</code>: Next sibling</li>
+        </ul>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">div p { color: blue; }
+div > p { color: red; }
+h1 + p { margin-top: 0; }</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Explore CSS transformations (e.g., rotate, scale, translate, etc.)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Transformations change element looks. Rotate, scale, and translate are common.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Transformations alter appearance:</p>
+        <div class="bg-blue-500 text-white p-4 rounded transform rotate-45">
+          Rotated 45°!
+        </div>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">.box {
+  transform: rotate(45deg);
+  transform: scale(1.5);
+  transform: translate(10px, 20px);
+}</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Create tables using <table>, <tr>, <td>, etc.",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Tables organize data in rows and columns. Use table, tr, and td tags.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Tables structure data neatly:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><table>
+  <tr>
+    <th>Header</th>
+    <th>Header</th>
+  </tr>
+  <tr>
+    <td>Data</td>
+    <td>Data</td>
+  </tr>
+</table></code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Understand form elements (<form>, <input>, <textarea>, <select>, etc.)",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Forms collect user input. Use input, textarea, and select for variety.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Forms gather user data:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><form>
+  <input type="text" name="name">
+  <textarea name="message"></textarea>
+  <select name="choice">
+    <option value="1">One</option>
+  </select>
+</form></code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Embed multimedia content using iframes, videos, and audio",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Iframes, video, and audio add multimedia. They enhance user experience.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Add rich media to pages:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><iframe height="450" width="900"  src="https://progress-tracker-gamma.vercel.app"></iframe>
+        </div>
+      </div>`
+  },
+  {
+    title: "Optimize for different screen sizes with the viewport meta tag",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Viewport meta tag makes sites responsive. It fits content to screens.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Viewport ensures mobile-friendly design:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><meta name="viewport" content="width=device-width, initial-scale=1.0"></code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Use comments to explain your code",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Comments explain code purpose. They make code easier to understand.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Comments clarify your code:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><!-- HTML Comment -->
+<p>Hello</p>
+/* CSS Comment */
+p { color: black; }</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Achieve aligning two items in a row using flexbox or other techniques",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Flexbox aligns two items in a row. It’s simple and flexible.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Align items side by side:</p>
+        <div class="flex justify-between bg-gray-800 p-4 rounded-xl">
+          <div class="bg-blue-500 text-white p-2 rounded">Left</div>
+          <div class="bg-blue-500 text-white p-2 rounded">Right</div>
+        </div>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">.container {
+  display: flex;
+  justify-content: space-between;
+}</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Understand the importance of accessibility and semantic HTML",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Accessibility helps all users. Semantic HTML improves clarity and usability.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Use semantic tags and attributes for accessibility:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white"><main>
+  <img src="image.jpg" alt="Description">
+</main></code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Helps screen readers and SEO.</p>
+      </div>`
+  },
+  {
+    title: "Learn about responsive web design principles",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: Responsive design fits all screens. Use media queries and flexible units.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Make sites work on all devices:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">@media (max-width: 600px) {
+  div { font-size: 14px; }
+}</code></pre>
+        </div>
+        <p class="text-sm text-gray-400">Use <code>vw</code>, <code>rem</code>, and flexbox.</p>
+      </div>`
+  },
+  {
+    title: "Explore CSS grid layout for advanced page structuring",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tell the reviewer: CSS Grid creates complex layouts. Use rows and columns for control.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Grid layouts organize content:</p>
+        <div class="grid grid-cols-2 gap-4 bg-gray-800 p-4 rounded-xl">
+          <div class="bg-blue-500 text-white p-2 rounded">1</div>
+          <div class="bg-blue-500 text-white p-2 rounded">2</div>
+        </div>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}</code></pre>
+        </div>
+      </div>`
+  },
+  {
+    title: "Stay updated with the latest web development trends and technologies",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">Tip: Web trends change fast. Follow blogs to learn new tools like Tailwind.</blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p>Stay current with web development:</p>
+        <p class="text-sm text-gray-400">Explore tools like Tailwind CSS, WebAssembly, and new frameworks through blogs and communities.</p>
+        <p class="text-sm text-gray-400">Use reddit for find <a href="https://www.reddit.com/r/webdev/"  target="_blank" class="text-blue-500">web development discussions</a>.</p>
+      </div>`
+  }
+  
+];
 
-    <!-- 
 
-     -->
+    window.proTips = [
+      { text: "Don't forget to add comments to your code for better readability.", color: "blue" },
+      { text: "Give importance to theory over practical in this week.", color: "blue" },
+      { text: "Don't overuse styles like carousels, hover effects, tooltips, etc in your Project", color: "blue" },
+      { text: "It's a simple week—aim for the green badge! 🏆", color: "green" },
+      { text: "checkout resources like W3Schools and MDN for HTML learning. MDN may be tough for first use. But trust me guys you'll love it once you get used to it", color: "blue" },
+      { text: "If you are absolute begginer new to HTML/css refer this video <a href='https://youtu.be/G3e-cpL7ofc?si=flNrXbhGQHWYdYpe' target='_blank' class='text-blue-500'>HTML Crash Course.</a> Do all the assignments he is mentioning even you feel that is too easy." }
+    ];
 
-    <script>
-      const nav = document.querySelector(".nav-container")
 
-      if (nav) {
-        const toggle = nav.querySelector(".nav-toggle")
 
-        if (toggle) {
-          toggle.addEventListener("click", () => {
-            if (nav.classList.contains("is-active")) {
-              nav.classList.remove("is-active")
-            } else {
-              nav.classList.add("is-active")
-            }
-          })
+  </script>
+  <script src="main.js"></script>
+  <script src="sidebar.js"></script>
+</body>
 
-          nav.addEventListener("blur", () => {
-            nav.classList.remove("is-active")
-          })
-        }
-      }
-    </script>
-  </body>
 </html>
