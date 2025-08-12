@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fution - Week 01</title>
+  <!-- tailwindcss CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+  <!-- external stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-K0MZG1JY6E"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-K0MZG1JY6E');
+  </script>
+  <script>
+    // This must be available for WeekLearningTracker when it initializes.
+    window.weekKey = 'personal-space';
+
+    // Keep topics empty by default — user adds their own. If you want seeded topics, put them here:
+    window.topics = [
+      // Example seed (optional)
+      // { title: "Welcome to your personal space", details: "<p>Type your first task.</p>" }
+    ];
+
+    // Some gentle proTips visible in the right column
+    window.proTips = [
+      { text: "Write 3 tiny goals each morning — finish at least 1 before noon.", color: "green" },
+      { text: "Use short code snippets inside notes so your future self knows what you meant.", color: "blue" },
+      { text: "Be specific about your goals — vague goals are hard to achieve.", color: "green" }
+    ];
+  </script>
+</head>
+
+<!-- Inline config: set the weekKey and any default arrays BEFORE your main.js runs -->
+
+<body class="h-dvh overflow-hidden flex font-sans text-white bluue scrollbar-thin-gray lg:pb-0 pb-5">
+
+  <!-- Page loader + UI elements (same style as your other pages) -->
+  <div id="page-loader"
+    class="fixed inset-0 bg-gray-900/10 backdrop-blur-sm z-50 flex flex-col items-center justify-center transition-opacity duration-500 opacity-100">
+    <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    <p class="mt-4 text-gray-300 text-xs uppercase tracking-widest">Loading Fution...</p>
+  </div>
+  <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
+
+  <!-- Top header (mobile) -->
+  <div class="fixed top-0 left-0 right-0 z-50 flex lg:hidden">
+    <button id="mobile-menu-toggle"
+      class="w-12 h-16 bg-gradient-to-t from-gray-800 to-gray-900 border-b border-gray-700 flex items-center justify-center hover:bg-gray-700/50 transition-all duration-200 bg-gray-800">
+      <div class="w-6 h-6 flex flex-col justify-center space-y-1">
+        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar1"></span>
+        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar2"></span>
+        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar3"></span>
+      </div>
+    </button>
+
+    <header
+      class="flex-1 bg-gradient-to-t from-gray-800 to-gray-900 h-16 border-b border-gray-700 border-opacity-70 flex items-center justify-between px-4 rounded-r-lg">
+      <div class="flex items-center gap-2">
+        <img src="logo.png" alt="Fution Logo" class="w-10 h-10 rounded-lg" />
+        <h2 class="text-lg font-bold">Fution — Personal Space</h2>
+      </div>
+    </header>
+  </div>
+
+
+  <!-- Toast -->
+  <div id="fusionToast"
+    class="fixed top-5 right-5 z-50 hidden px-6 py-4 rounded-2xl shadow-lg text-white bg-gradient-to-r from-blue-900/60 to-black animate-slide-in">
+    <p id="toastMessage" class="font-sans"></p>
+  </div>
+
+  <!-- Sidebar will be injected by your sidebar script (sidebar-generator.js) -->
+  <!-- Main content -->
+  <main class="lg:ml-96 flex-1 relative overflow-hidden">
+    <div class="p-2 lg:p-8 pt-20 lg:pt-2 lg:pb-2 overflow-y-auto h-full">
+
+      <!-- Page header -->
+      <div class="grid lg:grid-cols-3 gap-6 text-center mb-6 sm:mt-6 fade-up lg:pr-24">
+        <div class="lg:col-span-2">
+    <div class="inline-flex items-center space-x-4 border border-gray-700 border-opacity-70 px-6 py-4 rounded-2xl mb-2">
+        <div class="w-16 h-16 bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-70 rounded-xl flex items-center justify-center">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M2.93 19.07A10 10 0 1 1 19.07 5.93 10 10 0 0 1 2.93 19.07zm1.41-1.41A8 8 0 1 0 18.59 4.42 8 8 0 0 0 4.34 17.66"/>
+            </svg>
+        </div>
+        <div class="text-left">
+            <h1 class="text-3xl lg:text-4xl font-bold">Fution Space</h1>
+            <p class="text-gray-400 text-lg">A Space to Relax.</p>
+        </div>
+    </div>
+</div>
+
+        <!-- Progress summary -->
+        <div class="flex items-center pr-12 justify-center gap-6">
+          <div class="relative">
+            <svg class="w-24 h-24" viewBox="0 0 96 96">
+              <defs>
+                <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25" />
+                  <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+                </radialGradient>
+              </defs>
+              <g transform="rotate(-90 48 48)">
+                <circle cx="48" cy="48" r="40" fill="url(#glow)" />
+                <circle cx="48" cy="48" r="44" stroke="currentColor" stroke-width="1" fill="transparent"
+                  class="text-gray-700/10" />
+                <circle cx="48" cy="48" r="34" stroke="currentColor" stroke-width="1.5" fill="transparent"
+                  class="text-gray-700/30" />
+                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent"
+                  class="text-gray-700/60" />
+                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent"
+                  stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-500" id="main-progress"
+                  style="transition: stroke-dashoffset 0.6s cubic-bezier(.4,2,.6,1);" stroke-linecap="round" />
+              </g>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-2xl font-extrabold text-white drop-shadow" id="progress-text">0%</span>
+              <span class="text-xs text-gray-400 mt-1 tracking-wide" id="progress-count">0 / 0</span>
+            </div>
+          </div>
+          <div class="flex flex-col justify-center">
+            <div class="text-lg font-semibold text-white/90 tracking-tight flex items-center gap-2">Progress Tracker
+            </div>
+            <div class="text-sm text-gray-400 mt-1">Track your personal mastery</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div
+        class="tab-container flex flex-wrap items-center justify-between gap-2 p-4 rounded-xl bg-gray-900/60 backdrop-blur-lg border border-gray-800 shadow-lg">
+
+        <!-- Left: Tab buttons -->
+        <div class="tab-buttons flex flex-wrap items-center gap-1 relative">
+          <button data-tab="tasks" class="tab-btn active-tab">Tasks</button>
+          <button data-tab="journal" class="tab-btn">Journal</button>
+          <button data-tab="resources" class="tab-btn">Resources</button>
+          <button data-tab="goals" class="tab-btn">Goals</button>
+          <span class="tab-highlight"></span>
+        </div>
+
+
+      </div>
+
+
+      <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
+        <!-- Left: Main column (Tasks / Journal / Resources / Goals content) -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Box container matching your theme -->
+          <div id="mainBox"
+            class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-260px)] lg:w-full w-[calc(100vw-10px)] overflow-hidden">
+
+            <!-- Tasks area (rendered by main.js's WeekLearningTracker) -->
+            <div id="tab-tasks" class="tab-content">
+              <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center space-x-3">
+                  <div
+                    class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h2 class="text-xl lg:text-2xl font-bold">Tasks & Topics</h2>
+                </div>
+
+                <!-- <button id="requestTopicBtn" class="text-sm px-4 py-2 rounded-lg bg-transparent border border-gray-700 hover:bg-blue-700 transition text-white font-medium">Add Pending</button> -->
+              </div>
+
+              <!-- Topics Container (main.js expects this ID) -->
+              <div id="topicsContainer"
+                class="lg:overflow-y-auto lg:h-[calc(100vh-350px)] lg:px-4 space-y-3 scrollbar-thin-gray"></div>
+            </div>
+
+            <!-- Journal tab (replace existing journal HTML inside #tab-journal) -->
+            <div id="tab-journal" class="tab-content hidden">
+              <div class="mb-4 flex items-start gap-4">
+                <div class="flex-1">
+                  <div class="flex justify-between items-center mb-2">
+                    <label class="text-sm text-gray-300">Daily Journal</label>
+                    <!-- NOTE: use a class, not an id — this prevents duplicates/global selection -->
+                    <button
+                      class="new-journal-btn px-3 py-1 bg-blue-900 bg-opacity-10 border border-gray-700 text-white text-sm font-semibold rounded ml-4">+
+                      New</button>
+                  </div>
+
+                  <!-- Journal cards go here -->
+                  <div id="journalList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- injected by JS -->
+                  </div>
+                </div>
+
+                <aside class="w-64 hidden lg:block">
+                  <div class="p-4 rounded-lg border border-gray-700 bg-gray-900/40">
+                    <h3 class="text-sm text-gray-300 mb-2 font-semibold">Quick Prompts</h3>
+                    <ul class="text-xs text-gray-400 space-y-2">
+                      <li>What was the smallest win today?</li>
+                      <li>What confused you most?</li>
+                      <li>One thing to improve tomorrow.</li>
+                    </ul>
+                  </div>
+                </aside>
+              </div>
+
+              <div id="journalPreview"
+                class="prose max-w-none text-gray-100 hidden p-4 border border-gray-800 rounded-lg bg-gray-900/20">
+              </div>
+            </div>
+
+
+
+            <!-- Resources -->
+            <div id="tab-resources" class="tab-content hidden">
+              <div class="mb-4">
+                <form id="resourceForm" class="flex gap-2 flex-col">
+                  <input id="resourceTitle" placeholder="Title (optional)"
+                    class="flex-1 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
+                  <input id="resourceUrl" placeholder="https://youtube.com"
+                    class="flex-2 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
+                  <button type="submit"
+                    class="px-4 py-2 rounded-lg bg-blue-900 bg-opacity-10 border border-gray-700 text-white text-sm font-semibold">Add</button>
+                </form>
+              </div>
+              <div id="resourcesList" class="space-y-3 overflow-y-auto h-auto scrollbar-thin-gray"></div>
+            </div>
+
+            <!-- Goals -->
+            <div id="tab-goals" class="tab-content hidden">
+              <div class="mb-4">
+                <form id="goalForm" class="flex gap-2">
+                  <input id="goalTitle" required placeholder="Micro goal e.g., 'Ship demo v1'"
+                    class="flex-1 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
+                  <button type="submit"
+                    class="px-4 py-2 rounded-lg bg-gradient-to-t from-black to-blue-800/30 border border-gray-700 text-white">Add</button>
+                </form>
+              </div>
+
+              <div id="goalsList" class="space-y-3 overflow-y-auto  scrollbar-thin-gray"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right column (Pro tips + quick widgets) -->
+        <div class="space-y-6">
+          <div
+            class="border border-gray-700 border-opacity-70 rounded-2xl p-6 slide-right lg:overflow-y-auto h-auto scrollbar-thin-gray">
+            <div class="flex items-center space-x-3 mb-6">
+              <div
+                class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 border-opacity-40 rounded-lg flex items-center justify-center">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
+                  </path>
+                </svg>
+              </div>
+              <h2 class="text-xl font-bold">Pro Tips</h2>
+            </div>
+            <div id="pro-tips-list" class="space-y-4"></div>
+          </div>
+
+          <!-- Left: Actions -->
+          <!-- footer like container for actions -->
+          <div class="p-4 rounded-2xl border border-gray-700 bg-gray-900/40">
+            <p class="text-lg font-semibold text-white mb-4">Manage your journal entries</p>
+            <div class="flex items-center gap-4">
+              <!-- Export -->
+              <button id="exportBtn"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-700 bg-transparent hover:bg-gray-700 transition-colors duration-200">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19 10V4a1 1 0 0 0-1-1H9.9a1 1 0 0 0-.7.3L5.3 7.2A1 1 0 0 0 5 7.9V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2M10 3v4a1 1 0 0 1-1 1H5m5 6h9m0 0-2-2m2 2-2 2" />
+                </svg>
+                <p class="text-sm text-white">Export</p>
+              </button>
+
+              <!-- Import -->
+              <label for="importInput"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-700 bg-transparent hover:bg-gray-700 cursor-pointer transition-colors duration-200">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01" />
+                </svg>
+                <p class="text-sm text-white">Import</p>
+              </label>
+              <input id="importInput" type="file" accept="application/json" class="hidden" />
+            </div>
+          </div>
+        </div>
+      </div>
+  </main>
+
+  <!-- ======== SCRIPTS ======== -->
+  <!-- Include your sidebar-generator.js and main.js here (if not globally loaded) -->
+  <script src="sidebar.js"></script>
+  <script src="main.js"></script>
+  <script src="fution-space.js"></script>
+
+  <!-- Personal-space client script (keeps things tidy and interacts with WeekLearningTracker) -->
+  <script>
+
+  </script>
+</body>
+
+</html>
