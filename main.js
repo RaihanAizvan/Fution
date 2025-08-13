@@ -170,7 +170,7 @@ class WeekLearningTracker {
     clearTimeout(this.inactivityTimer);
 
     // 3. Set a new timer. After 3 seconds of inactivity, hide the bar.
-    const inactivityDelay = 10000; // 3 seconds
+    const inactivityDelay = 3000; // 3 seconds
     this.inactivityTimer = setTimeout(() => {
       // Don't hide if the user is currently typing in the input
       if (document.activeElement !== this.addTopicInput) {
