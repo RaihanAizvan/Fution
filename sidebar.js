@@ -23,44 +23,44 @@ const sidebarConfig = {
         },
         {
             id: 3,
-            title: "DOM",
+            title: "JAVAASCRIPT",
             subtitle: "Manipulation",
             href: "week-3.html",
             isActive: false
         },
         {
             id: 4,
-            title: "React",
-            subtitle: "Fundamentals",
+            title: "Node JS & Express",
+            subtitle: "The Backend World",
             href: "week-4.html",
             isActive: false
         },
         {
             id: 5,
-            title: "Projects",
-            subtitle: "Building",
+            title: "MongoDB",
+            subtitle: "Database",
             href: "week-5.html",
             isActive: false
         },
         {
-            id: 5,
-            title: "Projects",
-            subtitle: "Building",
-            href: "week-5.html",
+            id: 6,
+            title: "Full Domain",
+            subtitle: "Things Gets Stuck Here",
+            href: "week-6.html",
             isActive: false
         },
         {
-            id: 5,
-            title: "Projects",
-            subtitle: "Building",
-            href: "week-5.html",
+            id: 7,
+            title: "Figma, API, DB Design",
+            subtitle: "First step to real world",
+            href: "week-7.html",
             isActive: false
         },
         {
-            id: 5,
-            title: "Projects",
+            id: 8,
+            title: "Project 1",
             subtitle: "Building",
-            href: "week-5.html",
+            href: "week-8.html",
             isActive: false
         },
         // Add new weeks here as needed
@@ -85,30 +85,36 @@ const sidebarConfig = {
 
 function generateSidebar(currentWeek = 1) {
     const config = sidebarConfig;
+    const currentPage = window.location.pathname.split("/").pop();
 
+    // Fution Space active check
+    const isFutionActive = currentPage === "fution-space.html";
+    
     // Set active week
     config.weeks.forEach(week => {
-        week.isActive = week.id === currentWeek;
+        week.isActive = !isFutionActive && week.id === currentWeek;
     });
+
 
     const weeksHTML = config.weeks.map(week => {
         const activeClass = week.isActive ? 'active-week' : '';
         const numberBgClass = week.isActive ? 'bg-blue-500' : 'bg-gray-600';
-        const activeIndicator = week.isActive ?
-            '<div class="ml-auto"><div class="w-2 h-2 bg-blue-500 rounded-full"></div></div>' : '';
-
+        const activeIndicator = week.isActive
+            ? '<div class="ml-auto"><div class="w-2 h-2 bg-blue-500 rounded-full"></div></div>'
+            : '';
         return `
-            <a href="${week.href}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700/50 transition-all duration-200 week-item ${activeClass}">
-                <div class="w-8 h-8 ${numberBgClass} rounded-full flex items-center justify-center text-sm font-bold  ${week.isActive ? 'text-white' : ''}">
-                ${week.id}
+            <a href="${week.href}" 
+               class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-700/50 transition-all duration-200 week-item ${activeClass}">
+                <div class="w-8 h-8 ${numberBgClass} rounded-full flex items-center justify-center text-sm font-bold ${week.isActive ? 'text-white' : ''}">
+                    ${week.id}
                 </div>
                 <div>
-                <div class="font-medium">${week.title}</div>
-                <div class="text-xs text-gray-400">${week.subtitle}</div>
+                    <div class="font-medium">${week.title}</div>
+                    <div class="text-xs text-gray-400">${week.subtitle}</div>
                 </div>
                 ${activeIndicator}
             </a>
-    `;
+        `;
     }).join('');
 
     // Random motivational quote logic
@@ -128,23 +134,43 @@ function generateSidebar(currentWeek = 1) {
     const q = quotes[Math.floor(Math.random() * quotes.length)];
 
     return `
-    <nav id="sidebar" class="flex flex-col justify-between fixed top-0 left-0 h-full w-64 lg:w-96 bluue border border-gray-700 border-opacity-70 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50 border-r border-gray-700 pt-16 lg:pt-0 bg-gray-900">
-      <div class="lg:p-6 p-3">
-        <!-- Logo/Header -->
-        <a href="${config.weeks[0].href}">
-          <div class="flex items-center space-x-3 mb-8">
-            <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-              <img src="${config.logo.src}" alt="${config.logo.alt}" class="w-8 h-8 rounded" />
-            </div>
-            <div>
-              <h1 class="text-xl font-bold">${config.logo.title}</h1>
-              <p class="text-sm text-gray-400">${config.logo.subtitle}</p>
-            </div>
-          </div>
-        </a>
+        <nav id="sidebar" class="flex flex-col justify-between fixed top-0 left-0 h-full w-64 lg:w-96 bluue border border-gray-700 border-opacity-70 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50 border-r border-gray-700 pt-16 lg:pt-0 bg-gray-900">
+            <div class="lg:p-6 p-3 pb-0">
+
+                <!-- Logo/Header -->
+                <a href="${config.weeks[0].href}">
+                    <div class="flex items-center space-x-3 mb-8">
+                        <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <img src="${config.logo.src}" alt="${config.logo.alt}" class="w-8 h-8 rounded" />
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold">${config.logo.title}</h1>
+                            <p class="text-sm text-gray-400">${config.logo.subtitle}</p>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Fution Space Navigation -->
+                <div class="space-y-2 mb-6">
+                    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Fution Space</h2>
+                    <a href="fution-space.html" 
+                       class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${isFutionActive ? 'bg-gray-700/50 border border-blue-500' : 'hover:bg-gray-700/50'}">
+                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
+                            <div class="w-5 h-5 bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-70 rounded-xl flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M2.93 19.07A10 10 0 1 1 19.07 5.93 10 10 0 0 1 2.93 19.07zm1.41-1.41A8 8 0 1 0 18.59 4.42 8 8 0 0 0 4.34 17.66"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="font-medium">Fution Space</div>
+                            <div class="text-xs text-gray-400">Your personal learning hub</div>
+                        </div>
+                    </a>
+                </div>
         
         <!-- Week Navigation -->
-        <div class="space-y-2 overflow-y-auto lg:h-[calc(100vh-350px)] h-[calc(100dvh-400px)] overflow-x-hidden  scrollbar-thin-gray ">
+        <div class="space-y-2 overflow-y-auto  h-[calc(100dvh-500px)] overflow-x-hidden  scrollbar-thin-gray ">
           <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4 ">Weeks</h2>
           ${weeksHTML}
         </div>

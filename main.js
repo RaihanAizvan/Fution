@@ -15,6 +15,7 @@ class WeekLearningTracker {
       mobileMenuToggle: document.getElementById('mobile-menu-toggle'),
       sidebar: document.getElementById('sidebar'),
       mobileOverlay: document.getElementById('mobile-overlay'),
+      topicsContainer: document.getElementById('your-topics-container-id'), 
       hamburgerBars: {
         bar1: document.getElementById('bar1'),
         bar2: document.getElementById('bar2'),
@@ -53,6 +54,7 @@ class WeekLearningTracker {
     this.setupProgressCircles();
     this.createAddTopicUI();
     this.renderAllTopics();
+    this.renderPracticals();
     this.renderProTips();
     this.updateAllProgress();
     console.log('Initialization complete', {
@@ -111,21 +113,70 @@ class WeekLearningTracker {
       return;
     }
     this.addTopicWrapper = document.createElement('div');
-    this.addTopicWrapper.className = "flex items-center sticky bottom-0  rounded-lg space-x-2 mt-4 py-2";
+    
+    // --- MODIFICATION 1: Add transition and transform classes ---
+    // We add classes for smooth transition and initial state.
+    // 'transition-transform', 'duration-300', 'ease-in-out' control the animation.
+    this.addTopicWrapper.className = "flex items-center sticky bottom-0 rounded-lg space-x-2 mt-4 py-2 transition-transform duration-300 ease-in-out";
+
     this.addTopicInput = document.createElement('input');
     this.addTopicInput.type = "text";
     this.addTopicInput.placeholder = "Add your own topic...";
     this.addTopicInput.className = "flex-1 px-4 py-2 rounded-lg bg-gradient-to-t from-gray-900 to-gray-900 border border-gray-700 border-opacity-50 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors duration-200";
+    
     this.addTopicButton = document.createElement('button');
     this.addTopicButton.innerText = "Add";
     this.addTopicButton.className = "px-4 py-2 pb-3 rounded-md bg-gradient-to-t from-black to-blue-800/30 border border-gray-700 hover:bg-blue-600/40 hover:border-blue-500 text-white text-sm font-semibold transition-all duration-200";
+
     this.addTopicWrapper.appendChild(this.addTopicInput);
     this.addTopicWrapper.appendChild(this.addTopicButton);
     this.elements.topicsContainer.appendChild(this.addTopicWrapper);
+
     this.addTopicButton.addEventListener('click', () => this.handleAddTopic());
     this.addTopicInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.handleAddTopic();
     });
+
+    // --- MODIFICATION 2: Set up event listeners for user activity ---
+    this.setupActivityListeners();
+    // Initially start the timer.
+    this.resetInactivityTimer();
+  }
+  
+  setupActivityListeners() {
+    const activityEvents = ['scroll', 'mousemove', 'mousedown', 'keypress', 'touchstart'];
+    const boundResetTimer = this.resetInactivityTimer.bind(this);
+    
+    // Listen for scroll specifically on your container
+    if (this.elements.topicsContainer) {
+        this.elements.topicsContainer.addEventListener('scroll', boundResetTimer);
+    }
+    // Listen for other activities on the whole window
+    activityEvents.forEach(event => {
+        if (event !== 'scroll') { // 'scroll' is already handled
+            window.addEventListener(event, boundResetTimer);
+        }
+    });
+  }
+
+  resetInactivityTimer() {
+    if (!this.addTopicWrapper) return;
+    
+    // 1. Make the input bar visible by removing the translate class
+    // 'translate-y-full' moves the element down by 100% of its height.
+    this.addTopicWrapper.classList.remove('translate-y-full');
+
+    // 2. Clear any existing timer to prevent it from hiding the bar prematurely
+    clearTimeout(this.inactivityTimer);
+
+    // 3. Set a new timer. After 3 seconds of inactivity, hide the bar.
+    const inactivityDelay = 10000; // 3 seconds
+    this.inactivityTimer = setTimeout(() => {
+      // Don't hide if the user is currently typing in the input
+      if (document.activeElement !== this.addTopicInput) {
+        this.addTopicWrapper.classList.add('translate-y-full');
+      }
+    }, inactivityDelay);
   }
 
   handleAddTopic() {
@@ -138,15 +189,19 @@ class WeekLearningTracker {
     }
     const newTopic = { title: topicTitle, details: null };
     this.userTopics.push(newTopic);
-    this.saveToStorage();
-    this.renderTopic(newTopic, this.userTopics.length - 1, true);
+    // this.saveToStorage(); // Assuming you have this method
+    this.renderTopic(newTopic, this.userTopics.length - 1, true); // Assuming you have this method
     this.addTopicInput.value = '';
-    this.updateAllProgress();
+    // this.updateAllProgress(); // Assuming you have this method
+    
+    // Scroll container to the bottom to show the new topic
     this.elements.topicsContainer.scrollTo({
       top: this.elements.topicsContainer.scrollHeight,
       behavior: 'smooth'
     });
-
+    
+    // --- MODIFICATION 3: Keep the bar visible after adding a topic ---
+    this.resetInactivityTimer();
   }
 
   getTopicKey(topic, index, isUserTopic = false) {
@@ -154,13 +209,20 @@ class WeekLearningTracker {
   }
 
   renderTopic(topic, index, isUserTopic = false) {
+    const difficultyColors = {
+      "Beginner": "bg-green-500",
+      "Intermediate": "bg-orange-500",
+      "Advanced": "bg-red-500",
+      "Beginner → Intermediate": "bg-gradient-to-r from-green-500 to-orange-500",
+      "Intermediate → Advanced": "bg-gradient-to-r from-orange-500 to-red-500"
+    };
 
     if (topic.type === "heading") {
       const heading = document.createElement('div');
       heading.className = "text-md uppercase tracking-wider text-white px-2 py-4 font-bold";
       heading.textContent = topic.title;
       this.elements.topicsContainer.insertBefore(heading, this.addTopicWrapper);
-      return; // exit early, don't render accordion
+      return;
     }
 
     const topicKey = this.getTopicKey(topic.title, index, isUserTopic);
@@ -186,20 +248,31 @@ class WeekLearningTracker {
     hiddenCheckbox.checked = isChecked;
 
     const customCheckbox = document.createElement('div');
-    customCheckbox.className = `w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-200 ${isChecked ? 'bg-blue-500 border-blue-500' : 'border-gray-500 bg-white/10 backdrop-blur-sm'
-      }`;
+    customCheckbox.className = `w-5 h-5 rounded-md border flex items-center justify-center transition-all duration-200 ${isChecked ? 'bg-blue-500 border-blue-500' : 'border-gray-500 bg-white/10 backdrop-blur-sm'}`;
 
     const checkIcon = this.createCheckIcon(isChecked);
     customCheckbox.appendChild(checkIcon);
 
+    const topicTitleWrapper = document.createElement('div');
+    topicTitleWrapper.className = "flex items-center space-x-2";
+
+    // Difficulty dot
+    const diffDot = document.createElement('span');
+    diffDot.className = `w-1 h-1 rounded-full ${difficultyColors[topic.difficulty] || 'bg-gray-400'}`;
+
     const topicTitle = document.createElement('p');
-    topicTitle.className = "text-white/90 ml-3 flex-1";
+    topicTitle.className = "text-white/90";
     topicTitle.textContent = topic.title;
+
+    topicTitleWrapper.appendChild(topicTitle);
+    topicTitleWrapper.appendChild(diffDot);
+
 
     label.appendChild(hiddenCheckbox);
     label.appendChild(customCheckbox);
     contentWrapper.appendChild(label);
-    contentWrapper.appendChild(topicTitle);
+    contentWrapper.appendChild(topicTitleWrapper);
+
 
     if (isUserTopic) {
       const deleteButton = this.createDeleteButton(topic.title, topicKey, wrapper);
@@ -207,6 +280,15 @@ class WeekLearningTracker {
     }
 
     heading.appendChild(contentWrapper);
+
+
+    // Accordion chevron
+    const chevron = document.createElement('span');
+    chevron.innerHTML = `<svg class="w-4 h-4 text-gray-400 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M19 9l-7 7-7-7" />
+                        </svg>`;
+    heading.appendChild(chevron);
 
     wrapper.appendChild(heading);
 
@@ -219,13 +301,16 @@ class WeekLearningTracker {
       panel.appendChild(panelContent);
       wrapper.appendChild(panel);
 
+
       heading.addEventListener('click', (e) => {
         if (!e.target.closest('label') && !e.target.closest('button')) {
           const isOpen = panel.style.maxHeight;
           if (isOpen) {
             panel.style.maxHeight = null;
+            chevron.querySelector('svg').style.transform = "rotate(0deg)";
           } else {
             panel.style.maxHeight = panel.scrollHeight + 'px';
+            chevron.querySelector('svg').style.transform = "rotate(180deg)";
           }
         }
       });
@@ -243,6 +328,85 @@ class WeekLearningTracker {
     });
 
     this.elements.topicsContainer.insertBefore(wrapper, this.addTopicWrapper);
+  }
+
+  renderPracticals() {
+    if( !window.practicals || !Array.isArray(window.practicals) || window.practicals.length === 0) {
+      console.warn('No practicals available or not an array');
+      return;
+    }
+    const container = document.getElementById("practicalsContainer") ;
+    container.innerHTML = ""; // Clear old ones
+    if (!container) {
+      console.warn('Practicals container not found');
+      return;
+    }
+
+    window.practicals.forEach((item, index) => {
+      // Map difficulty to color
+      let colorClass = "bg-green-500"; // default Beginner
+      if (item.difficulty.includes("Intermediate") && !item.difficulty.includes("Beginner")) {
+        colorClass = "bg-orange-500";
+      }
+      if (item.difficulty.includes("Advanced") && !item.difficulty.includes("Intermediate")) {
+        colorClass = "bg-red-500";
+      }
+      if (item.difficulty.includes("Beginner") && item.difficulty.includes("Intermediate")) {
+        colorClass = "bg-yellow-500";
+      }
+      if (item.difficulty.includes("Intermediate") && item.difficulty.includes("Advanced")) {
+        colorClass = "bg-pink-500";
+      }
+
+      // Create wrapper with Alpine.js
+      const wrapper = document.createElement("div");
+      wrapper.className = "border border-gray-700 rounded-lg overflow-hidden";
+      wrapper.setAttribute("x-data", `{ open: false }`);
+
+      // Create the full HTML structure with Alpine.js
+  wrapper.innerHTML = `
+    <div x-data="{ open: false }" class="border-b border-gray-700">
+      <div 
+        class="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-700/30 transition-all duration-200" 
+        @click="open = !open"
+      >
+        <div class="flex items-center space-x-3">
+          <span class="w-2 h-2 rounded-full ${colorClass}"></span>
+          <span class="text-white font-medium">${item.practicalTopic}</span>
+        </div>
+        <span 
+          class="transition-transform duration-300" 
+          :class="{ 'rotate-180': open }"
+        >
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </span>
+      </div>
+
+      <div 
+        x-show="open"
+        x-transition:enter="transition-all ease-out duration-300"
+        x-transition:enter-start="max-h-0 opacity-0"
+        x-transition:enter-end="max-h-screen opacity-100"
+        x-transition:leave="transition-all ease-in duration-200"
+        x-transition:leave-start="max-h-screen opacity-100"
+        x-transition:leave-end="max-h-0 opacity-0"
+        class="overflow-hidden text-gray-300"
+      >
+        <div class="p-4">
+          ${item.details}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Tell Alpine to re-scan this HTML so transitions work
+  Alpine.initTree(wrapper);
+
+
+      container.appendChild(wrapper);
+    });
   }
 
   renderHeading(text) {
@@ -311,7 +475,6 @@ class WeekLearningTracker {
 
     return deleteButton;
   }
-
 
   handleTopicToggle(topicKey, isChecked, customCheckbox, checkIcon) {
     this.topicsState[topicKey] = isChecked;
@@ -481,3 +644,109 @@ function showFusionToast(message, type = 'success') {
 }
 
 
+
+
+
+// --- New Swipe Logic ---
+let touchstartX = 0;
+let touchendX = 0;
+const swipeThreshold = 50; // Minimum distance in pixels to register as a swipe
+
+const mainBox = document.getElementById('mainBox');
+const tabNames = Array.from(document.querySelectorAll('.tab-btn')).map(btn => btn.dataset.tab);
+
+let isSwiping = false;
+
+// Handle the start of a touch gesture
+mainBox.addEventListener('touchstart', e => {
+    isSwiping = true;
+    touchstartX = e.changedTouches[0].screenX;
+    mainBox.style.transition = 'none'; // Disable CSS transition for smooth live drag
+});
+
+// Handle the movement during a touch gesture
+mainBox.addEventListener('touchmove', e => {
+    if (!isSwiping) return;
+
+    const currentX = e.changedTouches[0].screenX;
+    const diff = currentX - touchstartX;
+    mainBox.style.transform = `translateX(${diff}px)`;
+});
+
+// Handle the end of a touch gesture
+mainBox.addEventListener('touchend', e => {
+    isSwiping = false;
+    touchendX = e.changedTouches[0].screenX;
+    handleGesture();
+    mainBox.style.transition = 'transform 0.3s ease-out'; // Re-enable transition for snapping back
+    mainBox.style.transform = 'translateX(0)'; // Snap back to original position
+});
+
+function handleGesture() {
+    const diff = touchendX - touchstartX;
+    if (Math.abs(diff) < swipeThreshold) {
+        return; // Not a significant enough swipe
+    }
+
+    const currentActiveBtn = document.querySelector('.tab-btn.active-tab');
+    const currentTabName = currentActiveBtn.dataset.tab;
+    const currentIndex = tabNames.indexOf(currentTabName);
+    
+    let nextIndex;
+    if (diff > 0) { // Swiped right
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : tabNames.length - 1;
+    } else { // Swiped left
+        nextIndex = currentIndex < tabNames.length - 1 ? currentIndex + 1 : 0;
+    }
+    
+    switchTab(tabNames[nextIndex]);
+}
+
+// --- End of New Swipe Logic ---
+
+// Existing tab logic (slightly modified)
+
+function switchTab(name) {
+    // Hide all tabs and remove active state from buttons
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+
+    // Show the new tab and set the new active button
+    document.getElementById('tab-' + name).classList.remove('hidden');
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${name}"]`);
+    activeBtn.classList.add('active-tab');
+
+    // Move the highlight when tab changes
+    moveHighlight(activeBtn);
+}
+
+function moveHighlight(activeBtn) {
+    const highlight = document.querySelector(".tab-highlight");
+    if (!highlight) return;
+
+    const btnRect = activeBtn.getBoundingClientRect();
+    const parentRect = activeBtn.parentElement.getBoundingClientRect();
+
+    highlight.style.width = `${btnRect.width}px`;
+    highlight.style.transform = `translateX(${btnRect.left - parentRect.left}px)`;
+}
+
+// Ensure highlight is positioned correctly on page load
+window.addEventListener("DOMContentLoaded", () => {
+    const activeBtn = document.querySelector(".tab-btn.active-tab");
+    if (activeBtn) {
+        moveHighlight(activeBtn);
+    }
+});
+
+
+//cache logic
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/public/service-worker.js")
+      .then(() => console.log("Service Worker Registered"))
+      .catch((err) => console.error("SW registration failed", err));
+  });
+}
