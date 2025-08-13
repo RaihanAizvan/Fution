@@ -5,7 +5,7 @@
     const KEY_RESOURCES = `fution-personal-resources-${window.weekKey}`;
     const KEY_GOALS = `fution-personal-goals-${window.weekKey}`;
 
-    
+
 
 
     // Quick helpers
@@ -301,7 +301,7 @@
             }
             list.forEach((r, idx) => {
                 const row = document.createElement('div');
-                if(r.url && !r.url.startsWith('http')) {
+                if (r.url && !r.url.startsWith('http')) {
                     r.url = `https://${r.url}`; // ensure URL starts with http(s)
                 }
                 console.log(r)
@@ -334,7 +334,7 @@
                 const idx = +btn.getAttribute('data-idx');
                 const items = JSON.parse(localStorage.getItem(KEY_RESOURCES) || '[]');
                 const url = items[idx].url;
-                if(url && !url.startsWith('http')) {
+                if (url && !url.startsWith('http')) {
                     items[idx].url = `https://${url}`;
                     localStorage.setItem(KEY_RESOURCES, JSON.stringify(items));
                 }

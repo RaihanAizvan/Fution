@@ -41,7 +41,7 @@
 
 <!-- Inline config: set the weekKey and any default arrays BEFORE your main.js runs -->
 
-<body class="h-dvh overflow-hidden flex font-sans text-white bluue scrollbar-thin-gray lg:pb-0 pb-5">
+<body class="h-dvh overflow-hidden flex font-sans text-white bluue scrollbar-thin-gray lg:pb-0 pb:2">
 
   <!-- Page loader + UI elements (same style as your other pages) -->
   <div id="page-loader"
@@ -86,18 +86,21 @@
       <!-- Page header -->
       <div class="grid lg:grid-cols-3 gap-6 text-center mb-6 sm:mt-6 fade-up lg:pr-24">
         <div class="lg:col-span-2">
-    <div class="inline-flex items-center space-x-4 border border-gray-700 border-opacity-70 px-6 py-4 rounded-2xl mb-2">
-        <div class="w-16 h-16 bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-70 rounded-xl flex items-center justify-center">
-            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M2.93 19.07A10 10 0 1 1 19.07 5.93 10 10 0 0 1 2.93 19.07zm1.41-1.41A8 8 0 1 0 18.59 4.42 8 8 0 0 0 4.34 17.66"/>
-            </svg>
+          <div
+            class="inline-flex items-center space-x-4 border border-gray-700 border-opacity-70 px-6 py-4 rounded-2xl mb-2">
+            <div
+              class="w-16 h-16 bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-70 rounded-xl flex items-center justify-center">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9 3v2m6-2v2M2.93 19.07A10 10 0 1 1 19.07 5.93 10 10 0 0 1 2.93 19.07zm1.41-1.41A8 8 0 1 0 18.59 4.42 8 8 0 0 0 4.34 17.66" />
+              </svg>
+            </div>
+            <div class="text-left">
+              <h1 class="text-3xl lg:text-4xl font-bold">Fution Space</h1>
+              <p class="text-gray-400 text-lg">A Space to Relax.</p>
+            </div>
+          </div>
         </div>
-        <div class="text-left">
-            <h1 class="text-3xl lg:text-4xl font-bold">Fution Space</h1>
-            <p class="text-gray-400 text-lg">A Space to Relax.</p>
-        </div>
-    </div>
-</div>
 
         <!-- Progress summary -->
         <div class="flex items-center pr-12 justify-center gap-6">
@@ -158,95 +161,95 @@
           <!-- Box container matching your theme -->
           <div id="mainBox"
             class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-260px)] lg:w-full w-[calc(100vw-10px)] overflow-hidden">
+            <div id="swipeContainer">
 
-            <!-- Tasks area (rendered by main.js's WeekLearningTracker) -->
-            <div id="tab-tasks" class="tab-content">
-              <div class="flex items-center justify-between mb-6">
-                <div class="flex items-center space-x-3">
-                  <div
-                    class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
+              <!-- Tasks area (rendered by main.js's WeekLearningTracker) -->
+              <div id="tab-tasks" class="tab-content">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center space-x-3">
+                    <div
+                      class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 rounded-lg flex items-center justify-center">
+                      <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <h2 class="text-xl lg:text-2xl font-bold">Tasks & Topics</h2>
                   </div>
-                  <h2 class="text-xl lg:text-2xl font-bold">Tasks & Topics</h2>
+
+                  <!-- <button id="requestTopicBtn" class="text-sm px-4 py-2 rounded-lg bg-transparent border border-gray-700 hover:bg-blue-700 transition text-white font-medium">Add Pending</button> -->
                 </div>
 
-                <!-- <button id="requestTopicBtn" class="text-sm px-4 py-2 rounded-lg bg-transparent border border-gray-700 hover:bg-blue-700 transition text-white font-medium">Add Pending</button> -->
+                <!-- Topics Container (main.js expects this ID) -->
+                <div id="topicsContainer"
+                  class="lg:overflow-y-auto lg:h-[calc(100vh-350px)] lg:px-4 space-y-3 scrollbar-thin-gray"></div>
               </div>
 
-              <!-- Topics Container (main.js expects this ID) -->
-              <div id="topicsContainer"
-                class="lg:overflow-y-auto lg:h-[calc(100vh-350px)] lg:px-4 space-y-3 scrollbar-thin-gray"></div>
-            </div>
+              <!-- Journal tab (replace existing journal HTML inside #tab-journal) -->
+              <div id="tab-journal" class="tab-content hidden">
+                <div class="mb-4 flex items-start gap-4">
+                  <div class="flex-1">
+                    <div class="flex justify-between items-center mb-2">
+                      <label class="text-sm text-gray-300">Daily Journal</label>
+                      <!-- NOTE: use a class, not an id — this prevents duplicates/global selection -->
+                      <button
+                        class="new-journal-btn px-3 py-1 bg-blue-900 bg-opacity-10 border border-gray-700 text-white text-sm font-semibold rounded ml-4">+
+                        New</button>
+                    </div>
 
-            <!-- Journal tab (replace existing journal HTML inside #tab-journal) -->
-            <div id="tab-journal" class="tab-content hidden">
-              <div class="mb-4 flex items-start gap-4">
-                <div class="flex-1">
-                  <div class="flex justify-between items-center mb-2">
-                    <label class="text-sm text-gray-300">Daily Journal</label>
-                    <!-- NOTE: use a class, not an id — this prevents duplicates/global selection -->
-                    <button
-                      class="new-journal-btn px-3 py-1 bg-blue-900 bg-opacity-10 border border-gray-700 text-white text-sm font-semibold rounded ml-4">+
-                      New</button>
+                    <!-- Journal cards go here -->
+                    <div id="journalList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <!-- injected by JS -->
+                    </div>
                   </div>
 
-                  <!-- Journal cards go here -->
-                  <div id="journalList" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- injected by JS -->
-                  </div>
+                  <aside class="w-64 hidden lg:block">
+                    <div class="p-4 rounded-lg border border-gray-700 bg-gray-900/40">
+                      <h3 class="text-sm text-gray-300 mb-2 font-semibold">Quick Prompts</h3>
+                      <ul class="text-xs text-gray-400 space-y-2">
+                        <li>What was the smallest win today?</li>
+                        <li>What confused you most?</li>
+                        <li>One thing to improve tomorrow.</li>
+                      </ul>
+                    </div>
+                  </aside>
                 </div>
 
-                <aside class="w-64 hidden lg:block">
-                  <div class="p-4 rounded-lg border border-gray-700 bg-gray-900/40">
-                    <h3 class="text-sm text-gray-300 mb-2 font-semibold">Quick Prompts</h3>
-                    <ul class="text-xs text-gray-400 space-y-2">
-                      <li>What was the smallest win today?</li>
-                      <li>What confused you most?</li>
-                      <li>One thing to improve tomorrow.</li>
-                    </ul>
-                  </div>
-                </aside>
+                <div id="journalPreview"
+                  class="prose max-w-none text-gray-100 hidden p-4 border border-gray-800 rounded-lg bg-gray-900/20">
+                </div>
               </div>
 
-              <div id="journalPreview"
-                class="prose max-w-none text-gray-100 hidden p-4 border border-gray-800 rounded-lg bg-gray-900/20">
+
+
+              <!-- Resources -->
+              <div id="tab-resources" class="tab-content hidden">
+                <div class="mb-4">
+                  <form id="resourceForm" class="flex gap-2 flex-col">
+                    <input id="resourceTitle" placeholder="Title (optional)"
+                      class="flex-1 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
+                    <input id="resourceUrl" placeholder="https://youtube.com"
+                      class="flex-2 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
+                    <button type="submit"
+                      class="px-4 py-2 rounded-lg bg-blue-900 bg-opacity-10 border border-gray-700 text-white text-sm font-semibold">Add</button>
+                  </form>
+                </div>
+                <div id="resourcesList" class="space-y-3 overflow-y-auto h-auto scrollbar-thin-gray"></div>
+              </div>
+
+              <!-- Goals -->
+              <div id="tab-goals" class="tab-content hidden">
+                <div class="mb-4">
+                  <form id="goalForm" class="flex gap-2">
+                    <input id="goalTitle" required placeholder="Micro goal e.g., 'Ship demo v1'"
+                      class="flex-1 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
+                    <button type="submit"
+                      class="px-4 py-2 rounded-lg bg-gradient-to-t from-black to-blue-800/30 border border-gray-700 text-white">Add</button>
+                  </form>
+                  <div id="goalsList" class="space-y-3 overflow-y-auto  scrollbar-thin-gray"></div>
+                </div>
               </div>
             </div>
-
-
-
-            <!-- Resources -->
-            <div id="tab-resources" class="tab-content hidden">
-              <div class="mb-4">
-                <form id="resourceForm" class="flex gap-2 flex-col">
-                  <input id="resourceTitle" placeholder="Title (optional)"
-                    class="flex-1 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
-                  <input id="resourceUrl" placeholder="https://youtube.com"
-                    class="flex-2 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
-                  <button type="submit"
-                    class="px-4 py-2 rounded-lg bg-blue-900 bg-opacity-10 border border-gray-700 text-white text-sm font-semibold">Add</button>
-                </form>
-              </div>
-              <div id="resourcesList" class="space-y-3 overflow-y-auto h-auto scrollbar-thin-gray"></div>
-            </div>
-
-            <!-- Goals -->
-            <div id="tab-goals" class="tab-content hidden">
-              <div class="mb-4">
-                <form id="goalForm" class="flex gap-2">
-                  <input id="goalTitle" required placeholder="Micro goal e.g., 'Ship demo v1'"
-                    class="flex-1 px-3 py-2 rounded-lg bg-gray-800 border border-gray-700" />
-                  <button type="submit"
-                    class="px-4 py-2 rounded-lg bg-gradient-to-t from-black to-blue-800/30 border border-gray-700 text-white">Add</button>
-                </form>
-              </div>
-
-              <div id="goalsList" class="space-y-3 overflow-y-auto  scrollbar-thin-gray"></div>
-            </div>
-
           </div>
         </div>
 

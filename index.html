@@ -14,6 +14,10 @@
   <link rel="shortcut icon" href="logo.png" type="image/x-icon">
   <!-- external stylesheet -->
   <link rel="stylesheet" href="style.css">
+
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#000000">
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-K0MZG1JY6E"></script>
   <script>
@@ -25,7 +29,7 @@
   </script>
 </head>
 
-<body class="h-dvh overflow-hidden flex font-sans text-white bluue scrollbar-thin-gray lg:pb-0 pb-5  ">
+<body class="h-dvh overflow-hidden flex font-sans text-white bluue scrollbar-thin-gray  ">
   <div id="page-loader"
     class="fixed inset-0 bg-gray-900/10 backdrop-blur-sm z-50 flex flex-col items-center justify-center transition-opacity duration-500 opacity-100">
     <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
@@ -182,7 +186,7 @@
       <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
         <div class="lg:col-span-2 space-y-6">
           <div
-            class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-260px)] lg:w-full w-[calc(100vw-10px)]">
+            class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-220px)] lg:w-full w-[calc(100vw-10px)]">
 
             <!-- Header Row -->
             <div class="flex items-center justify-between mb-6">
@@ -216,7 +220,7 @@
 
         <div class="space-y-6">
           <div
-            class="border border-gray-700 border-opacity-70 rounded-2xl p-6 slide-right lg:overflow-y-auto h-[calc(100vh-260px)] scrollbar-thin-gray ">
+            class="border border-gray-700 border-opacity-70 rounded-2xl p-6 slide-right lg:overflow-y-auto h-[calc(100vh-220px)] scrollbar-thin-gray ">
             <div class="flex items-center space-x-3 mb-6">
               <div
                 class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 border-opacity-40 rounded-lg flex items-center justify-center">
@@ -766,7 +770,7 @@ p { color: black; }</code></pre>
         <p>Use semantic tags and attributes for accessibility:</p>
         <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
           <pre><code class="text-white"><main>
-  <img src="image.jpg" alt="Description">
+  \`<img src='image.jpg' alt="<img src='image.jpg'>">\`
 </main></code></pre>
         </div>
         <p class="text-sm text-gray-400">Helps screen readers and SEO.</p>
