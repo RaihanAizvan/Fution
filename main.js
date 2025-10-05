@@ -330,6 +330,20 @@ class WeekLearningTracker {
     this.elements.topicsContainer.insertBefore(wrapper, this.addTopicWrapper);
   }
 
+  renderProTips() {
+    const { proTipsList } = this.elements;
+    if (!proTipsList || !Array.isArray(this.proTips) || this.proTips.length === 0) {
+      console.warn('Pro tips list element not found or no pro tips available');
+      return;
+    }
+    proTipsList.innerHTML = '';
+    this.proTips.forEach((tip, index) => {
+      const tipElement = this.createProTipElement(tip, index + 1);
+      proTipsList.appendChild(tipElement);
+    });
+    console.log(`Rendered ${this.proTips.length} pro tips`);
+  }
+
   renderPracticals() {
     if( !window.practicals || !Array.isArray(window.practicals) || window.practicals.length === 0) {
       console.warn('No practicals available or not an array');
@@ -530,7 +544,7 @@ class WeekLearningTracker {
     circle.style.strokeDashoffset = offset;
   }
 
-  renderProTips() {
+  render  () {
     const { proTipsList } = this.elements;
     if (!proTipsList || !Array.isArray(this.proTips) || this.proTips.length === 0) {
       console.warn('Pro tips list element not found or no pro tips available');
@@ -739,14 +753,3 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-
-//cache logic
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/public/service-worker.js")
-      .then(() => console.log("Service Worker Registered"))
-      .catch((err) => console.error("SW registration failed", err));
-  });
-}
