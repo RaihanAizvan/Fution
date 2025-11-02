@@ -190,7 +190,7 @@
 
             <div class="flex items-center justify-between mb-6" >
               <div
-                class="tab-buttons flex gap-1 relative bg-white/5 rounded-full p-1 backdrop-blur-md border border-white/10 sticky">
+                class="tab-buttons flex gap-1 relative bg-white/5 rounded-full p-1 backdrop-blur-md border border-white/10">
                 <button data-tab="topics" class="tab-btn active-tab" onclick="switchTab('topics')">Topics</button>
                 <button data-tab="practicals" class="tab-btn" onclick="switchTab('practicals')">Practicals</button>
                 <span class="tab-highlight"></span>
@@ -1261,7 +1261,442 @@ my-project/
     type: 'heading',
     title: "HTTP and server Basics",
   },
-    
+    {
+    title: "What is HTTP & HTTPS?",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I understand HTTP as the protocol for client-server communication on the web, like a browser asking a server for a webpage. HTTPS is just the secure version, which encrypts the communication using SSL/TLS to protect user data."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><strong>HTTP (Hypertext Transfer Protocol)</strong> is the foundational protocol of the World Wide Web. It's a simple, text-based set of rules that defines how a <strong>client</strong> (like your web browser) and a <strong>server</strong> (where a website is hosted) communicate with each other.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Client:</strong> Makes requests (e.g., "Give me the homepage").</li>
+            <li><strong>Server:</strong> Sends responses (e.g., "Here is the HTML for the homepage").</li>
+          </ul>
+          <p class="mt-2"><strong>HTTPS (HTTP Secure)</strong> is the exact same protocol, but with a crucial layer of security added. It uses <strong>SSL/TLS</strong> to encrypt the entire conversation between the client and the server. This prevents attackers from "eavesdropping" or modifying the data being sent, which is essential for login forms, credit card payments, and protecting user privacy.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Conceptual Flow)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# 1. Client (Browser) makes a request:
+GET /contact HTTP/1.1
+Host: www.example.com
+
+# 2. Server (Node.js) sends a response:
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 127
+
+&lt;html&gt;
+  &lt;body&gt;&lt;h1&gt;Contact Us&lt;/h1&gt;&lt;/body&gt;
+&lt;/html&gt;
+
+# With HTTPS, this entire conversation is encrypted and unreadable to outsiders.
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>All web development, especially back-end development with Node.js, is based on handling HTTP requests and sending HTTP responses. Understanding this "request/response cycle" is the single most important concept for building APIs or web applications. HTTPS is now the standard; browsers will warn users if a site uses plain HTTP.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is SSL/TLS and how does the "handshake" work at a high level?</li>
+            <li>What is the 'S' in HTTPS and what does it provide? (Secure: Encryption, Authentication, and Integrity).</li>
+            <li>Why would a site still use HTTP? (No good reason for public sites; maybe for local-only development).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview" target="_blank" class="hover:underline">MDN: An overview of HTTP</a></li>
+            <li><a href="https://www.cloudflare.com/learning/ssl/what-is-https/" target="_blank" class="hover:underline">Cloudflare: What is HTTPS?</a></li>
+            <li><a href="https://www.digitalocean.com/community/tutorials/http-vs-https" target="_blank" class="hover:underline">DigitalOcean: HTTP vs. HTTPS</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "HTTP Request/Response Structure",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know that an HTTP message, whether a request or response, has a start-line, headers, and an optional body. For a request, this includes the method and path. For a response, it includes the status code. Headers provide metadata, and the body contains the actual data, like JSON or HTML."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Every HTTP message is just plain text with three parts.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Start-Line:</strong> The first line.
+              <ul>
+                <li><strong>Request:</strong> <code>GET /users HTTP/1.1</code> (Method, Path, Version)</li>
+                <li><strong>Response:</strong> <code>HTTP/1.1 200 OK</code> (Version, Status Code, Status Message)</li>
+              </ul>
+            </li>
+            <li><strong>Headers:</strong> Key-value pairs providing metadata about the message. Examples:
+              <ul>
+                <li><code>Host: api.example.com</code> (Which server to talk to)</li>
+                <li><code>User-Agent: Mozilla/5.0</code> (Which client is asking)</li>
+                <li><code>Content-Type: application/json</code> (What format the body is in)</li>
+              </ul>
+            </li>
+            <li><strong>Body:</strong> (Optional) The actual data being sent. This is used in <code>POST</code> requests (to send data) and most responses (to send the HTML or JSON back).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A POST Request & Response)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-http">
+# --- REQUEST (Client to Server) ---
+
+# Start-Line
+POST /api/users HTTP/1.1
+
+# Headers
+Host: my-app.com
+Content-Type: application/json
+Content-Length: 35
+
+# Body (JSON data)
+{
+  "name": "Alice",
+  "job": "Developer"
+}
+
+# --- RESPONSE (Server to Client) ---
+
+# Start-Line
+HTTP/1.1 201 Created
+
+# Headers
+Content-Type: application/json
+Date: Mon, 03 Nov 2025 01:30:00 GMT
+
+# Body (New user with ID)
+{
+  "id": 123,
+  "name": "Alice",
+  "job": "Developer"
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>In Node.js, you are not just "writing a function." You are parsing requests and building responses. You will directly read from <code>request.headers</code>, check <code>request.method</code>, read the <code>request</code> body, and set <code>response.headers</code> (like <code>Content-Type</code>) and <code>response.statusCode</code> before sending the body back.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is the <code>Host</code> header used for? (To allow a single server to host multiple websites).</li>
+            <li>What is the <code>Content-Length</code> header? (It tells the server how many bytes the body is, so it knows when it's done reading).</li>
+            <li>What's the difference between <code>User-Agent</code> and <code>Accept</code> headers? (<code>User-Agent</code> says *who* I am; <code>Accept</code> says *what* formats I understand).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages" target="_blank" class="hover:underline">MDN: HTTP Messages</a></li>
+            <li><a href="https.developer.mozilla.org/en-US/docs/Web/HTTP/Headers" target="_blank" class="hover:underline">MDN: HTTP Headers</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "HTTP Methods (Basics): GET & POST",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the basic HTTP verbs, especially GET and POST. GET is for retrieving data and should be 'safe' and 'idempotent'—it doesn't change anything. POST is for submitting new data, like creating a user or posting a form, and it sends its payload in the request body."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>HTTP Methods (or "verbs") tell the server what <strong>action</strong> the client wants to perform on a resource.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>GET</code>:</strong>
+              <ul>
+                <li><strong>Action:</strong> Retrieve data.</li>
+                <li><strong>Example:</strong> Get a user's profile, get a list of products.</li>
+                <li><strong>Data:</strong> Sent in the URL (e.g., <code>/users?id=123</code>).</li>
+                <li><strong>Body:</strong> Has no body.</li>
+                <li><strong>Safe:</strong> Should not change data on the server.</li>
+              </ul>
+            </li>
+            <li><strong><code>POST</code>:</strong>
+              <ul>
+                <li><strong>Action:</strong> Submit data to be processed.</li>
+                <li><strong>Example:</strong> Create a new user, submit a contact form.</li>
+                <li><strong>Data:</strong> Sent in the request <strong>body</strong>.</li>
+                <li><strong>Body:</strong> Almost always has a body (e.g., JSON or form data).</li>
+                <li><strong>Safe:</strong> Not safe. It is *expected* to change data (e.g., create a new record).</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (How they are used)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-http">
+# --- GET Request ---
+# Action: Get the user with ID 42
+GET /api/users/42 HTTP/1.1
+Host: example.com
+
+
+# --- POST Request ---
+# Action: Create a new user
+POST /api/users HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "username": "new_user",
+  "email": "new@example.com"
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>In your Node.js server, your first step is *always* to check the <code>request.method</code>. If you get a <code>GET</code> request, you'll fetch data from a database. If you get a <code>POST</code> request, you'll parse the request body and save new data. Using the wrong method is confusing and breaks RESTful API design principles.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What are <code>PUT</code> and <code>DELETE</code> methods for? (<code>PUT</code> to update an entire resource, <code>DELETE</code> to remove one).</li>
+            <li>What does "idempotent" mean? (Doing the request once has the same effect as doing it 100 times. <code>GET</code> is idempotent, <code>POST</code> is not).</li>
+            <li>How does a browser send a <code>POST</code> request? (Typically from an HTML <code>&lt;form method="POST"&gt;</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" target="_blank" class="hover:underline">MDN: HTTP request methods</a></li>
+            <li><a href="https://www.restapitutorial.com/httpmethods.html" target="_blank" class="hover:underline">REST API Tutorial: HTTP Methods</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Common Status Codes: 200, 404, 500",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the main status code classes. 2xx for success, like '200 OK'. 4xx for client errors, like '404 Not Found' if a user requests a non-existent page. And 5xx for server errors, like '500 Internal Server Error' if my code crashes while processing the request."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>HTTP Status Codes are a 3-digit number sent by the server to tell the client the <strong>result</strong> of its request. They are grouped into classes:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>2xx</code> (Success):</strong> The request was successful.
+              <ul>
+                <li><strong><code>200 OK</code>:</strong> The standard "everything worked" response. Used for <code>GET</code>.</li>
+                <li><strong><code>201 Created</code>:</strong> The request was successful and a new resource was created. Used for <code>POST</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>4xx</code> (Client Error):</strong> The client made a mistake.
+              <ul>
+                <li><strong><code>404 Not Found</code>:</strong> The server couldn't find the requested resource (e.g., wrong URL).</li>
+                <li><strong><code>400 Bad Request</code>:</strong> The server couldn't understand the request, often due to invalid JSON or missing data.</li>
+                <li><strong><code>403 Forbidden</code>:</strong> The client is not authorized to access this resource.</li>
+              </ul>
+            </li>
+            <li><strong><code>5xx</code> (Server Error):</strong> The server failed to fulfill a valid request.
+              <ul>
+                <li><strong><code>500 Internal Server Error</code>:</strong> A generic "something broke" error. Your Node.js code probably crashed.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (How a server sends them)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-http">
+# --- Response for a successful GET ---
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ "data": "here is your stuff" }
+
+
+# --- Response for a missing page ---
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{ "error": "User not found" }
+
+
+# --- Response for a server crash ---
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{ "error": "An unexpected error occurred" }
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Sending the correct status code is critical. Your front-end application (like React or Angular) will check the status code to know if its request worked. If it sees a <code>200</code>, it shows the data. If it sees a <code>404</code>, it shows a "Not Found" message. If it sees a <code>500</code>, it shows a generic "Try again later" error.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between a 401 and a 403? (401 Unauthorized means "you need to log in"; 403 Forbidden means "you are logged in, but you still can't see this").</li>
+            <li>What is a 301 or 302? (Redirects. 301 is a permanent redirect, 302 is temporary).</li>
+            <li>When would you send a 204? (No Content. For a <code>DELETE</code> request, to say "it worked, but I have nothing to send you back").</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status" target="_blank" class="hover:underline">MDN: HTTP status codes</a></li>
+            <li><a href="https://http.cat/" target="_blank" class="hover:underline">HTTP Status Cats (A fun way to learn)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Using the `http` module",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I'm comfortable using the built-in 'http' module to create a basic server. I know 'http.createServer' takes a callback that runs on every request, and inside that, I can inspect 'req.url' and 'req.method' to build a response, set 'res.writeHead' for status and headers, and use 'res.end' to send the data."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>http</code> module is a core Node.js library for creating HTTP servers. You don't need any frameworks like Express to use it, though frameworks make it much easier. The primary method is <code>http.createServer()</code>, which creates a server object. You provide a callback function that will be executed <strong>every time</strong> a new request hits the server.</p>
+          <p class="mt-2">This callback receives two objects: <code>req</code> (the request) and <code>res</code> (the response).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A simple router)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const http = require('http');
+
+const port = 3000;
+
+// The callback function that handles all requests
+const requestHandler = (req, res) => {
+  console.log(\`New request: \${req.method} \${req.url}\`);
+
+  // Simple Router
+  if (req.method === 'GET' && req.url === '/') {
+    // 1. Set Status Code 200 (OK) and Headers
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    // 2. Write the body and send
+    res.end(JSON.stringify({ message: 'Welcome to the homepage!' }));
+  
+  } else if (req.method === 'GET' && req.url === '/about') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end('&lt;h1&gt;About Us&lt;/h1&gt;');
+  
+  } else if (req.method === 'POST' && req.url === '/api/submit') {
+    // Handling a POST request (body parsing is more complex)
+    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'Data submitted' }));
+  
+  } else {
+    // 404 Not Found for everything else
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Page Not Found' }));
+  }
+};
+
+// Create the server
+const server = http.createServer(requestHandler);
+
+// Start listening
+server.listen(port, () => {
+  console.log(\`Server is listening on http://localhost:\${port}\`);
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Save the code as server.js
+$ node server.js
+# Output: Server is listening on http://localhost:3000
+
+# In another terminal, test with curl:
+$ curl http://localhost:3000/
+# {"message":"Welcome to the homepage!"}
+
+$ curl http://localhost:3000/about
+# <h1>About Us</h1>
+
+$ curl -X POST http://localhost:3000/api/submit
+# {"message":"Data submitted"}
+
+$ curl http://localhost:3000/bad-url
+# {"error":"Page Not Found"}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the "raw" material of a Node.js web server. While you will almost always use a framework like <strong>Express.js</strong> (which does all the routing and parsing for you), Express is built on *top* of this <code>http</code> module. Understanding what happens under the hood makes you a much stronger developer.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you parse the body of a POST request? (It's complex: you have to listen for 'data' and 'end' events on the <code>req</code> object, which is a stream).</li>
+            <li>Why is it better to use Express than this? (Express handles routing, body parsing,
+            error handling, and middleware, which is very complex to do manually).</li>
+            <li>What does <code>res.end()</code> do? (It finalizes the response, sends all data, and tells the server the request is complete).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/http.html" target="_blank" class="hover:underline">Node.js Docs: HTTP</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/learn/Server-side/Nodejs/skeleton_server" target="_blank" class="hover:underline">MDN: Create a Node.js HTTP server</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  }
 ]
 
 
