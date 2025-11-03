@@ -2872,6 +2872,349 @@ readUserData();
         </section>
       </div>
     `
+  },
+  {
+    type: "heading",
+    title: "Buffer, Streams and Events"
+  },
+  {
+    title: "Buffers",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I understand Buffers are Node.js's way of handling raw binary data, which JavaScript's string type is not good at. I know they're used for tasks like reading files, handling network data, or manipulating images, where I need to work with the data byte by byte."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>A <strong>Buffer</strong> is a global object in Node.js (you don't need to <code>require</code> it). It's used to represent a fixed-size chunk of memory (a sequence of bytes) outside the V8 JavaScript engine.</p>
+          <p class="mt-2">JavaScript strings are great for text (UTF-16), but they are terrible for binary data (like an image file, a TCP packet, or a zip file). Buffers are Node's solution to this. They let you interact with raw binary data directly, which is essential for I/O operations.</p>
+          <p class="mt-2">When you use <code>fs.readFile()</code>, the <code>data</code> you get (if you don't specify an encoding) is a Buffer.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Creating and using Buffers)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// 1. Create a Buffer from a string
+// Allocates 13 bytes to store "Hello World!"
+const bufFromString = Buffer.from('Hello World!', 'utf8');
+
+console.log(bufFromString); // <Buffer 48 65 6c 6c 6f 20 57 6f 72 6c 64 21> (hex values)
+console.log(bufFromString.toString()); // "Hello World!"
+console.log(bufFromString.length); // 13 (bytes)
+
+
+// 2. Create an empty Buffer of a specific size (e.g., 10 bytes)
+const bufAlloc = Buffer.alloc(10);
+console.log(bufAlloc); // <Buffer 00 00 00 00 00 00 00 00 00 00> (zero-filled)
+
+// 3. Write data to the buffer
+bufAlloc.write('Hi', 'utf8');
+console.log(bufAlloc); // <Buffer 48 69 00 00 00 00 00 00 00 00>
+console.log(bufAlloc.toString()); // "Hi"
+
+
+// 4. Buffers from file I/O (very common)
+const fs = require('fs');
+fs.readFile('package.json', (err, data) => {
+  if (err) return console.error(err);
+  
+  // 'data' is a Buffer!
+  console.log('Is data a Buffer?', Buffer.isBuffer(data)); // true
+  console.log(data.toString('utf8').substring(0, 50) + '...'); // Shows file content
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Node.js is built to interact with the operating system (files, network, etc.), which "speaks" in binary data, not just text. Buffers are the low-level "bridge" that allows your JavaScript code to handle this binary data efficiently. You need them for everything from file I/O and networking to data compression and cryptography.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>Buffer.alloc()</code> and <code>Buffer.from()</code>? (<code>alloc</code> creates a new, empty buffer of a given size. <code>from</code> creates a buffer *from* existing data, like a string or array).</li>
+            <li>What is an "encoding"? (The rule set for converting bytes to characters, e.g., 'utf8', 'hex', 'base64').</li>
+            <li>Are Buffers related to Streams? (Yes, streams are a mechanism for moving data, and that data is often handled in Buffer-based chunks).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/buffer.html" target="_blank" class="hover:underline">Node.js Docs: Buffer</a></li>
+            <li><a href="https://www.freecodecamp.org/news/node-js-buffer-guide/" target="_blank" class="hover:underline">A Guide to Buffers in Node.js (freeCodeCamp)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Streams (Basics)",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use Streams to handle data I/O efficiently, especially with large files or network connections. Instead of loading an entire 1GB file into memory with 'readFile', I use a 'createReadStream' to process the data in small, manageable chunks, which is much more memory-efficient."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><strong>Streams</strong> are one of the most powerful concepts in Node.js. They are a way to handle reading or writing data in a continuous flow (a "stream") rather than all at once. Instead of loading a 1GB file into memory (which would crash your app), you can read it chunk by chunk.</p>
+          <p class="mt-2">There are four types of streams, but the two most common are:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Readable Streams:</strong> A source of data you can read from (e.g., <code>fs.createReadStream</code> to read a file, or an HTTP <code>request</code>).</li>
+            <li><strong>Writable Streams:</strong> A destination for data you can write to (e.g., <code>fs.createWriteStream</code> to write to a file, or an HTTP <code>response</code>).</li>
+          </ul>
+          <p class="mt-2">You work with streams by listening for events, like <code>'data'</code> (a chunk is ready), <code>'end'</code> (no more data), and <code>'error'</code>.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Reading a large file)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+// Imagine 'large-file.txt' is 5GB.
+const readStream = fs.createReadStream(path.join(__dirname, 'large-file.txt'), {
+  encoding: 'utf8',
+  highWaterMark: 16 * 1024 // Set chunk size to 16kb
+});
+
+let chunkCount = 0;
+
+// 1. Listen for the 'data' event. This fires every time a chunk is ready.
+readStream.on('data', (chunk) => {
+  chunkCount++;
+  console.log(\`--- Received chunk \${chunkCount} (\${chunk.length} bytes) ---\`);
+  // console.log(chunk); // Uncomment to see the data
+});
+
+// 2. Listen for the 'end' event. This fires when the file is done.
+readStream.on('end', () => {
+  console.log(\`--- No more data. Total chunks: \${chunkCount} ---\`);
+});
+
+// 3. Listen for the 'error' event.
+readStream.on('error', (err) => {
+  console.error('An error occurred:', err.message);
+});
+
+console.log('Starting to read the stream...');
+// This logs first, as the stream is async
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Streams are the key to Node.js's high performance and low memory usage for I/O. They allow you to build applications that can process massive amounts of data without ever storing more than a tiny chunk in memory at one time. HTTP requests and responses are streams, file I/O uses streams, and data compression/encryption uses streams.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is <code>.pipe()</code>? (The easy way to connect a Readable stream to a Writable stream).</li>
+            <li>What are Duplex and Transform streams? (Duplex is both readable/writable, like a socket. Transform is a Duplex that modifies data, like a Gzip stream).</li>
+            <li>What is "backpressure"? (When a Writable stream is too slow, and the Readable stream has to pause).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/stream.html" target="_blank" class="hover:underline">Node.js Docs: Stream</a></li>
+            <li><a href="https://nodejs.org/en/learn/streaming/introduction-to-streams" target="_blank" class="hover:underline">Node.js Learn: Introduction to Streams</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Piping Streams (`.pipe()`)",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "Instead of manually listening for 'data' and 'end' events, I use the '.pipe()' method to connect a readable stream directly to a writable stream. It's the cleanest way to move data, for example, from a 'createReadStream' to an 'http response' or a 'createWriteStream', and it handles backpressure automatically."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>.pipe()</code> method is a shortcut for connecting a <strong>Readable</strong> stream to a <strong>Writable</strong> stream. It's like attaching a pipe from a water source to a drain.</p>
+          <p class="mt-2">It automatically does all the event handling for you:</p>
+          <ul>
+            <li>It listens for <code>'data'</code> on the readable stream and calls <code>.write()</code> on the writable stream.</li>
+            <li>It listens for <code>'end'</code> on the readable stream and calls <code>.end()</code> on the writable stream.</li>
+            <li>It automatically handles <strong>backpressure</strong>, pausing the readable stream if the writable stream gets overwhelmed.</li>
+          </ul>
+          <p class="mt-2">The syntax is simple: <code>readableStream.pipe(writableStream)</code>.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Copying a file & serving a file)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const http = require('http');
+
+// --- Example 1: Efficiently copying a large file ---
+
+const sourceFile = fs.createReadStream('large-video.mp4');
+const destFile = fs.createWriteStream('video-copy.mp4');
+
+// Instead of .on('data', ...)
+sourceFile.pipe(destFile);
+
+sourceFile.on('end', () => {
+  console.log('File copy complete!');
+});
+sourceFile.on('error', (err) => {
+  console.log('Error copying file:', err.message);
+});
+
+
+// --- Example 2: Serving a large file with http ---
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/my-video') {
+    // Create a readable stream from the file
+    const videoStream = fs.createReadStream('large-video.mp4');
+    
+    // 'res' (the HTTP response) is a Writable Stream!
+    // Pipe the file data directly to the user's browser.
+    res.writeHead(200, { 'Content-Type': 'video/mp4' });
+    videoStream.pipe(res);
+  } else {
+    res.writeHead(404).end('Not Found');
+  }
+});
+
+server.listen(3000, () => console.log('Server running on port 3000...'));
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p><code>.pipe()</code> is the preferred way to work with streams. It's a single line of code that replaces a lot of complex, error-prone boilerplate. The automatic backpressure handling is a huge performance benefit, preventing your app from running out of memory when a writable stream is slow.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>Can you chain <code>.pipe()</code> calls? (Yes! <code>read.pipe(transform).pipe(write)</code>, e.g., to Gzip a file before saving it).</li>
+            <li>What is the difference between this and <code>fs.readFile()</code>? (<code>readFile</code> loads the entire file into memory at once. This streams it chunk by chunk. For the HTTP example, the server memory usage stays tiny, even for a 10GB file).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/stream.html#readablepipewritable-options" target="_blank" class="hover:underline">Node.js Docs: readable.pipe()</a></li>
+            <li><a href="https://www.freecodecamp.org/news/pipe-in-node-js/" target="_blank" class="hover:underline">What is pipe() in Node.js? (freeCodeCamp)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "EventEmitter Class",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the 'EventEmitter' is a core concept in Node.js. I use it to implement the observer pattern, where I 'emit' named events, and 'on' listeners react to them. This helps me write decoupled, event-driven code. I also know many Node.js objects, like streams, are built on it."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>EventEmitter</code> is a class from the <code>events</code> core module. It's the foundation of Node's event-driven architecture. Many of Node's built-in objects (like HTTP servers, streams, and process) <strong>inherit</strong> from <code>EventEmitter</code>.</p>
+          <p class="mt-2">The concept is simple (it's the "Observer Pattern"):</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>.on('eventName', listener)</code>:</strong> You "listen" for an event. The <code>listener</code> function will be called every time that event happens.</li>
+            <li><strong><code>.emit('eventName', ...args)</code>:</strong> You "emit" (or fire) an event. This will trigger all registered listeners, passing them any arguments.</li>
+          </ul>
+          <p class="mt-2">You can also use <code>.once()</code> to listen for an event only one time.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Creating a custom EventEmitter)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const EventEmitter = require('events');
+
+// 1. Create a class that inherits from EventEmitter
+class MyLogger extends EventEmitter {
+  log(message) {
+    console.log('LOG:', message);
+    
+    // 2. Emit an event with data
+    this.emit('messageLogged', { level: 'info', text: message });
+  }
+
+  error(message) {
+    console.error('ERROR:', message);
+    
+    // 2. Emit a different event
+    this.emit('errorLogged', { level: 'high', text: message });
+  }
+}
+
+// --- Using the class ---
+
+const logger = new MyLogger();
+
+// 3. Register listeners with .on()
+logger.on('messageLogged', (eventArgs) => {
+  console.log(\`Listener 1 (info): \${eventArgs.text}\`);
+});
+
+logger.on('errorLogged', (eventArgs) => {
+  console.log(\`Listener 2 (error): Sending email about \${eventArgs.text}\`);
+});
+
+// 4. Using .once()
+logger.once('messageLogged', () => {
+  console.log('This will only run for the first log message.');
+});
+
+// --- Trigger the events ---
+logger.log('Server started');
+logger.log('User signed in');
+logger.error('Database connection failed');
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This pattern allows you to write highly decoupled code. Your logger class doesn't need to know *what* to do when a message is logged (send an email, save to a file, etc.). It just <em>emits an event</em>. Other parts of your application can then listen for that event and react however they want, without the logger class ever knowing about them.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>on</code> and <code>once</code>? (<code>on</code> fires every time, <code>once</code> fires only the first time).</li>
+            <li>How do streams use EventEmitters? (<code>readStream.on('data', ...)</code> is the stream object, which is an EventEmitter, listening for the 'data' event).</li>
+            <li>How would you remove a listener? (<code>.off('eventName', listenerFunction)</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/events.html" target="_blank" class="hover:underline">Node.js Docs: Events</a></li>
+            <li><a href="https://www.freecodecamp.org/news/event-emitter-in-node-js/" target="_blank" class="hover:underline">Event Emitter in Node.js (freeCodeCamp)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
   }
 ]
 
