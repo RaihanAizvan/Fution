@@ -2332,6 +2332,546 @@ $ curl http://localhost:3000/posts/999
         </section>
       </div>
     `
+  },
+  
+  {
+    title: "What is Middleware?",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I understand middleware as a function that runs in the middle of the request-response cycle. It has access to the 'req' and 'res' objects and a 'next' function, which it must call to pass control to the next middleware or route handler in the stack."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Middleware functions are the "plumbing" of an Express application. They are functions that execute <strong>between</strong> the server receiving a request and a route handler sending a response.</p>
+          <p class="mt-2">Every middleware function has access to three arguments:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>req</code> (Request):</strong> The request object.</li>
+            <li><strong><code>res</code> (Response):</strong> The response object.</li>
+            <li><strong><code>next</code> (Next):</strong> A function that, when called, passes control to the next middleware function in the stack.</li>
+          </ul>
+          <p class="mt-2">A middleware function can:</p>
+          <ul class="list-disc list-inside ml-4 mt-2">
+            <li>Execute any code.</li>
+            <li>Make changes to the <code>req</code> or <code>res</code> objects (e.g., <code>req.user = ...</code>).</li>
+            <li>End the request-response cycle (e.g., <code>res.status(401).send('Unauthorized')</code>).</li>
+            <li>Call <code>next()</code> to pass control to the next middleware.</li>
+          </ul>
+          <p class="mt-2"><strong>If you don't call <code>next()</code> or send a response, the request will hang forever!</strong></p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A simple logger middleware)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// 1. Define a custom middleware function
+const loggerMiddleware = (req, res, next) => {
+  console.log(\`[LOG] \${new Date().toISOString()}: \${req.method} \${req.url}\`);
+  
+  // 2. Add a custom property to 'req'
+  req.requestTime = Date.now();
+  
+  // 3. Call next() to pass control to the next function
+  next();
+};
+
+// 4. Use the middleware (more on this in the next topic)
+app.use(loggerMiddleware);
+
+app.get('/', (req, res) => {
+  // We can access the property set by the middleware
+  res.send(\`Hello! Your request time was \${req.requestTime}\`);
+});
+
+app.listen(3000, () => console.log('Server running...'));
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Middleware is the most powerful concept in Express. It's how you handle almost every cross-cutting concern: parsing JSON bodies, checking for authentication tokens, logging requests, handling errors, serving static files, and more. Your application is essentially a stack of middleware functions.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What happens if you don't call <code>next()</code>? (The request hangs, and the client eventually times out).</li>
+            <li>What is an error-handling middleware? (A special middleware with 4 arguments: <code>(err, req, res, next)</code>).</li>
+            <li>Can a middleware send a response? (Yes, it can end the cycle, e.g., an auth middleware sending a 401).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/guide/writing-middleware.html" target="_blank" class="hover:underline">Express Docs: Writing middleware</a></li>
+            <li><a href="https://expressjs.com/en/guide/using-middleware.html" target="_blank" class="hover:underline">Express Docs: Using middleware</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Using Middleware: `app.use()`",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use 'app.use()' to apply middleware. If I call it without a path, it runs on every request. If I provide a path, like 'app.use('/admin', ...)', it runs only on requests that start with that path. I know 'app.use()' is how I plug in features like 'express.json()' or authentication."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><code>app.use()</code> is the primary method for "mounting" middleware functions onto your application. The order in which you <code>use</code> middleware is critical, as requests will flow through them in that order.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Application-level middleware (no path):</strong>
+              <ul>
+                <li><code>app.use(myLogger);</code></li>
+                <li>This middleware will run for <strong>every single request</strong> that comes into your server, regardless of the URL.</li>
+              </ul>
+            </li>
+            <li><strong>Application-level middleware (with path):</strong>
+              <ul>
+                <li><code>app.use('/api', myApiAuth);</code></li>
+                <li>This middleware will run for any request whose path <strong>starts with</strong> <code>/api</code> (e.g., <code>/api/users</code>, <code>/api/products</code>).</li>
+              </ul>
+            </li>
+          </ul>
+          <p class="mt-2">You can also apply middleware to a single route:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Route-level middleware:</strong>
+              <ul>
+                <li><code>app.get('/secret-data', checkAdmin, (req, res) => { ... });</code></li>
+                <li>Here, <code>checkAdmin</code> is a middleware that runs *only* for this specific <code>GET</code> route.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Different app.use patterns)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// 1. Application-level middleware (runs on EVERY request)
+app.use((req, res, next) => {
+  console.log('Time:', Date.now());
+  next();
+});
+
+// 2. Path-specific middleware (runs on any request to /admin/...)
+const adminAuth = (req, res, next) => {
+  if (req.query.user === 'admin') {
+    next();
+  } else {
+    res.status(403).send('Forbidden: Not an admin');
+  }
+};
+app.use('/admin', adminAuth);
+
+// 3. Route-level middleware (runs only for this route)
+const checkId = (req, res, next) => {
+  if (isNaN(parseInt(req.params.id))) {
+    return res.status(400).send('Invalid ID format');
+  }
+  next();
+};
+
+// --- Routes ---
+
+app.get('/', (req, res) => {
+  res.send('Homepage (Time logged)');
+});
+
+app.get('/admin/dashboard', (req, res) => {
+  res.send('Welcome, Admin! (Time logged, auth passed)');
+});
+
+// This route uses the 'checkId' middleware
+app.get('/users/:id', checkId, (req, res) => {
+  res.send(\`User details for ID \${req.params.id}\`);
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p><code>app.use()</code> is how you build your application's functionality. You "compose" your server by stacking middleware. Understanding how to apply middleware globally (for logging), to specific paths (for auth), or to individual routes (for validation) gives you complete control over the request lifecycle.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>app.use('/foo', ...)</code> and <code>app.get('/foo', ...)</code>? (<code>app.use</code> matches any method and paths *starting with* <code>/foo</code>. <code>app.get</code> *only* matches <code>GET</code> requests for the *exact* path <code>/foo</code>).</li>
+            <li>Does the order of <code>app.use()</code> calls matter? (Yes, absolutely. Requests pass through them in order).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#app.use" target="_blank" class="hover:underline">Express Docs: app.use()</a></li>
+            <li><a href="https://expressjs.com/en/guide/using-middleware.html" target="_blank" class="hover:underline">Express Docs: Using middleware</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Built-in Middleware",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I'm familiar with Express's built-in middleware. I use 'express.json()' to parse incoming JSON payloads, 'express.urlencoded()' for form data, and 'express.static()' to serve files like HTML, CSS, and images directly from a folder."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Express comes with a few extremely useful middleware functions that you'll use in almost every project.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>express.json()</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> Parses incoming requests with JSON payloads (<code>Content-Type: application/json</code>).</li>
+                <li><strong>Effect:</strong> It takes the JSON string from the request body and puts the parsed JavaScript object onto <code>req.body</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>express.urlencoded({ extended: true })</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> Parses incoming requests with URL-encoded payloads (<code>Content-Type: application/x-www-form-urlencoded</code>).</li>
+                <li><strong>Effect:</strong> This is how HTML forms send data. It parses this data and puts it on <code>req.body</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>express.static('public')</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> Serves static assets (HTML, CSS, JS, images).</li>
+                <li><strong>Effect:</strong> It "exposes" a folder (e.g., <code>'public'</code>). If a request comes in for <code>/style.css</code>, Express will look for <code>public/style.css</code> and send it automatically.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using all three)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const path = require('path');
+const app = express();
+
+// --- Setup ---
+// 1. Serve static files from the 'public' directory
+// e.g., http://localhost:3000/index.html
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 2. Parse JSON bodies (for API requests)
+app.use(express.json());
+
+// 3. Parse URL-encoded bodies (for form submissions)
+app.use(express.urlencoded({ extended: true }));
+
+// --- Routes ---
+
+// A POST route for a JSON API
+app.post('/api/users', (req, res) => {
+  // Thanks to express.json(), req.body has the data
+  const newUser = req.body;
+  console.log('JSON data:', newUser);
+  res.json({ message: 'User created!', user: newUser });
+});
+
+// A POST route for an HTML form
+app.post('/login', (req, res) => {
+  // Thanks to express.urlencoded(), req.body has the data
+  const { username, password } = req.body;
+  console.log('Form data:', username);
+  res.send(\`Welcome, \${username}\`);
+});
+
+app.listen(3000, () => console.log('Server running...'));
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Without <code>express.json()</code> and <code>express.urlencoded()</code>, <code>req.body</code> would be <code>undefined</code>. You <strong>must</strong> use these to handle <code>POST</code> or <code>PUT</code> requests. <code>express.static()</code> is the standard way to serve a front-end (like a React or Vue app) from your Express server.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What does <code>{ extended: true }</code> mean? (It allows for "rich" objects and arrays to be encoded, using the <code>qs</code> library. It's best practice to set it).</li>
+            <li>Why do you need <code>path.join(__dirname, 'public')</code>? (To create an absolute path to the 'public' folder, which is safer than a relative path).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#express.json" target="_blank" class="hover:underline">Express Docs: express.json()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#express.urlencoded" target="_blank" class="hover:underline">Express Docs: express.urlencoded()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#express.static" target="_blank" class="hover:underline">Express Docs: express.static()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "(Legacy) `bodyParser`",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know that 'bodyParser' was a separate npm package used to parse request bodies. However, I'm aware that its functionality is now built directly into Express (since v4.16), so I just use 'express.json()' and 'express.urlencoded()' instead."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>In older versions of Express (before 4.16.0), the <code>express.json()</code> and <code>express.urlencoded()</code> middleware did not exist. To parse request bodies, you had to install and use a separate package called <code>body-parser</code>.</p>
+          <p class="mt-2">You will <strong>constantly</strong> see this in older tutorials, Stack Overflow answers, and existing projects. It's crucial to recognize this pattern and know that it is no longer necessary for modern projects.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Legacy vs. Modern)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- LEGACY WAY (Old tutorials, old projects) ---
+// 1. npm install body-parser
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+
+// 2. Use bodyParser middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.post('/submit', (req, res) => {
+  // req.body is now available
+});
+
+
+// --- MODERN WAY (Express v4.16+) ---
+const express = require('express');
+const app = express();
+
+// 1. No separate install needed
+// 2. Use built-in middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.post('/submit', (req, res) => {
+  // req.body is now available
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Knowing this saves you from confusion. If you see <code>require('body-parser')</code>, you should immediately think, "This is an older project, but I know what this code is doing." It also stops you from installing an unnecessary package in your new projects.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>If <code>express.json()</code> isn't working, what's the first thing you should check? (That <code>app.use(express.json())</code> is *before* your routes, and that the client is sending the <code>Content-Type: application/json</code> header).</li>
+            <li>What if you need to parse a plain text body? (You can use <code>express.text()</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://github.com/expressjs/body-parser" target="_blank" class="hover:underline">body-parser NPM Package</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#express.json" target="_blank" class="hover:underline">Express Docs: express.json() (see notes)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+
+  {
+    type: "heading",
+    title:'Error Handling'
+  },
+  {
+    title: "Error-First Callbacks",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I'm very familiar with the error-first callback pattern, which is standard in Node.js. It's a convention where the first argument to any callback function is reserved for an 'error' object. If that argument is 'null', the operation succeeded, and the data is in the subsequent arguments."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The "error-first callback" (or "errback") is a fundamental design pattern in Node.js for handling asynchronous errors. Since asynchronous functions can't <code>throw</code> errors back to the calling function, they "pass" the error as the first argument to their callback.</p>
+          <p class="mt-2">The pattern is: <code>myAsyncFunction(arg1, (err, data) => { ... })</code></p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>err</code>:</strong> The first argument. If an error occurred, <code>err</code> will be an <code>Error</code> object. If everything was successful, <code>err</code> will be <code>null</code> or <code>undefined</code>.</li>
+            <li><strong><code>data</code>:</strong> The second argument (and any after). This holds the successful result of the operation.</li>
+          </ul>
+          <p class="mt-2">Your first step inside any errback is <strong>always</strong>: <code>if (err) { ... }</code></p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using fs.readFile)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+const filePath = path.join(__dirname, 'data.txt');
+
+// This function follows the error-first callback pattern
+fs.readFile(filePath, 'utf8', (err, data) => {
+  // 1. ALWAYS check for the error first!
+  if (err) {
+    console.error('Error reading the file:', err.message);
+    if (err.code === 'ENOENT') {
+      console.error('File not found!');
+    }
+    return; // Stop execution
+  }
+
+  // 2. If err is null, we can safely use the data
+  console.log('File content:');
+  console.log(data);
+});
+
+// This code runs *before* the callback, as fs.readFile is async
+console.log('Attempting to read file...');
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the classic, foundational way Node.js handles asynchronicity and errors. While modern JavaScript (<code>async/await</code>, Promises) is now more common, you will *always* encounter this pattern in Node's core modules (like <code>fs</code>, <code>http</code>), older libraries, and even in some modern ones. You must be able to read and write this pattern fluently.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is "callback hell"? (When you nest many error-first callbacks, leading to deeply indented, unreadable code).</li>
+            <li>How do you "promisify" a function that uses this pattern? (Using <code>util.promisify</code> or wrapping it in a <code>new Promise()</code> constructor).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/en/learn/getting-started/control-flow-and-error-handling" target="_blank" class="hover:underline">Node.js Docs: Error Handling</a></li>
+            <li><a href="https://www.freecodecamp.org/news/error-first-callback-pattern-in-node-js/" target="_blank" class="hover:underline">Error-First Callbacks (freeCodeCamp)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Basic `try...catch` with `async/await`",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I prefer using 'async/await' for asynchronous code as it's cleaner than callbacks. I know that 'await' pauses the function and returns the resolved value of a Promise, and to handle errors, I wrap my 'await' calls in a 'try...catch' block, which is the modern standard for async error handling."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><code>async/await</code> is modern JavaScript syntax that makes asynchronous code look and behave more like synchronous code. It's built on top of Promises.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>async</code>:</strong> A keyword you put before a function definition (<code>async function myFunc()</code>). It automatically makes the function return a Promise.</li>
+            <li><strong><code>await</code>:</strong> A keyword you can *only* use inside an <code>async</code> function. It "pauses" the function execution until the Promise it's "awaiting" resolves, then gives you the value.</li>
+            <li><strong><code>try...catch</code>:</strong> Because <code>await</code> "pauses" and "unwraps" the Promise, if the Promise *rejects* (fails), it will throw an error. You can catch this error using a standard, synchronous-style <code>try...catch</code> block.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Callbacks vs. async/await)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+
+// --- 1. Callback "Hell" ---
+// Read a file, parse it, read another file based on the first
+fs.readFile('file1.txt', 'utf8', (err, data) => {
+  if (err) return console.error(err);
+  try {
+    const config = JSON.parse(data);
+    fs.readFile(config.userFile, 'utf8', (err2, data2) => {
+      if (err2) return console.error(err2);
+      console.log('User data:', data2);
+    });
+  } catch (parseErr) {
+    console.error('Error parsing JSON:', parseErr);
+  }
+});
+
+
+// --- 2. Modern async/await ---
+// We need the 'fs.promises' API
+const fsPromises = require('fs').promises;
+
+async function readUserData() {
+  console.log('Attempting to read...');
+  try {
+    // Await pauses until the file is read
+    const data = await fsPromises.readFile('file1.txt', 'utf8');
+    
+    // Await can also be used on non-Promise values
+    const config = JSON.parse(data); // This part is still sync
+    
+    // Await pauses again for the second file
+    const data2 = await fsPromises.readFile(config.userFile, 'utf8');
+    
+    console.log('User data:', data2);
+
+  } catch (err) {
+    // *Any* error (file not found, bad JSON) is caught here
+    console.error('An error occurred:', err.message);
+  }
+}
+
+readUserData();
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the preferred way to handle asynchronous operations in modern Node.js. It avoids "callback hell" and makes your code much more readable and maintainable. In Express, you will often make your route handlers <code>async</code> so you can <code>await</code> database queries inside a <code>try...catch</code> block.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What does <code>await</code> actually return? (The resolved value of the Promise).</li>
+            <li>What happens if you use L_await</code> on a function that doesn't return a Promise? (It just returns the value immediately, no harm done).</li>
+            <li>How would you handle multiple promises in parallel? (<code>Promise.all()</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" class="hover:underline">MDN: async function</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await" target="_blank" class="hover:underline">MDN: await</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises" target="_blank" class="hover:underline">MDN: Using promises</a></li>
+          </ul>
+        </section>
+      </div>
+    `
   }
 ]
 
