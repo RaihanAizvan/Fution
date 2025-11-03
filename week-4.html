@@ -190,7 +190,7 @@
 
             <div class="flex items-center justify-between mb-6" >
               <div
-                class="tab-buttons flex gap-1 relative bg-white/5 rounded-full p-1 backdrop-blur-md border border-white/10 sticky">
+                class="tab-buttons flex gap-1 relative bg-white/5 rounded-full p-1 backdrop-blur-md border border-white/10">
                 <button data-tab="topics" class="tab-btn active-tab" onclick="switchTab('topics')">Topics</button>
                 <button data-tab="practicals" class="tab-btn" onclick="switchTab('practicals')">Practicals</button>
                 <span class="tab-highlight"></span>
@@ -1261,7 +1261,1078 @@ my-project/
     type: 'heading',
     title: "HTTP and server Basics",
   },
-    
+    {
+    title: "What is HTTP & HTTPS?",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I understand HTTP as the protocol for client-server communication on the web, like a browser asking a server for a webpage. HTTPS is just the secure version, which encrypts the communication using SSL/TLS to protect user data."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><strong>HTTP (Hypertext Transfer Protocol)</strong> is the foundational protocol of the World Wide Web. It's a simple, text-based set of rules that defines how a <strong>client</strong> (like your web browser) and a <strong>server</strong> (where a website is hosted) communicate with each other.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Client:</strong> Makes requests (e.g., "Give me the homepage").</li>
+            <li><strong>Server:</strong> Sends responses (e.g., "Here is the HTML for the homepage").</li>
+          </ul>
+          <p class="mt-2"><strong>HTTPS (HTTP Secure)</strong> is the exact same protocol, but with a crucial layer of security added. It uses <strong>SSL/TLS</strong> to encrypt the entire conversation between the client and the server. This prevents attackers from "eavesdropping" or modifying the data being sent, which is essential for login forms, credit card payments, and protecting user privacy.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Conceptual Flow)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# 1. Client (Browser) makes a request:
+GET /contact HTTP/1.1
+Host: www.example.com
+
+# 2. Server (Node.js) sends a response:
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 127
+
+&lt;html&gt;
+  &lt;body&gt;&lt;h1&gt;Contact Us&lt;/h1&gt;&lt;/body&gt;
+&lt;/html&gt;
+
+# With HTTPS, this entire conversation is encrypted and unreadable to outsiders.
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>All web development, especially back-end development with Node.js, is based on handling HTTP requests and sending HTTP responses. Understanding this "request/response cycle" is the single most important concept for building APIs or web applications. HTTPS is now the standard; browsers will warn users if a site uses plain HTTP.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is SSL/TLS and how does the "handshake" work at a high level?</li>
+            <li>What is the 'S' in HTTPS and what does it provide? (Secure: Encryption, Authentication, and Integrity).</li>
+            <li>Why would a site still use HTTP? (No good reason for public sites; maybe for local-only development).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview" target="_blank" class="hover:underline">MDN: An overview of HTTP</a></li>
+            <li><a href="https://www.cloudflare.com/learning/ssl/what-is-https/" target="_blank" class="hover:underline">Cloudflare: What is HTTPS?</a></li>
+            <li><a href="https://www.digitalocean.com/community/tutorials/http-vs-https" target="_blank" class="hover:underline">DigitalOcean: HTTP vs. HTTPS</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "HTTP Request/Response Structure",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know that an HTTP message, whether a request or response, has a start-line, headers, and an optional body. For a request, this includes the method and path. For a response, it includes the status code. Headers provide metadata, and the body contains the actual data, like JSON or HTML."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Every HTTP message is just plain text with three parts.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Start-Line:</strong> The first line.
+              <ul>
+                <li><strong>Request:</strong> <code>GET /users HTTP/1.1</code> (Method, Path, Version)</li>
+                <li><strong>Response:</strong> <code>HTTP/1.1 200 OK</code> (Version, Status Code, Status Message)</li>
+              </ul>
+            </li>
+            <li><strong>Headers:</strong> Key-value pairs providing metadata about the message. Examples:
+              <ul>
+                <li><code>Host: api.example.com</code> (Which server to talk to)</li>
+                <li><code>User-Agent: Mozilla/5.0</code> (Which client is asking)</li>
+                <li><code>Content-Type: application/json</code> (What format the body is in)</li>
+              </ul>
+            </li>
+            <li><strong>Body:</strong> (Optional) The actual data being sent. This is used in <code>POST</code> requests (to send data) and most responses (to send the HTML or JSON back).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A POST Request & Response)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-http">
+# --- REQUEST (Client to Server) ---
+
+# Start-Line
+POST /api/users HTTP/1.1
+
+# Headers
+Host: my-app.com
+Content-Type: application/json
+Content-Length: 35
+
+# Body (JSON data)
+{
+  "name": "Alice",
+  "job": "Developer"
+}
+
+# --- RESPONSE (Server to Client) ---
+
+# Start-Line
+HTTP/1.1 201 Created
+
+# Headers
+Content-Type: application/json
+Date: Mon, 03 Nov 2025 01:30:00 GMT
+
+# Body (New user with ID)
+{
+  "id": 123,
+  "name": "Alice",
+  "job": "Developer"
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>In Node.js, you are not just "writing a function." You are parsing requests and building responses. You will directly read from <code>request.headers</code>, check <code>request.method</code>, read the <code>request</code> body, and set <code>response.headers</code> (like <code>Content-Type</code>) and <code>response.statusCode</code> before sending the body back.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is the <code>Host</code> header used for? (To allow a single server to host multiple websites).</li>
+            <li>What is the <code>Content-Length</code> header? (It tells the server how many bytes the body is, so it knows when it's done reading).</li>
+            <li>What's the difference between <code>User-Agent</code> and <code>Accept</code> headers? (<code>User-Agent</code> says *who* I am; <code>Accept</code> says *what* formats I understand).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages" target="_blank" class="hover:underline">MDN: HTTP Messages</a></li>
+            <li><a href="https.developer.mozilla.org/en-US/docs/Web/HTTP/Headers" target="_blank" class="hover:underline">MDN: HTTP Headers</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "HTTP Methods (Basics): GET & POST",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the basic HTTP verbs, especially GET and POST. GET is for retrieving data and should be 'safe' and 'idempotent'—it doesn't change anything. POST is for submitting new data, like creating a user or posting a form, and it sends its payload in the request body."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>HTTP Methods (or "verbs") tell the server what <strong>action</strong> the client wants to perform on a resource.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>GET</code>:</strong>
+              <ul>
+                <li><strong>Action:</strong> Retrieve data.</li>
+                <li><strong>Example:</strong> Get a user's profile, get a list of products.</li>
+                <li><strong>Data:</strong> Sent in the URL (e.g., <code>/users?id=123</code>).</li>
+                <li><strong>Body:</strong> Has no body.</li>
+                <li><strong>Safe:</strong> Should not change data on the server.</li>
+              </ul>
+            </li>
+            <li><strong><code>POST</code>:</strong>
+              <ul>
+                <li><strong>Action:</strong> Submit data to be processed.</li>
+                <li><strong>Example:</strong> Create a new user, submit a contact form.</li>
+                <li><strong>Data:</strong> Sent in the request <strong>body</strong>.</li>
+                <li><strong>Body:</strong> Almost always has a body (e.g., JSON or form data).</li>
+                <li><strong>Safe:</strong> Not safe. It is *expected* to change data (e.g., create a new record).</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (How they are used)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-http">
+# --- GET Request ---
+# Action: Get the user with ID 42
+GET /api/users/42 HTTP/1.1
+Host: example.com
+
+
+# --- POST Request ---
+# Action: Create a new user
+POST /api/users HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "username": "new_user",
+  "email": "new@example.com"
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>In your Node.js server, your first step is *always* to check the <code>request.method</code>. If you get a <code>GET</code> request, you'll fetch data from a database. If you get a <code>POST</code> request, you'll parse the request body and save new data. Using the wrong method is confusing and breaks RESTful API design principles.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What are <code>PUT</code> and <code>DELETE</code> methods for? (<code>PUT</code> to update an entire resource, <code>DELETE</code> to remove one).</li>
+            <li>What does "idempotent" mean? (Doing the request once has the same effect as doing it 100 times. <code>GET</code> is idempotent, <code>POST</code> is not).</li>
+            <li>How does a browser send a <code>POST</code> request? (Typically from an HTML <code>&lt;form method="POST"&gt;</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" target="_blank" class="hover:underline">MDN: HTTP request methods</a></li>
+            <li><a href="https://www.restapitutorial.com/httpmethods.html" target="_blank" class="hover:underline">REST API Tutorial: HTTP Methods</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Common Status Codes: 200, 404, 500",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the main status code classes. 2xx for success, like '200 OK'. 4xx for client errors, like '404 Not Found' if a user requests a non-existent page. And 5xx for server errors, like '500 Internal Server Error' if my code crashes while processing the request."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>HTTP Status Codes are a 3-digit number sent by the server to tell the client the <strong>result</strong> of its request. They are grouped into classes:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>2xx</code> (Success):</strong> The request was successful.
+              <ul>
+                <li><strong><code>200 OK</code>:</strong> The standard "everything worked" response. Used for <code>GET</code>.</li>
+                <li><strong><code>201 Created</code>:</strong> The request was successful and a new resource was created. Used for <code>POST</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>4xx</code> (Client Error):</strong> The client made a mistake.
+              <ul>
+                <li><strong><code>404 Not Found</code>:</strong> The server couldn't find the requested resource (e.g., wrong URL).</li>
+                <li><strong><code>400 Bad Request</code>:</strong> The server couldn't understand the request, often due to invalid JSON or missing data.</li>
+                <li><strong><code>403 Forbidden</code>:</strong> The client is not authorized to access this resource.</li>
+              </ul>
+            </li>
+            <li><strong><code>5xx</code> (Server Error):</strong> The server failed to fulfill a valid request.
+              <ul>
+                <li><strong><code>500 Internal Server Error</code>:</strong> A generic "something broke" error. Your Node.js code probably crashed.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (How a server sends them)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-http">
+# --- Response for a successful GET ---
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{ "data": "here is your stuff" }
+
+
+# --- Response for a missing page ---
+HTTP/1.1 404 Not Found
+Content-Type: application/json
+
+{ "error": "User not found" }
+
+
+# --- Response for a server crash ---
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{ "error": "An unexpected error occurred" }
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Sending the correct status code is critical. Your front-end application (like React or Angular) will check the status code to know if its request worked. If it sees a <code>200</code>, it shows the data. If it sees a <code>404</code>, it shows a "Not Found" message. If it sees a <code>500</code>, it shows a generic "Try again later" error.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between a 401 and a 403? (401 Unauthorized means "you need to log in"; 403 Forbidden means "you are logged in, but you still can't see this").</li>
+            <li>What is a 301 or 302? (Redirects. 301 is a permanent redirect, 302 is temporary).</li>
+            <li>When would you send a 204? (No Content. For a <code>DELETE</code> request, to say "it worked, but I have nothing to send you back").</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status" target="_blank" class="hover:underline">MDN: HTTP status codes</a></li>
+            <li><a href="https://http.cat/" target="_blank" class="hover:underline">HTTP Status Cats (A fun way to learn)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Using the `http` module",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I'm comfortable using the built-in 'http' module to create a basic server. I know 'http.createServer' takes a callback that runs on every request, and inside that, I can inspect 'req.url' and 'req.method' to build a response, set 'res.writeHead' for status and headers, and use 'res.end' to send the data."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>http</code> module is a core Node.js library for creating HTTP servers. You don't need any frameworks like Express to use it, though frameworks make it much easier. The primary method is <code>http.createServer()</code>, which creates a server object. You provide a callback function that will be executed <strong>every time</strong> a new request hits the server.</p>
+          <p class="mt-2">This callback receives two objects: <code>req</code> (the request) and <code>res</code> (the response).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A simple router)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const http = require('http');
+
+const port = 3000;
+
+// The callback function that handles all requests
+const requestHandler = (req, res) => {
+  console.log(\`New request: \${req.method} \${req.url}\`);
+
+  // Simple Router
+  if (req.method === 'GET' && req.url === '/') {
+    // 1. Set Status Code 200 (OK) and Headers
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    // 2. Write the body and send
+    res.end(JSON.stringify({ message: 'Welcome to the homepage!' }));
+  
+  } else if (req.method === 'GET' && req.url === '/about') {
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end('&lt;h1&gt;About Us&lt;/h1&gt;');
+  
+  } else if (req.method === 'POST' && req.url === '/api/submit') {
+    // Handling a POST request (body parsing is more complex)
+    res.writeHead(201, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ message: 'Data submitted' }));
+  
+  } else {
+    // 404 Not Found for everything else
+    res.writeHead(404, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Page Not Found' }));
+  }
+};
+
+// Create the server
+const server = http.createServer(requestHandler);
+
+// Start listening
+server.listen(port, () => {
+  console.log(\`Server is listening on http://localhost:\${port}\`);
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Save the code as server.js
+$ node server.js
+# Output: Server is listening on http://localhost:3000
+
+# In another terminal, test with curl:
+$ curl http://localhost:3000/
+# {"message":"Welcome to the homepage!"}
+
+$ curl http://localhost:3000/about
+# <h1>About Us</h1>
+
+$ curl -X POST http://localhost:3000/api/submit
+# {"message":"Data submitted"}
+
+$ curl http://localhost:3000/bad-url
+# {"error":"Page Not Found"}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the "raw" material of a Node.js web server. While you will almost always use a framework like <strong>Express.js</strong> (which does all the routing and parsing for you), Express is built on *top* of this <code>http</code> module. Understanding what happens under the hood makes you a much stronger developer.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you parse the body of a POST request? (It's complex: you have to listen for 'data' and 'end' events on the <code>req</code> object, which is a stream).</li>
+            <li>Why is it better to use Express than this? (Express handles routing, body parsing,
+            error handling, and middleware, which is very complex to do manually).</li>
+            <li>What does <code>res.end()</code> do? (It finalizes the response, sends all data, and tells the server the request is complete).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/http.html" target="_blank" class="hover:underline">Node.js Docs: HTTP</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/learn/Server-side/Nodejs/skeleton_server" target="_blank" class="hover:underline">MDN: Create a Node.js HTTP server</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+
+  {
+    type: 'heading',
+    title: "Express JS Basics",
+  },
+  {
+    title: "What is Express.js?",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "Express.js is a minimal and flexible Node.js web application framework. I use it because it simplifies core Node.js tasks like routing, handling requests, and managing middleware, making server-side code much cleaner and faster to write."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Express.js is a back-end web framework for Node.js. It is the most popular and "de-facto" standard framework for building servers with Node.</p>
+          <p class="mt-2">It's <strong>not</strong> a "framework" like Angular or Ruby on Rails that forces a strict project structure. Instead, it's a minimal and "unopinionated" library that provides a powerful set of tools on top of the built-in <code>http</code> module, letting you build your server however you like.</p>
+          <p class="mt-2"><strong>Why use it?</strong> It dramatically simplifies tasks that are complex with the raw <code>http</code> module:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Routing:</strong> Easily handle different URLs and HTTP methods (<code>app.get</code>, <code>app.post</code>).</li>
+            <li><strong>Request/Response Helpers:</strong> Provides easy-to-use <code>req</code> and <code>res</code> objects (e.g., <code>res.json()</code>, <code>req.params</code>).</li>
+            <li><strong>Middleware:</strong> A powerful concept for adding features like logging, authentication, and body-parsing.</li>
+            <li><strong>Error Handling:</strong> A centralized place to catch and handle errors.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example: Before (raw Node.js) vs. After (Express)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- BEFORE: Raw Node.js http module ---
+const http = require('http');
+http.createServer((req, res) => {
+  if (req.method === 'GET' && req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Hello World');
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
+  }
+}).listen(3000);
+
+
+// --- AFTER: With Express.js ---
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
+// 404s are handled automatically by default
+app.listen(3000, () => console.log('Server running'));
+
+// Note how much cleaner and more readable the Express version is.
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>You will almost never use the raw <code>http</code> module for a real project. Express (or a similar framework like Fastify or Koa) is the standard. It provides the essential structure and tools, allowing you to focus on your application's logic instead of re-inventing the "server" part every time.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is "middleware"?</li>
+            <li>Is Express a framework or a library? (It's often debated, but it's a "web application framework" by its own definition, just an unopinionated one).</li>
+            <li>What are some alternatives to Express? (e.g., Koa, Fastify, Hapi).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/" target="_blank" class="hover:underline">Express.js Official Website</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction" target="_blank" class="hover:underline">MDN: Introduction to Express/Node.js</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Installing Express",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I install Express like any other npm package: 'npm install express'. This adds it to my 'package.json' as a production dependency, which is correct because my server needs it to run."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Express is just a package on the npm registry. To use it, you must first initialize a Node.js project (which creates a <code>package.json</code> file) and then install <code>express</code> as a dependency. This will download the Express code into your <code>node_modules</code> folder.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# 1. Create a new project directory
+$ mkdir my-express-server
+$ cd my-express-server
+
+# 2. Initialize a new Node.js project (creates package.json)
+$ npm init -y
+
+# 3. Install Express
+$ npm install express
+
+# You can also use the shorthand 'npm i express'
+            </code></pre>
+          </div>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Resulting package.json)</h2>
+          <p class="mb-2">After running <code>npm install express</code>, your <code>package.json</code> will be updated with a <code>dependencies</code> section.</p>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-json">
+{
+  "name": "my-express-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the first physical step to building any Express application. Understanding that Express is just an npm package, like any other, is a key first step. It lives in <code>node_modules</code> and is managed by <code>package.json</code>.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>Why is Express in <code>dependencies</code> and not <code>devDependencies</code>? (Because the server needs Express to *run* in production, not just for development).</li>
+            <li>How would you install a specific version of Express? (<code>npm install express@4.17.1</code>).</li>
+            <li>What does the <code>^</code> in <code>^4.18.2</code> mean? (It's for semantic versioning, allowing minor and patch updates).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/starter/installing.html" target="_blank" class="hover:underline">Express Docs: Installing</a></li>
+            <li><a href="https://docs.npmjs.com/cli/v10/commands/npm-install" target="_blank" class="hover:underline">NPM Docs: npm install</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Creating an Express Server: `express()`, `app.listen()`",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "To create a basic server, I first require 'express'. Then I call 'express()' to create an application instance, which I conventionally name 'app'. After defining my routes on 'app', I call 'app.listen()' at the end, passing it a port number and a callback to log that the server is running."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>This is the "Hello World" of Express. It's a three-step process:</p>
+          <ol class="list-decimal list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Import:</strong> Use <code>require('express')</code> to get the Express function.</li>
+            <li><strong>Initialize:</strong> Call <code>express()</code>. This creates your main <code>app</code> object, which you will use to define all your routes and middleware.</li>
+            <li><strong>Listen:</strong> Call <code>app.listen(port, ...)</code>. This starts the server, binds it to a specific port, and listens for incoming connections.</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (The smallest Express server)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// 1. Import
+const express = require('express');
+
+// 2. Initialize
+const app = express();
+const port = 3000;
+
+// Define a simple route (we'll cover this next)
+app.get('/', (req, res) => {
+  res.send('Hello, Express!');
+});
+
+// 3. Listen
+app.listen(port, () => {
+  // This callback runs once the server is successfully started
+  console.log(\`Server running at http://localhost:\${port}\`);
+});
+            </code></pre>
+          </div>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Save the code as index.js (or server.js)
+$ node index.js
+# Output: Server running at http://localhost:3000
+
+# Open http://localhost:3000 in your browser
+# You will see "Hello, Express!"
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>These three steps are the boilerplate for <em>every</em> Express application you will ever build. Understanding that <code>app</code> is your central object and <code>app.listen</code> is what "turns on" the server is fundamental.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is the <code>app</code> object? (An object with methods for routing, middleware, etc.)</li>
+            <li>What does <code>app.listen()</code> do that <code>http.createServer()</code> doesn't? (Actually, <code>app.listen</code> creates an <code>http</code> server for you under the hood!)</li>
+            <li>What is <code>process.env.PORT</code>? (A common pattern for using a port from an environment variable, e.g., <code>const port = process.env.PORT || 3000;</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/starter/hello-world.html" target="_blank" class="hover:underline">Express Docs: Hello world</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#app.listen" target="_blank" class="hover:underline">Express Docs: app.listen()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Basic Routing: `app.get()`, `app.post()`",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I define routes using methods on the 'app' object that match the HTTP verbs, like 'app.get()' or 'app.post()'. Each method takes two main arguments: a string for the URL path, and a callback function (the handler) that receives the 'req' and 'res' objects."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Routing is how your server responds to different URLs. Express provides methods on the <code>app</code> object that match all HTTP verbs: <code>app.get()</code>, <code>app.post()</code>, <code>app.put()</code>, <code>app.delete()</code>, etc.</p>
+          <p class="mt-2">The structure is: <code>app.METHOD(PATH, HANDLER)</code></p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>METHOD:</strong> <code>get</code>, <code>post</code>, etc.</li>
+            <li><strong>PATH:</strong> The URL path string (e.g., <code>'/'</code>, <code>'/users'</code>).</li>
+            <li><strong>HANDLER:</strong> A callback function, <code>(req, res) => { ... }</code>, that runs when a request matches the method and path.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A simple set of routes)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+const port = 3000;
+
+// GET request to the homepage
+app.get('/', (req, res) => {
+  res.send('Welcome to the homepage!');
+});
+
+// GET request to /about
+app.get('/about', (req, res) => {
+  res.send('This is the About Us page.');
+});
+
+// POST request to /api/users
+// (Note: To read the body, you'd need middleware like express.json())
+app.post('/api/users', (req, res) => {
+  // For now, just confirm the request
+  res.status(201).send('User created successfully!');
+});
+
+app.listen(port, () => {
+  console.log(\`Server running at http://localhost:\${port}\`);
+});
+            </code></pre>
+          </div>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Run the server
+$ node index.js
+
+# Test GET routes in another terminal
+$ curl http://localhost:3000/
+# Welcome to the homepage!
+$ curl http://localhost:3000/about
+# This is the About Us page.
+
+# Test POST route
+$ curl -X POST http://localhost:3000/api/users
+# User created successfully!
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the core of your application. Your entire API or website is just a collection of these routes. <code>app.get</code> and <code>app.post</code> are the two you will use more than any others.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you handle a <code>PUT</code> or <code>DELETE</code> request? (The same way: <code>app.put(...)</code>, <code>app.delete(...)</code>).</li>
+            <li>What does <code>app.use()</code> do? (It's used for middleware, or to handle all methods for a path).</li>
+            <li>How can you send back JSON data? (<code>res.json({ key: 'value' })</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/starter/basic-routing.html" target="_blank" class="hover:underline">Express Docs: Basic Routing</a></li>
+            <li><a href="https://expressjs.com/en/guide/routing.html" target="_blank" class="hover:underline">Express Docs: Routing Guide (Advanced)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "`req` and `res` objects",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the 'req' and 'res' objects in Express are enhanced versions of the Node 'http' objects. I use 'req' to get request data (like 'req.body', 'req.params', 'req.query') and 'res' to send the response back (using 'res.send()', 'res.json()', or 'res.status()')."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>In every Express route handler, you get two objects: <code>req</code> (Request) and <code>res</code> (Response).</p>
+          <p class="mt-2"><strong><code>req</code> (Request Object):</strong></p>
+          <p>This object holds all information about the incoming request. Common properties you'll use:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>req.params</code>:</strong> For route parameters (e.g., <code>/users/:id</code>).</li>
+            <li><strong><code>req.query</code>:</strong> For query parameters (e.g., <code>/search?q=test</code>).</li>
+            <li><strong><code>req.body</code>:</strong> For data in the request body (e.g., from a POST form). Requires middleware like <code>express.json()</code>.</li>
+            <li><strong><code>req.headers</code>:</strong> An object with all request headers.</li>
+          </ul>
+          <p class="mt-2"><strong><code>res</code> (Response Object):</strong></p>
+          <p>This object is what you use to build and send the response back to the client. Common methods you'll use:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>res.send()</code>:</strong> Sends a response. Can send strings, HTML, or even JSON (it auto-detects).</li>
+            <li><strong><code>res.json()</code>:</strong> Sends a JSON response and automatically sets the <code>Content-Type</code> header to <code>application/json</code>.</li>
+            <li><strong><code>res.status()</code>:</strong> Sets the HTTP status code (e.g., <code>res.status(404)</code>). It's chainable: <code>res.status(200).json(...)</code>.</li>
+            <li><strong><code>res.sendStatus()</code>:</strong> Sets the status and sends a plain text-body of the status (e.g., <code>res.sendStatus(404)</code> sends "Not Found").</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using req and res)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// A route that sends simple HTML
+app.get('/', (req, res) => {
+  // Using res.send()
+  res.send('&lt;h1&gt;Hello World!&lt;/h1&gt;');
+});
+
+// A route that sends JSON
+app.get('/api/me', (req, res) => {
+  // Using res.json()
+  res.json({ name: 'Alice', role: 'developer' });
+});
+
+// A route that uses a status code
+app.get('/not-found', (req, res) => {
+  // Using res.status() and res.send()
+  res.status(404).send('Sorry, we cant find that!');
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>These two objects are your entire world inside a route handler. 99% of your server-side logic will be: 1. Read data from <code>req</code>. 2. Process it. 3. Send a response using <code>res</code>. Mastering these helpers (especially <code>res.json</code> and <code>res.status</code>) is what makes Express so fast to work with.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>res.send()</code> and <code>res.json()</code>? (<code>res.json</code> *always* sends JSON and sets the correct header. <code>res.send</code> is more flexible but <code>res.json</code> is preferred for APIs).</li>
+            <li>What's the difference between <code>res.end()</code> and <code>res.send()</code>? (<code>res.end</code> is a lower-level Node.js method. You should always use <code>res.send</code> or <code>res.json</code> in Express).</li>
+            <li>How do you set a response header? (<code>res.set('X-My-Header', 'my-value')</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#req" target="_blank" class="hover:underline">Express Docs: req (Request)</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#res" target="_blank" class="hover:underline">Express Docs: res (Response)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Query Parameters vs. Path Parameters",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use path parameters, accessed via 'req.params', for required values that define the resource, like '/users/:id'. I use query parameters, from 'req.query', for optional values like sorting or filtering, such as '/products?category=books'."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>These are the two main ways to send dynamic data to your server in a <code>GET</code> request.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Path Parameters (<code>req.params</code>):</strong>
+              <ul>
+                <li><strong>What:</strong> Part of the URL path itself, defined with a <code>:</code>.</li>
+                <li><strong>Example URL:</strong> <code>/users/123</code> or <code>/posts/my-first-post</code></li>
+                <li><strong>Route definition:</strong> <code>app.get('/users/:id', ...)</code></li>
+                <li><strong>Access:</strong> <code>req.params.id</code> (which would be <code>"123"</code>)</li>
+                <li><strong>Use Case:</strong> For <strong>required</strong> identifiers of a resource. You *must* have an ID to get a user.</li>
+              </ul>
+            </li>
+            <li><strong>Query Parameters (<code>req.query</code>):</strong>
+              <ul>
+                <li><strong>What:</strong> Key-value pairs after a <code>?</code> in the URL.</li>
+                <li><strong>Example URL:</strong> <code>/search?q=node&page=2</code></li>
+                <li><strong>Route definition:</strong> <code>app.get('/search', ...)</code> (no <code>?</code> needed)</li>
+                <li><strong>Access:</strong> <code>req.query.q</code> (<code>"node"</code>) and <code>req.query.page</code> (<code>"2"</code>)</li>
+                <li><strong>Use Case:</strong> For <strong>optional</strong> values, like filters, sorting, or pagination.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using both)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// 1. Using req.params (Path Parameters)
+// To get a specific post from a specific user
+app.get('/users/:userId/posts/:postId', (req, res) => {
+  const { userId, postId } = req.params;
+  res.send(\`Fetching post \${postId} for user \${userId}\`);
+});
+
+// 2. Using req.query (Query Parameters)
+// To search for products
+app.get('/products', (req, res) => {
+  const { category, limit } = req.query;
+  let response = 'Fetching all products';
+  if (category) {
+    response += \` in category: \${category}\`;
+  }
+  if (limit) {
+    response += \` (limited to \${limit} results)\`;
+  }
+  res.send(response);
+});
+
+app.listen(3000, () => console.log('Server running'));
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Test req.params
+$ curl http://localhost:3000/users/alice/posts/42
+# Fetching post 42 for user alice
+
+# Test req.query
+$ curl "http://localhost:3000/products?category=laptops&limit=10"
+# Fetching all products in category: laptops (limited to 10 results)
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Using these correctly is key to designing a clean, RESTful API. The URL structure should be predictable. Path parameters identify the *resource* (<code>/users/123</code>), and query parameters *filter* or *modify* the representation of that resource (<code>/users/123?view=full</code>).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>Where does <code>req.body</code> come from? (From <code>POST</code> or <code>PUT</code> requests, in the request body, not the URL).</li>
+            <li>What happens if a query parameter is missing? (<code>req.query.missing</code> will just be <code>undefined</code>).</li>
+            <li>Are parameters always strings? (Yes, Express parses them as strings. You must <code>parseInt()</code> if you need a number).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#req.params" target="_blank" class="hover:underline">Express Docs: req.params</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#req.query" target="_blank" class="hover:underline">Express Docs: req.query</a></li>
+            <li><a href="https://www.freecodecamp.org/news/rest-api-design-best-practices-build-a-rest-api/" target="_blank" class="hover:underline">REST API Design (see URL structure)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Dynamic Routing",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I implement dynamic routing using path parameters, like '/posts/:postId'. This lets me define a single route handler that can manage requests for many different resources (like individual posts) by using the value of ':postId' from 'req.params' to fetch the correct data from a database."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><strong>Dynamic Routing</strong> is the concept of creating routes that can respond to a variable (or "dynamic") part of the URL, instead of just a static, hard-coded path. You accomplish this using <strong>path parameters</strong> (which you just learned about!).</p>
+          <p class="mt-2">Instead of defining a route for every user:</p>
+          <pre class="bg-gray-800 text-sm p-2 rounded text-gray-400"><code>
+app.get('/users/alice', ...);
+app.get('/users/bob', ...);
+app.get('/users/charlie', ...);
+          </code></pre>
+          <p class="mt-2">You define <strong>one</strong> dynamic route:</p>
+          <pre class="bg-gray-800 text-sm p-2 rounded text-white"><code>
+app.get('/users/:username', ...);
+          </code></pre>
+          <p class="mt-2">Inside the handler, <code>req.params.username</code> will be <code>"alice"</code>, <code>"bob"</code>, etc. You can then use this variable to look up the user in a database.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A simple blog)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// A "fake" database of blog posts
+const posts = {
+  '1': { title: 'First Post', body: 'This is post 1.' },
+  '2': { title: 'Second Post', body: 'This is post 2.' },
+  'my-third-post': { title: 'Third Post', body: 'This one uses a string slug!' }
+};
+
+// A dynamic route to get a single post by its ID (or "slug")
+app.get('/posts/:postId', (req, res) => {
+  // Get the dynamic ID from req.params
+  const id = req.params.postId;
+  
+  // Find the post in our fake database
+  const post = posts[id];
+  
+  if (post) {
+    // If found, send it as JSON
+    res.json(post);
+  } else {
+    // If not found, send a 404
+    res.status(404).json({ error: 'Post not found' });
+  }
+});
+
+app.listen(3000, () => console.log('Server running'));
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Test post '1'
+$ curl http://localhost:3000/posts/1
+# {"title":"First Post","body":"This is post 1."}
+
+# Test post 'my-third-post' (a "slug")
+$ curl http://localhost:3000/posts/my-third-post
+# {"title":"Third Post","body":"This one uses a string slug!"}
+
+# Test a post that doesn't exist
+$ curl http://localhost:3000/posts/999
+# {"error":"Post not found"}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>You cannot build a modern, data-driven application without dynamic routing. It's impossible to know every possible URL ahead of time (like every user profile, product page, or blog post). This technique allows you to create a single template (the route handler) that can serve an infinite number of pages.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is a "slug"? (A user-friendly string, like <code>"my-third-post"</code>, used in a URL instead of a number like <code>3</code>).</li>
+            <li>How would you handle a route like <code>/users/:userId/books/:bookId</code>? (Both <code>userId</code> and <code>bookId</code> would be available in <code>req.params</code>).</li>
+            <li>What if two routes conflict, like <code>/posts/new</code> and <code>/posts/:id</code>? (Order matters. Express tries to match routes in the order they are defined, so <code>/posts/new</code> must be defined *before* <code>/posts/:id</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/guide/routing.html#route-parameters" target="_blank" class="hover:underline">Express Docs: Route Parameters</a></li>
+            <li><a href="https://masteringjs.io/tutorials/express/dynamic-routes" target="_blank" class="hover:underline">Mastering JS: Dynamic Routes in Express</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  }
 ]
 
 
