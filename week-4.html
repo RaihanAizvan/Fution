@@ -1251,6 +1251,102 @@ my-project/
       </div>
     `
   },
+  {
+    title: "View Engines (e.g., EJS)",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use view engines like EJS to render dynamic HTML on the server. I know how to set the 'view engine' in Express, and then use 'res.render()' to pass data from my route handler into a template file, which is much cleaner than building HTML with string concatenation."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>A <strong>View Engine</strong> (or template engine) allows you to write "template" files (e.g., <code>.ejs</code>, <code>.pug</code>) that mix static HTML with dynamic code. When a request comes in, Express processes this template, injects data into it, and sends the final, rendered HTML to the user.</p>
+          <p class="mt-2">EJS (Embedded JavaScript) is popular because it's just HTML with special tags for JavaScript:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><code>&lt;%= ... %&gt;</code>: "Escaped" output. Inserts a variable, but escapes HTML (e.g., <code>&lt;</code> becomes <code>&amp;lt;</code>). Use this by default.</li>
+            <li><code>&lt;%- ... %&gt;</code>: "Unescaped" output. Inserts data exactly as-is. <strong>Be careful with this</strong>; it's a security risk (XSS) if the data is from a user.</li>
+            <li><code>&lt;% ... %&gt;</code>: Logic tag. For loops, if-statements, etc. No output.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using EJS)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- File: server.js ---
+const express = require('express');
+const app = express();
+const path = require('path');
+
+// 1. Set the view engine and views directory
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views')); // Default is './views'
+
+app.get('/user', (req, res) => {
+  const userData = {
+    name: 'Alex',
+    isAdmin: true,
+    bio: '&lt;b&gt;This is my bio&lt;/b&gt;', // Potentially unsafe data
+    hobbies: ['Reading', 'Coding', 'Hiking']
+  };
+  
+  // 2. Render the 'profile.ejs' template and pass data
+  res.render('profile', { user: userData });
+});
+
+app.listen(3000, () => console.log('Server running...'));
+
+// --- File: views/profile.ejs ---
+// &lt;!DOCTYPE html&gt;
+// &lt;html&gt;
+// &lt;body&gt;
+//   &lt;h1&gt;Hello, &lt;%= user.name %&gt;!&lt;/h1&gt;
+//
+//   &lt;h2&gt;Escaped Bio (Safe):&lt;/h2&gt;
+//   &lt;p&gt;&lt;%= user.bio %&gt;&lt;/p&gt; &lt;!-- Renders as literal text: "<b>This is...</b>" --&gt;
+//
+//   &lt;h2&gt;Unescaped Bio (Unsafe):&lt;/h2&gt;
+//   &lt;p&gt;&lt;%- user.bio %&gt;&lt;/p&gt; &lt;!-- Renders as bold HTML: <b>This is...</b> --&gt;
+//
+//   &lt;% if (user.hobbies.length &gt; 0) { %&gt;
+//     &lt;h2&gt;Hobbies:&lt;/h2&gt;
+//     &lt;ul&gt;
+//       &lt;% user.hobbies.forEach(hobby =&gt; { %&gt;
+//         &lt;li&gt;&lt;%= hobby %&gt;&lt;/li&gt;
+//       &lt;% }); %&gt;
+//     &lt;/ul&gt;
+//   &lt;% } %&gt;
+// &lt;/body&gt;
+// &lt;/html&gt;
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>View engines are the backbone of Server-Side Rendering (SSR). They allow you to build dynamic, data-driven websites without needing a separate front-end framework. Even if you use a framework like React, your server might still use a view engine to render the initial HTML shell.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between EJS, Pug, and Handlebars? (EJS is "just HTML + JS," Pug uses indentation, Handlebars uses <code>{{...}}</code> syntax).</li>
+            <li>What is the security risk of <code>&lt;%- ... %&gt;</code>? (Cross-Site Scripting (XSS). A user could set their bio to <code>&lt;script&gt;alert('hacked')&lt;/script&gt;</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://ejs.co/" target="_blank" class="hover:underline">EJS Official Website</a></li>
+            <li><a href="https://expressjs.com/en/guide/using-template-engines.html" target="_blank" class="hover:underline">Express Docs: Using template engines</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
 
   //Http and server basics
   {
@@ -1688,6 +1784,528 @@ $ curl http://localhost:3000/bad-url
           <ul class="list-disc list-inside ml-4 text-blue-400">
             <li><a href="https://nodejs.org/api/http.html" target="_blank" class="hover:underline">Node.js Docs: HTTP</a></li>
             <li><a href="https://developer.mozilla.org/en-US/docs/learn/Server-side/Nodejs/skeleton_server" target="_blank" class="hover:underline">MDN: Create a Node.js HTTP server</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "REST API Principles",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I design my APIs using REST principles. This means I structure my endpoints around resources (like '/users' or '/products'), and I use the standard HTTP methods (like GET, POST, PUT, DELETE) to represent actions on those resources, rather than using custom verbs in my URLs."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><strong>REST (REpresentational State Transfer)</strong> is an architectural style for designing networked applications. It's not a strict protocol, but a set of guidelines for building clean, scalable, and easy-to-understand web APIs.</p>
+          <p class="mt-2">Key Principles:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Resources (Nouns, not Verbs):</strong> Endpoints are centered around "resources" (objects or entities).
+              <ul>
+                <li><strong>Good:</strong> <code>/users</code>, <code>/products/123</code></li>
+                <li><strong>Bad:</strong> <code>/getAllUsers</code>, <code>/createNewProduct</code>, <code>/updateProductById</code></li>
+              </ul>
+            </li>
+            <li><strong>Use HTTP Methods (Verbs):</strong> The *action* you want to perform is defined by the HTTP method, not the URL.</li>
+            <li><strong>Stateless:</strong> Every request from a client must contain all the information needed to process it (e.g., an auth token). The server does not store "session state" for the client.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (A "RESTful" API design)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// A RESTful design for a "users" resource
+
+// GET /api/users
+// (Read) Get a list of all users
+app.get('/api/users', (req, res) => { /* ... */ });
+
+// POST /api/users
+// (Create) Create a new user (data in req.body)
+app.post('/api/users', (req, res) => { /* ... */ });
+
+
+// GET /api/users/:id
+// (Read) Get a single user by their ID
+app.get('/api/users/:id', (req, res) => { /* ... */ });
+
+// PUT /api/users/:id
+// (Update/Replace) Replace the entire user with ID
+app.put('/api/users/:id', (req, res) => { /* ... */ });
+
+// PATCH /api/users/:id
+// (Update/Modify) Partially update the user with ID
+app.patch('/api/users/:id', (req, res) => { /* ... */ });
+
+// DELETE /api/users/:id
+// (Delete) Delete the user with ID
+app.delete('/api/users/:id', (req, res) => { /* ... */ });
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>REST is the industry standard. Following it makes your API predictable, scalable, and easy for other developers (including your front-end team) to understand and use. A well-designed REST API is self-explanatory.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What does "stateless" mean for your server? (It means you don't store user info in memory between requests. If you need to know *who* a user is, they must send a token (e.g., JWT) with *every* request).</li>
+            <li>How would you get all comments for a specific post? (Nested resource: <code>GET /api/posts/:postId/comments</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Glossary/REST" target="_blank" class="hover:underline">MDN: REST</a></li>
+            <li><a href="https://aws.amazon.com/what-is/restful-api/" target="_blank" class="hover:underline">What is a RESTful API? (AWS)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "HTTP Methods (Full)",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the main HTTP verbs and their RESTful meaning: 'GET' to retrieve data, 'POST' to create a new resource, 'PUT' to replace a resource, 'PATCH' to partially update, and 'DELETE' to remove a resource. I also know 'OPTIONS' is used for CORS preflights."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>HTTP methods (or "verbs") define the *action* to be performed on a resource.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>GET</code>:</strong> (Read) Retrieve a resource. Safe and idempotent.</li>
+            <li><strong><code>POST</code>:</strong> (Create) Submit a new resource (e.g., create a new user). Not idempotent.</li>
+            <li><strong><code>PUT</code>:</strong> (Replace) Replace an existing resource *entirely* with new data. Idempotent.</li>
+            <li><strong><code>PATCH</code>:</strong> (Modify) Apply a *partial* update to a resource (e.g., update only the 'email' field). Not always idempotent.</li>
+            <li><strong><code>DELETE</code>:</strong> (Delete) Delete a resource. Idempotent.</li>
+            <li><strong><code>OPTIONS</code>:</strong> Asks the server what methods and headers are allowed for a URL. Used by browsers for "preflight" requests in CORS.</li>
+            <li><strong><code>HEAD</code>:</strong> Same as <code>GET</code>, but returns *only* the headers, with no response body. Used to check if a resource exists or get its size.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Express routes for each)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// GET /items/1
+app.get('/items/:id', (req, res) => {
+  res.send(\`Get item \${req.params.id}\`);
+});
+
+// POST /items
+app.post('/items', (req, res) => {
+  res.status(201).send('Create new item');
+});
+
+// PUT /items/1
+app.put('/items/:id', (req, res) => {
+  res.send(\`Replace item \${req.params.id}\`);
+});
+
+// PATCH /items/1
+app.patch('/items/:id', (req, res) => {
+  res.send(\`Partially update item \${req.params.id}\`);
+});
+
+// DELETE /items/1
+app.delete('/items/:id', (req, res) => {
+  res.send(\`Delete item \${req.params.id}\`);
+});
+
+// OPTIONS /items/1
+app.options('/items/:id', (req, res) => {
+  res.setHeader('Allow', 'GET, PUT, PATCH, DELETE, OPTIONS');
+  res.send();
+});
+
+// HEAD /items/1
+app.head('/items/:id', (req, res) => {
+  // Logic to get resource metadata
+  res.setHeader('Content-Length', '1234'); // Example header
+  res.end(); // Send no body
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Using the correct HTTP method is the most important part of building a semantic, predictable REST API. It allows clients (like browsers or mobile apps) to know exactly what to expect from an endpoint just by looking at the method and URL.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is the difference between <code>PUT</code> and <code>PATCH</code>? (This is its own topic, but: PUT replaces the *entire* resource, PATCH applies a *partial* change).</li>
+            <li>When would <code>HEAD</code> be used? (To check a file's size before downloading it, or to check if a link is broken without downloading the whole page).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods" target="_blank" class="hover:underline">MDN: HTTP request methods</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Idempotency: `PUT` vs. `POST` vs. `PATCH`",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I understand idempotency is whether an operation can be run multiple times with the same result. 'PUT' is idempotent because 'PUT /user/1 {name: "A"}' twice is the same as once. 'POST' is not: 'POST /users' twice creates two users. 'PATCH' is generally not idempotent, as a command like 'add 1 to age' would fail."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>An operation is <strong>idempotent</strong> if running it one time has the same effect as running it 100 times.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>POST /users</code> (Create User)</strong>
+              <ul>
+                <li><strong>Not Idempotent.</strong> Every call creates a new user. Calling it 3 times results in 3 new users.</li>
+              </ul>
+            </li>
+            <li><strong><code>PUT /users/123</code> (Replace User 123)</strong>
+              <ul>
+                <li><strong>Idempotent.</strong> The request says "make user 123 look *exactly* like this." The first call sets the user's data. The 2nd, 3rd, and 100th calls set the user to that *same* data. The end result is identical.</li>
+              </ul>
+            </li>
+            <li><strong><code>PATCH /users/123</code> (Modify User 123)</strong>
+              <ul>
+                <li><strong>Not Idempotent (Usually).</strong> This is the tricky one. If your patch is "set email to 'a@b.com'", it's idempotent. But if your patch is "add 10 to user's score," it is *not* idempotent. Because it's not guaranteed, it's treated as non-idempotent.</li>
+              </ul>
+            </li>
+            <li><strong><code>GET</code>, <code>HEAD</code>, <code>DELETE</code></strong> are all idempotent. (Deleting something that's already deleted still results in it being deleted).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Conceptual Code)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+let users = { '123': { name: 'Alex', age: 30 } };
+
+// POST: Not Idempotent
+app.post('/users', (req, res) => {
+  const newUser = { id: Math.random(), ...req.body };
+  users[newUser.id] = newUser;
+  // Running this twice creates two different users.
+  res.status(201).json(newUser);
+});
+
+// PUT: Idempotent
+app.put('/users/:id', (req, res) => {
+  // This request *replaces* the entire resource
+  users[req.params.id] = { ...req.body };
+  // Running this twice with the same req.body just
+  // results in the same final state.
+  res.json(users[req.params.id]);
+});
+
+// PATCH: Not Idempotent (Example)
+app.patch('/users/:id/age', (req, res) => {
+  // This patch *modifies* based on current state
+  users[req.params.id].age += 1;
+  // Running this twice results in (age + 2),
+  // which is different from running it once (age + 1).
+  res.json(users[req.params.id]);
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Idempotency is important for network reliability. If a client sends a <code>PUT</code> request and the network times out, it doesn't know if the request worked. It can safely send it again. If it was a <code>POST</code> and it retried, it might accidentally create two resources. This distinction is crucial for robust API design.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>Why is <code>DELETE</code> idempotent? (Because the goal is "resource must not exist." After the first call, it's gone. The 2nd call also results in "resource does not exist." The end state is the same).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Glossary/Idempotent" target="_blank" class="hover:underline">MDN: Idempotent</a></li>
+            <li><a href="https://restfulapi.net/http-methods/#idempotent-methods" target="_blank" class="hover:underline">Idempotent Methods (restfulapi.net)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "HTTP Headers (Common)",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know headers are key-value metadata. On the request, I look for 'Content-Type' to know how to parse 'req.body', and 'Authorization' (like 'Bearer token...') to check credentials. On the response, I use 'res.set()' to set headers, and I know 'res.json()' automatically sets 'Content-Type: application/json'."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>HTTP Headers are key-value pairs of metadata sent with every request and response. They provide context and instructions to the client and server.</p>
+          <p class="mt-2"><strong>Common Request Headers:</strong> (Sent by client)</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>Content-Type</code>:</strong> What kind of data is in the body (e.g., <code>application/json</code>, <code>application/x-www-form-urlencoded</code>).</li>
+            <li><strong><code>Authorization</code>:</strong> How the client is authenticating (e.g., <code>Bearer eyJhbGci...</code>).</li>
+            <li><strong><code>Accept</code>:</strong> What kind of response format the client wants (e.g., <code>application/json</code>).</li>
+            <li><strong><code>User-Agent</code>:</strong> Information about the client (e.g., browser, cURL).</li>
+          </ul>
+          <p class="mt-2"><strong>Common Response Headers:</strong> (Sent by server)</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>Content-Type</code>:</strong> What kind of data is in the response body (e.g., <code>application/json</code>, <code>text/html</code>).</li>
+            <li><strong><code>Content-Length</code>:</strong> The size of the response body in bytes.</li>
+            <li><strong><code>Location</code>:</strong> Used in redirects (<code>3xx</code> status) to tell the client where to go.</li>
+            <li><strong><code>Set-Cookie</code>:</strong> Instructs the client to set a cookie.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Reading and Setting Headers)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+app.post('/api/auth-check', (req, res) => {
+  // 1. Read request headers
+  // Use req.get() (case-insensitive) or req.headers[]
+  const contentType = req.get('Content-Type');
+  const authHeader = req.get('Authorization'); // e.g., "Bearer mytoken123"
+
+  if (contentType !== 'application/json') {
+    return res.status(400).send('Must be application/json');
+  }
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).send('Missing Bearer token');
+  }
+
+  // 2. Set response headers
+  // Express does this for you with res.json(), but
+  // you can set custom ones with res.set()
+  res.set('X-Custom-Header', 'Hello from my server');
+  
+  res.json({ message: 'You are authenticated' });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Headers are the "language" of HTTP. You can't handle a <code>POST</code> request without reading <code>Content-Type</code>. You can't implement authentication without reading <code>Authorization</code>. You can't do redirects without setting <code>Location</code>. They are fundamental to the web.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>req.get('Content-Type')</code> and <code>req.headers['content-type']</code>? (<code>req.get()</code> is case-insensitive, which is safer. <code>req.headers</code> is the raw object where keys are lowercase).</li>
+            <li>What's a "preflight" request? (An <code>OPTIONS</code> request the browser sends before a <code>POST</code>/<code>PUT</code> to a different domain, to check CORS permissions).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers" target="_blank" class="hover:underline">MDN: HTTP Headers</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#req.get" target="_blank" class="hover:underline">Express Docs: req.get()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#res.set" target="_blank" class="hover:underline">Express Docs: res.set()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Setting Headers/Status: `setHeader()` vs. `writeHead()`",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know 'writeHead()' and 'setHeader()' are from the low-level Node 'http' module. 'writeHead' sends the status and all headers in one go. In Express, I don't use these. I use the 'res.status()' and 'res.set()' methods, which are Express's chainable, user-friendly abstractions."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>This distinction is about the <strong>low-level Node.js <code>http</code> module</strong> versus the <strong>Express framework abstraction</strong>.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Node.js <code>http</code> Module (Low-level):</strong>
+              <ul>
+                <li><strong><code>res.writeHead(statusCode, headers)</code>:</strong> Writes the status code AND all headers at once. You can't set more headers after this.</li>
+                <li><strong><code>res.setHeader(name, value)</code>:</strong> Sets a single header. You can call this multiple times, but *before* <code>writeHead</code> or writing the body.</li>
+              </ul>
+            </li>
+            <li><strong>Express <code>res</code> object (High-level):</strong>
+              <ul>
+                <li><strong><code>res.status(code)</code>:</strong> Sets the status code. It's chainable.</li>
+                <li><strong><code>res.set(name, value)</code>:</strong> Sets a single header. It's chainable.</li>
+                <li>Express handles "when" to send the headers for you. You just declare the status and headers, and when you call <code>.send()</code> or <code>.json()</code>, Express sends them.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Node.js vs. Express)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- 1. Low-level Node.js http server ---
+const http = require('http');
+const server = http.createServer((req, res) => {
+  // We have to set headers and status manually
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('X-Powered-By', 'Node');
+  res.writeHead(200); // Sends status and all headers
+  
+  res.end(JSON.stringify({ message: 'Hello' }));
+});
+
+// --- 2. The Express Way (Much cleaner) ---
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  // Just chain methods. Express handles the rest.
+  res
+    .status(200)
+    .set('X-Powered-By', 'Express')
+    .json({ message: 'Hello' }); // .json() also sets Content-Type
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This shows you understand the layers of abstraction. While you will (and should) use the Express methods 99% of the time, knowing that <code>res</code> in Express is just an enhanced version of Node's <code>http.ServerResponse</code> object is key. It demystifies what Express is actually doing for you.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What happens if you try to <code>res.set()</code> after <code>res.json()</code>? (It won't work, and you'll get an error: "Cannot set headers after they are sent to the client." <code>res.json()</code> sends the response).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/http.html#reswriteheadstatuscode-statusmessage-headers" target="_blank" class="hover:underline">Node.js Docs: res.writeHead()</a></li>
+            <li><a href="https://nodejs.org/api/http.html#ressetheadername-value" target="_blank" class="hover:underline">Node.js Docs: res.setHeader()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#res.status" target="_blank" class="hover:underline">Express Docs: res.status()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Common Status Codes (Fuller)",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the main status code categories. 2xx for success, like '201 Created' after a POST. 4xx for client errors, like '400 Bad Request' for bad data, '401 Unauthorized' for no auth, or '403 Forbidden' for no permission. And 5xx for server errors."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Status codes are the server's way of telling the client the result of its request.</p>
+          <p class="mt-2"><strong>2xx Success:</strong></p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>200 OK</code>:</strong> Standard success (e.g., <code>GET</code>, <code>PUT</code>, <code>PATCH</code>).</li>
+            <li><strong><code>201 Created</code>:</strong> A new resource was successfully created (e.g., after a <code>POST</code>).</li>
+            <li><strong><code>204 No Content</code>:</strong> Success, but there is no body to send back (e.g., after a <code>DELETE</code>).</li>
+          </ul>
+          <p class="mt-2"><strong>4xx Client Error:</strong> (The client did something wrong)</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>400 Bad Request</code>:</strong> Server can't process the request (e.g., missing data, invalid JSON).</li>
+            <li><strong><code>401 Unauthorized</code>:</strong> Client is not authenticated. They need to log in / send a valid token.</li>
+            <li><strong><code>403 Forbidden</code>:</strong> Client is authenticated, but does not have *permission* to do this (e.g., a non-admin trying to access an admin panel).</li>
+            <li><strong><code>404 Not Found</code>:</strong> The requested resource does not exist.</li>
+          </ul>
+          <p class="mt-2"><strong>5xx Server Error:</strong> (The server did something wrong)</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>500 Internal Server Error</code>:</strong> A generic "catch-all" error. Your app crashed.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Express routes for each)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// 201 Created
+app.post('/users', (req, res) => {
+  const newUser = { id: 1, ...req.body };
+  res.status(201).json(newUser);
+});
+
+// 400 Bad Request
+app.post('/users', (req, res) => {
+  if (!req.body.name) {
+    res.status(400).json({ error: 'Name is required' });
+  }
+});
+
+// 401 Unauthorized vs. 403 Forbidden
+app.get('/admin', (req, res) => {
+  if (!req.user) {
+    // They aren't logged in at all
+    res.status(401).json({ error: 'You must be logged in' });
+  } else if (req.user.role !== 'admin') {
+    // They are logged in, but are not an admin
+    res.status(403).json({ error: 'You do not have permission' });
+  } else {
+    res.json({ message: 'Welcome, Admin' });
+  }
+});
+
+// 500 Internal Server Error
+app.get('/danger', (req, res) => {
+  try {
+    throw new Error('Something broke!');
+  } catch (err) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Your front-end application *depends* on these codes. The front-end code will literally be: <code>if (response.status === 201) { ... } else if (response.status === 400) { ... }</code>. Using the correct, specific code is the foundation of a good API.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is the crucial difference between 401 and 403? (401 means "Who are you?". 403 means "I know who you are, and you're not allowed.").</li>
+            <li>What's a good response for a <code>DELETE</code> request? (<code>204 No Content</code>, or <code>200 OK</code> with the deleted item).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Status" target="_blank" class="hover:underline">MDN: HTTP status codes</a></li>
           </ul>
         </section>
       </div>
@@ -3216,6 +3834,269 @@ app.get('/api-send', (req, res) => {
       </div>
     `
   },
+  {
+    title: "Serving Static Files",
+    difficulty: "Beginner",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I serve static files like CSS, images, and client-side JavaScript using the 'express.static()' built-in middleware. I know to create a 'public' directory, point the middleware to it, and then I can access those files from the root URL of my site."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Static files are any files that your server sends to the client *as-is*, without any processing. This includes <code>.css</code> files, <code>.js</code> files (for the browser), images (<code>.png</code>, <code>.jpg</code>), fonts, and even static <code>.html</code> files.</p>
+          <p class="mt-2">The <code>express.static()</code> middleware "unlocks" a folder and makes its contents accessible via HTTP. The standard convention is to create a folder named <code>public</code> for all your static assets.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Setting up a 'public' folder)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const path = require('path');
+const app = express();
+
+// --- Folder Structure ---
+// my-project/
+//  |- server.js
+//  |- public/
+//  |  |- css/
+//  |  |  |- style.css
+//  |  |- js/
+//  |  |  |- app.js
+//  |  |- images/
+//  |  |  |- logo.png
+//  |  |- index.html
+
+// 1. Point express.static to the 'public' folder
+// We use path.join(__dirname, 'public') for a reliable absolute path
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+
+// 2. How it works:
+// - A request for http://localhost:3000/css/style.css
+//   ...will be served 'public/css/style.css'
+// - A request for http://localhost:3000/images/logo.png
+//   ...will be served 'public/images/logo.png'
+// - A request for http://localhost:3000/
+//   ...will be served 'public/index.html' (special case)
+
+app.get('/about', (req, res) => {
+  res.send('This is a dynamic route, not a static file.');
+});
+
+app.listen(3000, () => console.log('Server running...'));
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is a fundamental requirement for any web application. Your server-rendered HTML is useless without CSS to style it and client-side JavaScript to make it interactive. <code>express.static()</code> is the standard, built-in way to do this.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What happens if you request <code>/</code> and there's an <code>index.html</code> in your static folder? (<code>express.static</code> will serve it by default).</li>
+            <li>What if you want your static files to be prefixed, like <code>/static/css/style.css</code>? (You mount it: <code>app.use('/static', express.static('public'))</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/starter/static-files.html" target="_blank" class="hover:underline">Express Docs: Serving static files</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#express.static" target="_blank" class="hover:underline">Express Docs: express.static()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Partials (reusable template components)",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use partials to keep my templates DRY. I create reusable template files for common components like a header, footer, or navbar, and then I use my view engine's 'include' syntax, like '&lt;%- include('partials/header') %&gt;' in EJS, to pull them into my main templates."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p><strong>Partials</strong> are small, reusable template files. You don't want to copy and paste your navigation bar or your <code>&lt;head&gt;</code> tag into every single <code>.ejs</code> file. Instead, you create one partial for it (e.g., <code>header.ejs</code>) and then "include" it in all your other templates.</p>
+          <p class="mt-2">This follows the <strong>DRY (Don't Repeat Yourself)</strong> principle. If you need to add a new nav link, you only have to edit <code>header.ejs</code> once.</p>
+          <p class="mt-2">In EJS, the syntax is: <code>&lt;%- include('path/to/partial') %&gt;</code>. (You often use <code>&lt;%-</code> to allow partials to render HTML).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using EJS Partials)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- Folder Structure ---
+// views/
+//  |- pages/
+//  |  |- index.ejs
+//  |  |- about.ejs
+//  |- partials/
+//  |  |- header.ejs
+//  |  |- footer.ejs
+// server.js
+
+// --- File: views/partials/header.ejs ---
+// &lt;!DOCTYPE html&gt;
+// &lt;html lang="en"&gt;
+// &lt;head&gt;
+//   &lt;title&gt;&lt;%= title %&gt; | MySite&lt;/title&gt; &lt;!-- 'title' is passed from res.render --&gt;
+//   &lt;link rel="stylesheet" href="/css/style.css"&gt;
+// &lt;/head&gt;
+// &lt;body&gt;
+//   &lt;nav&gt;
+//     &lt;a href="/"&gt;Home&lt;/a&gt; | &lt;a href="/about"&gt;About&lt;/a&gt;
+//   &lt;/nav&gt;
+
+// --- File: views/partials/footer.ejs ---
+//   &lt;footer&gt;
+//     &lt;p&gt;&copy; 2025 MySite&lt;/p&gt;
+//   &lt;/footer&gt;
+// &lt;/body&gt;
+// &lt;/html&gt;
+
+// --- File: views/pages/index.ejs ---
+// &lt;%- include('../partials/header', { title: 'Homepage' }) %&gt;
+//
+// &lt;h1&gt;Welcome to the Homepage&lt;/h1&gt;
+// &lt;p&gt;This is the main content.&lt;/p&gt;
+//
+// &lt;%- include('../partials/footer') %&gt;
+
+// --- File: server.js ---
+app.set('view engine', 'ejs');
+app.get('/', (req, res) => {
+  // EJS knows to look for 'views/pages/index.ejs'
+  // We pass 'title' so the header partial can use it
+  res.render('pages/index', { title: 'Home' });
+});
+app.get('/about', (req, res) => {
+  res.render('pages/about', { title: 'About Us' });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Partials are fundamental to template maintainability. Without them, a simple change to your website's footer would require you to edit every single page. Partials are the view-layer equivalent of writing a reusable function instead of copy-pasting code.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How do you pass data to a partial? (In EJS, you can pass a data object as the second argument to <code>include</code>, as shown with <code>{ title: 'Homepage' }</code>. If you don't, the partial inherits the data from <code>res.render</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://ejs.co/#includes" target="_blank" class="hover:underline">EJS Docs: Includes</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "`res.render()` vs. `res.redirect()`",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the difference: 'res.render()' sends back HTML from a template, while 'res.redirect()' sends a 302 status and a 'Location' header to tell the browser to make a *new* request to a different URL. I use 'render' to show a page, and 'redirect' to move the user, like after a form submission."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>These two methods are often confused, but they are completely different.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>res.render('template', {data})</code>:</strong>
+              <ul>
+                <li><strong>What it does:</strong> Server-side action. Finds your template, combines it with data, and sends the resulting <strong>HTML</strong> to the browser.</li>
+                <li><strong>Browser URL:</strong> The URL in the browser bar <strong>does not change</strong>. If they visited <code>/profile</code>, the URL stays <code>/profile</code>.</li>
+                <li><strong>Use Case:</strong> Showing a page to the user.</li>
+              </ul>
+            </li>
+            <li><strong><code>res.redirect('/new-url')</code>:</strong>
+              <ul>
+                <li><strong>What it does:</strong> Client-side action. Sends a special response (<code>302 Found</code> status) with a <code>Location: /new-url</code> header.</li>
+                <li><strong>Browser URL:</strong> The browser sees this, says "OK, I need to go elsewhere," and makes a <strong>brand new GET request</strong> to <code>/new-url</code>. The URL in the bar <strong>changes</strong>.</li>
+                <li><strong>Use Case:</strong> Moving the user after an action (like a <code>POST</code> request), or for protected routes.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Login Form)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+app.use(express.urlencoded({ extended: true }));
+
+// 1. RENDER: Show the login page
+app.get('/login', (req, res) => {
+  // 'error' might come from a failed query param
+  res.render('login-form', { error: req.query.error });
+});
+
+// 2. REDIRECT: Handle the form submission
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  if (username === 'admin' && password === 'pass') {
+    // SUCCESS: User's action (POST) is done.
+    // Tell their browser to go to a new page (GET /dashboard)
+    res.redirect('/dashboard');
+  } else {
+    // FAILURE: User's action (POST) failed.
+    // Tell their browser to go back to the login page (GET /login)
+    // We add a query param to show an error
+    res.redirect('/login?error=Invalid+credentials');
+  }
+});
+
+app.get('/dashboard', (req, res) => {
+  // 3. RENDER: Show the dashboard page
+  res.render('dashboard', { user: 'admin' });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is critical for web flow. You should *never* <code>render</code> a page on a <code>POST</code> request. This breaks the browser's "back" button and can cause forms to be re-submitted. The correct pattern is <strong>Post-Redirect-Get (PRG)</strong>: handle the <code>POST</code>, then <code>redirect</code> to a <code>GET</code> route, which then <code>renders</code> the page.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What happens if you try to <code>res.render()</code> *after* <code>res.redirect()</code>? (You get an error: "Cannot set headers after they are sent." The redirect already sent the response).</li>
+            <li>What status code does <code>res.redirect()</code> use? (302 Found by default. You can change it: <code>res.redirect(301, '/new-url')</code> for a permanent move).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#res.render" target="_blank" class="hover:underline">Express Docs: res.render()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#res.redirect" target="_blank" class="hover:underline">Express Docs: res.redirect()</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/Post/Redirect/Get" target="_blank" class="hover:underline">Post/Redirect/Get (PRG) Pattern</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
 
   {
     type: "heading",
@@ -3467,6 +4348,8 @@ server.listen(3000, () => console.log('Server running on port 3000...'));
       </div>
     `
   },
+
+  
   
 ]
 
