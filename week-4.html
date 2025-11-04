@@ -718,10 +718,6 @@ undefined
     `
   },
   {
-        type: 'heading',
-        title: "Modules and Packages",
-      },
-  {
     title: "CommonJS vs. ES Modules",
     difficulty: "Intermediate",
     details: `
@@ -1259,7 +1255,7 @@ my-project/
   //Http and server basics
   {
     type: 'heading',
-    title: "HTTP and server Basics",
+    title: "Networking",
   },
     {
     title: "What is HTTP & HTTPS?",
@@ -1700,7 +1696,7 @@ $ curl http://localhost:3000/bad-url
 
   {
     type: 'heading',
-    title: "Express JS Basics",
+    title: "Express JS",
   },
   {
     title: "What is Express.js?",
@@ -2627,7 +2623,7 @@ app.listen(3000, () => console.log('Server running...'));
     `
   },
   {
-    title: "(Legacy) `bodyParser`",
+    title: "BodyParser (Legacy)",
     difficulty: "Beginner",
     details: `
       <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
@@ -2700,182 +2696,530 @@ app.post('/submit', (req, res) => {
     `
   },
 
+  
+  
   {
-    type: "heading",
-    title:'Error Handling'
-  },
-  {
-    title: "Error-First Callbacks",
+    title: "Express Router (`express.Router()`)",
     difficulty: "Intermediate",
     details: `
       <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
-        Tell the reviewer: "I'm very familiar with the error-first callback pattern, which is standard in Node.js. It's a convention where the first argument to any callback function is reserved for an 'error' object. If that argument is 'null', the operation succeeded, and the data is in the subsequent arguments."
+        Tell the reviewer: "I use 'express.Router()' to create modular, mountable route handlers. It lets me group all my '/users' routes in one file, for example, and then 'app.use('/users', usersRoutes)' in my main server file, which keeps my code clean and scalable."
       </blockquote>
 
       <div class="space-y-6 text-gray-300">
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
-          <p>The "error-first callback" (or "errback") is a fundamental design pattern in Node.js for handling asynchronous errors. Since asynchronous functions can't <code>throw</code> errors back to the calling function, they "pass" the error as the first argument to their callback.</p>
-          <p class="mt-2">The pattern is: <code>myAsyncFunction(arg1, (err, data) => { ... })</code></p>
+          <p>An <code>express.Router()</code> is like a "mini-app" or a "sub-app." It's an isolated instance of middleware and routes that can be mounted on a path in your main Express app.</p>
+          <p class="mt-2">This is the primary way to organize your application. Instead of putting all 100 of your routes in <code>server.js</code>, you group them into logical files:</p>
           <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
-            <li><strong><code>err</code>:</strong> The first argument. If an error occurred, <code>err</code> will be an <code>Error</code> object. If everything was successful, <code>err</code> will be <code>null</code> or <code>undefined</code>.</li>
-            <li><strong><code>data</code>:</strong> The second argument (and any after). This holds the successful result of the operation.</li>
+            <li><code>routes/users.js</code> (handles all <code>/users</code> routes)</li>
+            <li><code>routes/products.js</code> (handles all <code>/products</code> routes)</li>
+            <li><code>routes/admin.js</code> (handles all <code>/admin</code> routes)</li>
           </ul>
-          <p class="mt-2">Your first step inside any errback is <strong>always</strong>: <code>if (err) { ... }</code></p>
+          <p class="mt-2">Inside these files, you define routes on the <strong>router</strong> instance (e.g., <code>router.get('/')</code>). In your main <code>server.js</code>, you just <code>require</code> and <code>app.use()</code> them.</p>
         </section>
 
         <section>
-          <h2 class="text-lg font-semibold text-white mb-2">Example (Using fs.readFile)</h2>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Modularizing routes)</h2>
           <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
             <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
-const fs = require('fs');
-const path = require('path');
+// --- File: routes/users.js ---
+// This file defines all routes that start with /users
 
-const filePath = path.join(__dirname, 'data.txt');
+const express = require('express');
+const router = express.Router(); // 1. Create a new router instance
 
-// This function follows the error-first callback pattern
-fs.readFile(filePath, 'utf8', (err, data) => {
-  // 1. ALWAYS check for the error first!
-  if (err) {
-    console.error('Error reading the file:', err.message);
-    if (err.code === 'ENOENT') {
-      console.error('File not found!');
-    }
-    return; // Stop execution
-  }
-
-  // 2. If err is null, we can safely use the data
-  console.log('File content:');
-  console.log(data);
+// This is actually /users/
+router.get('/', (req, res) => {
+  res.send('Get all users');
 });
 
-// This code runs *before* the callback, as fs.readFile is async
-console.log('Attempting to read file...');
+// This is actually /users/:id
+router.get('/:id', (req, res) => {
+  res.send(\`Get user with ID \${req.params.id}\`);
+});
+
+module.exports = router; // 2. Export the router
+
+
+// --- File: server.js (Main App) ---
+const express = require('express');
+const app = express();
+const usersRoutes = require('./routes/users'); // 3. Import the router
+
+// 4. Mount the router on the '/users' path
+// Any request starting with /users will be handled by usersRoutes
+app.use('/users', usersRoutes);
+
+app.get('/', (req, res) => {
+  res.send('Homepage');
+});
+
+app.listen(3000, () => console.log('Server running...'));
             </code></pre>
           </div>
         </section>
 
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
-          <p>This is the classic, foundational way Node.js handles asynchronicity and errors. While modern JavaScript (<code>async/await</code>, Promises) is now more common, you will *always* encounter this pattern in Node's core modules (like <code>fs</code>, <code>http</code>), older libraries, and even in some modern ones. You must be able to read and write this pattern fluently.</p>
+          <p>This is not optional; it's essential for scalability. A real-world application will have its routes split into many different files using <code>express.Router</code>. This keeps your main <code>server.js</code> file clean and organized, focusing only on high-level configuration and mounting routes.</p>
         </section>
 
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
           <ul class="list-disc list-inside ml-4">
-            <li>What is "callback hell"? (When you nest many error-first callbacks, leading to deeply indented, unreadable code).</li>
-            <li>How do you "promisify" a function that uses this pattern? (Using <code>util.promisify</code> or wrapping it in a <code>new Promise()</code> constructor).</li>
+            <li>In the router file, why is <code>router.get('/')</code> not <code>router.get('/users')</code>? (Because the <code>/users</code> path is defined in <code>app.use()</code>. The router paths are *relative* to where they are mounted).</li>
+            <li>Can a router have its own middleware? (Yes, you can use <code>router.use()</code> just like <code>app.use()</code>).</li>
           </ul>
         </section>
         
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
           <ul class="list-disc list-inside ml-4 text-blue-400">
-            <li><a href="https://nodejs.org/en/learn/getting-started/control-flow-and-error-handling" target="_blank" class="hover:underline">Node.js Docs: Error Handling</a></li>
-            <li><a href="https://www.freecodecamp.org/news/error-first-callback-pattern-in-node-js/" target="_blank" class="hover:underline">Error-First Callbacks (freeCodeCamp)</a></li>
+            <li><a href="https://expressjs.com/en/guide/routing.html#express-router" target="_blank" class="hover:underline">Express Docs: express.Router</a></li>
+            <li><a href="https://www.digitalocean.com/community/tutorials/how-to-use-the-express-router" target="_blank" class="hover:underline">How To Use the Express Router (DigitalOcean)</a></li>
           </ul>
         </section>
       </div>
     `
   },
   {
-    title: "Basic `try...catch` with `async/await`",
+    title: "Middleware Types: Application-level vs. Router-level",
     difficulty: "Intermediate",
     details: `
       <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
-        Tell the reviewer: "I prefer using 'async/await' for asynchronous code as it's cleaner than callbacks. I know that 'await' pauses the function and returns the resolved value of a Promise, and to handle errors, I wrap my 'await' calls in a 'try...catch' block, which is the modern standard for async error handling."
+        Tell the reviewer: "I use application-level middleware with 'app.use()' for global tasks like logging, 'express.json()', or 'cors'. I use router-level middleware with 'router.use()' for tasks specific to a group of routes, like an 'isAdmin' check that only applies to my '/admin' router."
       </blockquote>
 
-      <div class="space-y-6 text-gray-300">
+      <div class="space-y-6 text-gray-30AN_INJECT_1-300">
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
-          <p><code>async/await</code> is modern JavaScript syntax that makes asynchronous code look and behave more like synchronous code. It's built on top of Promises.</p>
+          <p>Middleware can be applied at different "levels" in your application, giving you fine-grained control.</p>
           <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
-            <li><strong><code>async</code>:</strong> A keyword you put before a function definition (<code>async function myFunc()</code>). It automatically makes the function return a Promise.</li>
-            <li><strong><code>await</code>:</strong> A keyword you can *only* use inside an <code>async</code> function. It "pauses" the function execution until the Promise it's "awaiting" resolves, then gives you the value.</li>
-            <li><strong><code>try...catch</code>:</strong> Because <code>await</code> "pauses" and "unwraps" the Promise, if the Promise *rejects* (fails), it will throw an error. You can catch this error using a standard, synchronous-style <code>try...catch</code> block.</li>
+            <li><strong>Application-level Middleware:</strong>
+              <ul>
+                <li><strong>Bound to:</strong> The <code>app</code> instance (<code>app.use()</code>, <code>app.get()</code>).</li>
+                <li><strong>Scope:</strong> Runs for all requests that match the path, or *all requests* if no path is given (e.g., <code>app.use(express.json())</code>).</li>
+                <li><strong>Use Case:</strong> Global tasks: logging, body parsing, static files, global error handling.</li>
+              </ul>
+            </li>
+            <li><strong>Router-level Middleware:</strong>
+              <ul>
+                <li><strong>Bound to:</strong> An <code>express.Router()</code> instance (<code>router.use()</code>, <code>router.get()</code>).</li>
+                <li><strong>Scope:</strong> Runs *only* for requests that are handled by that specific router.</li>
+                <li><strong>Use Case:</strong> Resource-specific tasks: authentication for all <code>/admin</code> routes, validation for all <code>/api</code> routes.</li>
+              </ul>
+            </li>
           </ul>
         </section>
 
         <section>
-          <h2 class="text-lg font-semibold text-white mb-2">Example (Callbacks vs. async/await)</h2>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Global logger vs. Specific auth)</h2>
           <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
             <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
-const fs = require('fs');
+const express = require('express');
+const app = express();
 
-// --- 1. Callback "Hell" ---
-// Read a file, parse it, read another file based on the first
-fs.readFile('file1.txt', 'utf8', (err, data) => {
-  if (err) return console.error(err);
-  try {
-    const config = JSON.parse(data);
-    fs.readFile(config.userFile, 'utf8', (err2, data2) => {
-      if (err2) return console.error(err2);
-      console.log('User data:', data2);
-    });
-  } catch (parseErr) {
-    console.error('Error parsing JSON:', parseErr);
+// --- 1. Application-level middleware (runs for ALL requests) ---
+const globalLogger = (req, res, next) => {
+  console.log(\`[GLOBAL] \${req.method} \${req.path}\`);
+  next();
+};
+app.use(globalLogger);
+
+// --- 2. Router-level middleware (runs only for this router) ---
+const adminRouter = express.Router();
+
+const checkAdminAuth = (req, res, next) => {
+  if (req.query.token === 'admin123') {
+    console.log('[ROUTER] Admin auth passed');
+    next();
+  } else {
+    res.status(403).send('Forbidden: Admin access only');
   }
+};
+
+// Apply auth middleware to this *entire router*
+adminRouter.use(checkAdminAuth);
+
+adminRouter.get('/dashboard', (req, res) => {
+  res.send('Admin Dashboard');
 });
 
+// --- Routes ---
+app.get('/', (req, res) => {
+  res.send('Public Homepage');
+});
 
-// --- 2. Modern async/await ---
-// We need the 'fs.promises' API
-const fsPromises = require('fs').promises;
+// Mount the admin router
+app.use('/admin', adminRouter);
 
-async function readUserData() {
-  console.log('Attempting to read...');
-  try {
-    // Await pauses until the file is read
-    const data = await fsPromises.readFile('file1.txt', 'utf8');
-    
-    // Await can also be used on non-Promise values
-    const config = JSON.parse(data); // This part is still sync
-    
-    // Await pauses again for the second file
-    const data2 = await fsPromises.readFile(config.userFile, 'utf8');
-    
-    console.log('User data:', data2);
+app.listen(3000, () => console.log('Server running...'));
+            </code></pre>
+          </div>
+        </section>
 
-  } catch (err) {
-    // *Any* error (file not found, bad JSON) is caught here
-    console.error('An error occurred:', err.message);
-  }
-}
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# 1. Accessing homepage (only global logger runs)
+$ curl http://localhost:3000/
+# [GLOBAL] GET /
 
-readUserData();
+# 2. Accessing admin route without auth (auth middleware blocks it)
+$ curl http://localhost:3000/admin/dashboard
+# [GLOBAL] GET /admin/dashboard
+# Forbidden: Admin access only
+
+# 3. Accessing admin route *with* auth (both middleware run)
+$ curl "http://localhost:3000/admin/dashboard?token=admin123"
+# [GLOBAL] GET /admin/dashboard
+# [ROUTER] Admin auth passed
             </code></pre>
           </div>
         </section>
 
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
-          <p>This is the preferred way to handle asynchronous operations in modern Node.js. It avoids "callback hell" and makes your code much more readable and maintainable. In Express, you will often make your route handlers <code>async</code> so you can <code>await</code> database queries inside a <code>try...catch</code> block.</p>
+          <p>This separation of concerns is critical for security and organization. You don't want to run an expensive database check for user authentication on your public-facing <code>/</code> route. By applying auth at the router level (e.g., <code>app.use('/api', authRouter)</code>), you ensure that only the relevant requests are checked.</p>
         </section>
 
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
           <ul class="list-disc list-inside ml-4">
-            <li>What does <code>await</code> actually return? (The resolved value of the Promise).</li>
-            <li>What happens if you use L_await</code> on a function that doesn't return a Promise? (It just returns the value immediately, no harm done).</li>
-            <li>How would you handle multiple promises in parallel? (<code>Promise.all()</code>).</li>
+            <li>What other types of middleware are there? (Error-handling, Built-in, Third-party).</li>
+            <li>How would you apply middleware to just a single route? (<code>app.get('/path', myMiddleware, (req, res) => ...)</code>).</li>
           </ul>
         </section>
         
         <section>
           <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
           <ul class="list-disc list-inside ml-4 text-blue-400">
-            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function" target="_blank" class="hover:underline">MDN: async function</a></li>
-            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await" target="_blank" class="hover:underline">MDN: await</a></li>
-            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises" target="_blank" class="hover:underline">MDN: Using promises</a></li>
+            <li><a href="https://expressjs.com/en/guide/using-middleware.html#middleware.router" target="_blank" class="hover:underline">Express Docs: Router-level middleware</a></li>
           </ul>
         </section>
       </div>
     `
   },
   {
+    title: "Advanced Routing: `.route()` and `.all()`",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "For a single URL that needs different handlers for different verbs, I use '.route(\`/path\`)' to chain them, like '.get()', '.post()', and '.put()'. This avoids duplicating the route path and keeps my code DRY. I use 'app.all()' to run a handler for *all* HTTP methods on a path, often for validation."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>These are two special routing methods that give you more control.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>.route(path)</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> Creates a chainable route handler for a single path. This is a great way to group all logic for a single resource.</li>
+                <li><strong>Benefit:</strong> It's cleaner and more readable (D.R.Y. - Don't Repeat Yourself) than writing <code>app.get(path)</code>, <code>app.post(path)</code>, etc.</li>
+              </ul>
+            </li>
+            <li><strong><code>app.all(path, handler)</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> Matches *all* HTTP verbs (GET, POST, PUT, DELETE, etc.) for a specific path.</li>
+                <li><strong>Benefit:</strong> Useful for applying a middleware to a specific route (e.g., auth, validation) or for a "catch-all" handler.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using .route() and .all())</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// --- 1. Using .route() for a clean REST API ---
+
+app.route('/api/items/:id')
+  .get((req, res) => {
+    res.send(\`Get item \${req.params.id}\`);
+  })
+  .put((req, res) => {
+    res.send(\`Update item \${req.params.id}\`);
+  })
+  .delete((req, res) => {
+    res.send(\`Delete item \${req.params.id}\`);
+  });
+
+// This is cleaner than:
+// app.get('/api/items/:id', ...);
+// app.put('/api/items/:id', ...);
+// app.delete('/api/items/:id', ...);
+
+
+// --- 2. Using app.all() to protect a specific route ---
+
+const checkAuth = (req, res, next) => {
+  console.log('Checking auth for secret path...');
+  next();
+};
+
+app.all('/secret-document', checkAuth, (req, res) => {
+  // This handler will run after checkAuth, for ANY method
+  res.send(\`Secret document accessed via \${req.method}\`);
+});
+
+app.listen(3000, () => console.log('Server running...'));
+            </code></pre>
+          </div>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Test the .route() chain
+$ curl http://localhost:3000/api/items/123
+# Get item 123
+$ curl -X PUT http://localhost:3000/api/items/123
+# Update item 123
+
+# Test the .all() route
+$ curl http://localhost:3000/secret-document
+# Secret document accessed via GET
+$ curl -X POST http://localhost:3000/secret-document
+# Secret document accessed via POST
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p><code>.route()</code> is the standard for building clean, resource-oriented REST APIs. It groups all logic for one resource in one place. <code>app.all()</code> is a powerful, specific tool for middleware-like tasks that need to apply to all HTTP methods for a single route, but not its children.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>app.all('/foo', ...)</code> and <code>app.use('/foo', ...)</code>? (<code>app.use</code> matches <code>/foo</code> and any path *starting with* it, like <code>/foo/bar</code>. <code>app.all</code> only matches the *exact* path <code>/foo</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#app.route" target="_blank" class="hover:underline">Express Docs: app.route()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#app.all" target="_blank" class="hover:underline">Express Docs: app.all()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "App Settings: `app.set()`, `app.locals`, `res.locals`",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use 'app.set()' to store app-wide config, like a view engine or a secret key. I use 'app.locals' to set global variables for all templates, and 'res.locals' inside middleware to pass request-specific data, like the current user, to my route handler or template."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>These are different ways to store and access settings and variables in your app.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>app.set(key, value)</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> Sets application settings. Used for both Express's internal settings (e.g., <code>'view engine'</code>, <code>'views'</code>) and your own custom settings (e.g., <code>'jwtSecret'</code>).</li>
+                <li><strong>Access:</strong> Retrieve with <code>app.get(key)</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>app.locals</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> An object. Properties added here are available as variables in *all* templates rendered by the app, for its entire lifetime.</li>
+                <li><strong>Use Case:</strong> Setting global variables like <code>app.locals.appName = 'My Site'</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>res.locals</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> An object. Properties added here are available as variables in templates, but *only for the current request*.</li>
+                <li><strong>Use Case:</strong> This is the standard way to pass data from middleware to your route handler/template (e.g., an auth middleware adds <code>res.locals.user = ...</code>).</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Passing data to templates)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// 1. Set an Express-native setting
+app.set('view engine', 'pug'); // Assuming 'pug' is installed
+app.set('views', './my-templates');
+
+// 2. Set a custom app-level variable (global for all templates)
+app.locals.siteName = 'My Awesome App';
+
+// 3. Use middleware to set a request-level variable
+app.use((req, res, next) => {
+  // This is specific to THIS request
+  res.locals.requestTime = new Date().toLocaleTimeString();
+  
+  // Example: pass user info from auth (if it existed)
+  res.locals.user = req.query.user || 'Guest';
+  next();
+});
+
+app.get('/', (req, res) => {
+  // res.locals.user is "Guest" or from query
+  // app.locals.siteName is "My Awesome App"
+  // This template can access 'siteName', 'requestTime', and 'user'
+  res.render('index', { pageTitle: 'Homepage' });
+});
+
+// --- In your 'my-templates/index.pug' file ---
+// html
+//   head
+//     title= pageTitle + ' | ' + siteName
+//   body
+//     h1 Welcome to \${siteName}, \${user}!
+//     p Page loaded at: \${requestTime}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the correct way to manage global settings and pass data through the request lifecycle. <code>res.locals</code> is especially crucial for decoupling auth/validation middleware from route handlers. Your auth middleware finds the user, adds it to <code>res.locals</code>, and your route handler can then use it without re-fetching it.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>app.set('foo', 'bar')</code> and <code>app.locals.foo = 'bar'</code>? (<code>app.set</code> is for config, <code>app.locals</code> is for template variables. Though <code>app.set</code> can also set template variables, it's clearer to use <code>app.locals</code>).</li>
+            <li>Is <code>res.locals</code> secure? (It only exists on the server, for that one request. It is never sent to the client, unless you explicitly render it in a template).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#app.set" target="_blank" class="hover:underline">Express Docs: app.set()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#app.locals" target="_blank" class="hover:underline">Express Docs: app.locals</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#res.locals" target="_blank" class="hover:underline">Express Docs: res.locals</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Response Methods: `send()` vs. `json()` vs. `end()`",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the common 'res' methods. I almost always use 'res.json()' for APIs as it sets the 'Content-Type' header correctly. I use 'res.send()' for simple text or HTML. I only use 'res.end()' if I need to end the request with no body, like for a '204 No Content' response."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>These methods all end the request-response cycle, but they have key differences.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>res.json([body])</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> Sends a JSON response.</li>
+                <li><strong>Headers:</strong> Automatically sets <code>Content-Type: application/json</code>.</li>
+                <li><strong>Use Case:</strong> The standard for 99% of REST API responses.</li>
+              </ul>
+            </li>
+            <li><strong><code>res.send([body])</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> A flexible method that sends a response with a body.</li>
+                <li><strong>Headers:</strong> Tries to guess the <code>Content-Type</code>. (e.g., <code>text/html</code> for <code>'&lt;h1&gt;'</code>, <code>application/json</code> for <code>{a:1}</code>).</li>
+                <li><strong>Use Case:</strong> Good for simple text, HTML, or quick tests.</li>
+              </ul>
+            </li>
+            <li><strong><code>res.end([data])</code>:</strong>
+              <ul>
+                <li><strong>Purpose:</strong> A low-level Node.js method. Ends the response.</li>
+                <li><strong>Headers:</strong> Does NOT set <code>Content-Type</code> or other headers automatically.</li>
+                <li><strong>Use Case:</strong> Rarely used directly. Best for "No Content" responses: <code>res.status(204).end()</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>res.write(chunk)</code>:</strong> (Related)
+              <ul>
+                <li><strong>Purpose:</strong> A low-level stream method. Writes a chunk of data.</li>
+                <li><strong>This does NOT end the response.</strong> You must call <code>res.end()</code> manually. You should almost never use this; use <code>.pipe()</code> instead.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Comparing methods)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const express = require('express');
+const app = express();
+
+// 1. Preferred for APIs
+app.get('/api', (req, res) => {
+  // Sets Content-Type: application/json
+  res.json({ success: true, data: [1, 2, 3] });
+});
+
+// 2. Good for simple HTML/text
+app.get('/hello', (req, res) => {
+  // Sets Content-Type: text/html
+  res.send('<h1>Hello World</h1>');
+});
+
+// 3. Good for "No Content" responses
+app.delete('/api/items/1', (req, res) => {
+  // Does not send a body
+  res.status(204).end();
+});
+
+// 4. res.send is smart, but res.json is clearer
+app.get('/api-send', (req, res) => {
+  // This *works* (sets Content-Type: application/json)
+  // But res.json() is more explicit and preferred.
+  res.send({ success: true, data: [1, 2, 3] });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Using the right method is professional and prevents bugs. Using <code>res.json()</code> for APIs is standard practice. Using <code>res.end()</code> by mistake can lead to responses with no <code>Content-Type</code>, which will break your front-end. Understanding that <code>res</code> is a stream (which is why <code>.write</code> and <code>.end</code> exist) is a key Node.js concept.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>res.send({a:1})</code> and <code>res.json({a:1})</code>? (In modern Express, almost nothing. <code>res.json()</code> is just more explicit and guarantees JSON-specific formatting settings).</li>
+            <li>What is <code>res.sendStatus(404)</code>? (It's a shortcut. It's the same as <code>res.status(404).send('Not Found')</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://expressjs.com/en/4x/api.html#res.json" target="_blank" class="hover:underline">Express Docs: res.json()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#res.send" target="_blank" class="hover:underline">Express Docs: res.send()</a></li>
+            <li><a href="https://expressjs.com/en/4x/api.html#res.end" target="_blank" class="hover:underline">Express Docs: res.end()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+
+  {
     type: "heading",
-    title: "Buffer, Streams and Events"
+    title: "Node Advanced"
   },
   {
     title: "Buffers",
@@ -3123,99 +3467,7 @@ server.listen(3000, () => console.log('Server running on port 3000...'));
       </div>
     `
   },
-  {
-    title: "EventEmitter Class",
-    difficulty: "Advanced",
-    details: `
-      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
-        Tell the reviewer: "I know the 'EventEmitter' is a core concept in Node.js. I use it to implement the observer pattern, where I 'emit' named events, and 'on' listeners react to them. This helps me write decoupled, event-driven code. I also know many Node.js objects, like streams, are built on it."
-      </blockquote>
-
-      <div class="space-y-6 text-gray-300">
-        <section>
-          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
-          <p>The <code>EventEmitter</code> is a class from the <code>events</code> core module. It's the foundation of Node's event-driven architecture. Many of Node's built-in objects (like HTTP servers, streams, and process) <strong>inherit</strong> from <code>EventEmitter</code>.</p>
-          <p class="mt-2">The concept is simple (it's the "Observer Pattern"):</p>
-          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
-            <li><strong><code>.on('eventName', listener)</code>:</strong> You "listen" for an event. The <code>listener</code> function will be called every time that event happens.</li>
-            <li><strong><code>.emit('eventName', ...args)</code>:</strong> You "emit" (or fire) an event. This will trigger all registered listeners, passing them any arguments.</li>
-          </ul>
-          <p class="mt-2">You can also use <code>.once()</code> to listen for an event only one time.</p>
-        </section>
-
-        <section>
-          <h2 class="text-lg font-semibold text-white mb-2">Example (Creating a custom EventEmitter)</h2>
-          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
-            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
-const EventEmitter = require('events');
-
-// 1. Create a class that inherits from EventEmitter
-class MyLogger extends EventEmitter {
-  log(message) {
-    console.log('LOG:', message);
-    
-    // 2. Emit an event with data
-    this.emit('messageLogged', { level: 'info', text: message });
-  }
-
-  error(message) {
-    console.error('ERROR:', message);
-    
-    // 2. Emit a different event
-    this.emit('errorLogged', { level: 'high', text: message });
-  }
-}
-
-// --- Using the class ---
-
-const logger = new MyLogger();
-
-// 3. Register listeners with .on()
-logger.on('messageLogged', (eventArgs) => {
-  console.log(\`Listener 1 (info): \${eventArgs.text}\`);
-});
-
-logger.on('errorLogged', (eventArgs) => {
-  console.log(\`Listener 2 (error): Sending email about \${eventArgs.text}\`);
-});
-
-// 4. Using .once()
-logger.once('messageLogged', () => {
-  console.log('This will only run for the first log message.');
-});
-
-// --- Trigger the events ---
-logger.log('Server started');
-logger.log('User signed in');
-logger.error('Database connection failed');
-            </code></pre>
-          </div>
-        </section>
-
-        <section>
-          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
-          <p>This pattern allows you to write highly decoupled code. Your logger class doesn't need to know *what* to do when a message is logged (send an email, save to a file, etc.). It just <em>emits an event</em>. Other parts of your application can then listen for that event and react however they want, without the logger class ever knowing about them.</p>
-        </section>
-
-        <section>
-          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
-          <ul class="list-disc list-inside ml-4">
-            <li>What's the difference between <code>on</code> and <code>once</code>? (<code>on</code> fires every time, <code>once</code> fires only the first time).</li>
-            <li>How do streams use EventEmitters? (<code>readStream.on('data', ...)</code> is the stream object, which is an EventEmitter, listening for the 'data' event).</li>
-            <li>How would you remove a listener? (<code>.off('eventName', listenerFunction)</code>).</li>
-          </ul>
-        </section>
-        
-        <section>
-          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
-          <ul class="list-disc list-inside ml-4 text-blue-400">
-            <li><a href="https://nodejs.org/api/events.html" target="_blank" class="hover:underline">Node.js Docs: Events</a></li>
-            <li><a href="https://www.freecodecamp.org/news/event-emitter-in-node-js/" target="_blank" class="hover:underline">Event Emitter in Node.js (freeCodeCamp)</a></li>
-          </ul>
-        </section>
-      </div>
-    `
-  }
+  
 ]
 
 
