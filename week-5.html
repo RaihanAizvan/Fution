@@ -250,6 +250,104 @@
         type: 'heading',
         title: "Basic Mongodb Theory",
       },
+      {
+title: "What is MongoDB?",
+difficulty: "Beginner",
+details: `
+  <blockquote class="italic text-gray-400 border-l-4 border-green-500 pl-4 mb-4">
+    Tell the reviewer: "I understand that MongoDB is a NoSQL, document-oriented database. It stores data as flexible JSON-like documents instead of rows and columns, making it easy to work with changing data structures and ideal for modern web applications."
+  </blockquote>
+
+  <div class="space-y-6 text-gray-300">
+    <section>
+      <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+      <p>MongoDB is a <strong>NoSQL database</strong> that stores data in <strong>collections</strong> and <strong>documents</strong> instead of tables and rows. Each document is like a JavaScript object — simple, readable, and flexible.</p>
+
+      <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+        <li><strong>Document-oriented:</strong> Data is stored as key-value pairs inside JSON-like documents.</li>
+        <li><strong>Flexible schema:</strong> Documents in the same collection can have different structures.</li>
+        <li><strong>Scalable and fast:</strong> Ideal for applications that handle lots of unstructured or dynamic data.</li>
+        <li><strong>Works well with JavaScript:</strong> Since data looks like JSON, it fits naturally with Node.js and the MERN stack.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-white mb-2">Example (Imagine a Collection of Students)</h2>
+      <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+        <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+/*
+Think of a database as a big container.
+Inside it, we have collections (like tables).
+Inside each collection, we have documents (like rows).
+
+Example: A "students" collection in MongoDB might look like this:
+*/
+
+{
+  name: "Luffy",
+  age: 19,
+  course: "Computer Science",
+  hobbies: ["Adventure", "Sword Training"]
+}
+
+{
+  name: "Zoro",
+  age: 21,
+  course: "Martial Arts",
+  hobbies: ["Training", "Meditation"]
+}
+
+// Notice: Each document can have its own structure — no fixed schema!
+        </code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-white mb-2">Terminal Commands</h2>
+      <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+        <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-bash">
+# Start MongoDB server (make sure it's installed)
+$ mongod
+
+# Open Mongo shell (interactive terminal)
+$ mongosh
+
+# Create or switch to a database
+> use school
+
+# Create a collection and insert a document
+> db.students.insertOne({ name: "Luffy", age: 19, course: "Computer Science" })
+
+# Find all documents
+> db.students.find()
+
+# Update a document
+> db.students.updateOne({ name: "Luffy" }, { $set: { age: 20 } })
+
+# Delete a document
+> db.students.deleteOne({ name: "Luffy" })
+        </code></pre>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+      <p>MongoDB is popular in modern web development because it’s easy to start with, flexible, and fits naturally with JavaScript and Node.js. It’s perfect for building fast, scalable applications where data structure can evolve over time — such as social media apps, chat systems, or online stores.</p>
+    </section>
+
+    <section>
+      <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+      <ul class="list-disc list-inside ml-4">
+        <li>What is the difference between MongoDB and SQL databases?</li>
+        <li>What does NoSQL mean?</li>
+        <li>What is a collection and a document?</li>
+        <li>Is MongoDB schema-less? Why is that useful?</li>
+      </ul>
+    </section>
+  </div>
+`
+
+      }
   
 
 ]
