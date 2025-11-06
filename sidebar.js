@@ -134,71 +134,80 @@ function generateSidebar(currentWeek = 1) {
     const q = quotes[Math.floor(Math.random() * quotes.length)];
 
     return `
-        <nav id="sidebar" class="flex flex-col justify-between fixed top-0 left-0 h-full w-64 lg:w-96 bluue border border-gray-700 border-opacity-70 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50 border-r border-gray-700 pt-16 lg:pt-0 bg-gray-900">
-            <div class="lg:p-6 p-3 pb-0">
 
-                <!-- Logo/Header -->
-                <a href="${config.weeks[0].href}">
-                    <div class="flex items-center space-x-3 mb-8">
-                        <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <img src="${config.logo.src}" alt="${config.logo.alt}" class="w-8 h-8 rounded" />
-                        </div>
-                        <div>
-                            <h1 class="text-xl font-bold">${config.logo.title}</h1>
-                            <p class="text-sm text-gray-400">${config.logo.subtitle}</p>
-                        </div>
-                    </div>
-                </a>
+<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
 
-                <!-- Fution Space Navigation -->
-                <div class="space-y-2 mb-6">
-                    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Fution Space</h2>
-                    <a href="fution-space.html" 
-                       class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${isFutionActive ? 'bg-gray-700/50 border border-blue-500' : 'hover:bg-gray-700/50'}">
-                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
-                            <div class="w-5 h-5 bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-70 rounded-xl flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M2.93 19.07A10 10 0 1 1 19.07 5.93 10 10 0 0 1 2.93 19.07zm1.41-1.41A8 8 0 1 0 18.59 4.42 8 8 0 0 0 4.34 17.66"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="font-medium">Fution Space</div>
-                            <div class="text-xs text-gray-400">Your personal learning hub</div>
-                        </div>
-                    </a>
+
+<nav id="sidebar" class="flex flex-col h-screen fixed top-0 left-0 w-64 lg:w-96 bluue border-r border-gray-700/70 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-50">
+    
+    <div class="p-6 flex-shrink-0">
+        <button id="close-sidebar-button" class="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <a href="${config.weeks[0].href}">
+            <div class="flex items-center space-x-3 mb-6">
+                <div class="w-10 h-10 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <img src="${config.logo.src}" alt="${config.logo.alt}" class="w-8 h-8 rounded" />
                 </div>
-        
-        <!-- Week Navigation -->
-        <div class="space-y-2 overflow-y-auto  h-[calc(100dvh-500px)] overflow-x-hidden  scrollbar-thin-gray ">
-          <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4 ">Weeks</h2>
-          ${weeksHTML}
-        </div>
-        
-        <!-- Creative Section: Random Motivational Quote -->
-        <div class="text-[12px] mt-5s  p-4 border border-gray-700 border-opacity-70 rounded-lg bg-gradient-to-r from-blue-900/20 to-gray-700/20">
-          <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
-            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 17a4 4 0 0 1 4-4h1V7a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h2zm10 0a4 4 0 0 1 4-4h1V7a4 4 0 0 0-4-4h-2a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h2z"/></svg>
-            Random Quote
-          </h3>
-          <blockquote class="italic text-gray-300" id="motivationalQuote">
-            "${q.text}"<br>
-            <span class="text-xs text-gray-500">— ${q.category}</span>
-          </blockquote>
-        </div>
-      </div>
-      
-      <!-- Bottom Footer -->
-      <div class="p-2 border-t border-gray-700 text-center text-xs flex justify-center text-gray-500">
-        <div class="flex justify-center mb-2">
-            <img src="${config.footer.img}" alt="${config.logo.alt}" class="w-6 h-6 " />
-            
+                <div>
+                    <h1 class="text-xl font-bold">${config.logo.title}</h1>
+                    <p class="text-sm text-gray-400">${config.logo.subtitle}</p>
+                </div>
             </div>
-            <div class="flex flex-col items-center justify-center space-x-2">
-            <p>${config.footer.copyright}</p>
-            <p>${config.footer.author.text} <a href="${config.footer.author.url}" class="hover:text-white hover:underline" target="_blank">${config.footer.author.name}</a></p>
-          </div>
-      </nav>
+        </a>
+
+        <div class="space-y-2">
+            <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">Fution Space</h2>
+            <a href="fution-space.html" 
+               class="flex items-center space-x-3 p-3 rounded-lg transition-all duration-200 ${isFutionActive ? 'bg-gray-700/50 border border-blue-500' : 'hover:bg-gray-700/50'}">
+                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
+                    <div class="w-5 h-5 bg-blue-500 bg-opacity-10 border border-blue-500 border-opacity-70 rounded-xl flex items-center justify-center">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M2.93 19.07A10 10 0 1 1 19.07 5.93 10 10 0 0 1 2.93 19.07zm1.41-1.41A8 8 0 1 0 18.59 4.42 8 8 0 0 0 4.34 17.66"/>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <div class="font-medium">Fution Space</div>
+                    <div class="text-xs text-gray-400">Your personal learning hub</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="px-6 flex-grow overflow-y-auto scrollbar-thin-gray">
+        <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-4">Weeks</h2>
+        <div class="space-y-2">
+            ${weeksHTML}
+        </div>
+    </div>
+    
+    <div class="p-6 flex-shrink-0">
+        <div class="text-xs p-4 border border-gray-700/70 rounded-lg  mb-4">
+            <h3 class="text-sm font-semibold mb-3 flex items-center gap-2">
+                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 17a4 4 0 0 1 4-4h1V7a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h2zm10 0a4 4 0 0 1 4-4h1V7a4 4 0 0 0-4-4h-2a4 4 0 0 0-4 4v6a4 4 0 0 0 4 4h2z"/></svg>
+                Random Quote
+            </h3>
+            <blockquote class="italic text-gray-300" id="motivationalQuote">
+                "${q.text}"<br>
+                <span class="text-xs text-gray-500">— ${q.category}</span>
+            </blockquote>
+        </div>
+
+        <div class="border-t border-gray-700 pt-4 text-center text-xs text-gray-500">
+            <div class="flex items-center justify-center space-x-2">
+                <img src="${config.footer.img}" alt="${config.logo.alt}" class="w-6 h-6" />
+                <div>
+                    <p>${config.footer.copyright}</p>
+                    <p>${config.footer.author.text} <a href="${config.footer.author.url}" class="hover:text-white hover:underline" target="_blank">${config.footer.author.name}</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
   `;
 }
 
