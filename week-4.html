@@ -4103,6 +4103,501 @@ app.get('/dashboard', (req, res) => {
     title: "Node Advanced"
   },
   {
+    title: "Event Loop Phases",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the event loop isn't just one queue. It's a series of phases that run in a specific order, like 'timers' for 'setTimeout', 'poll' for I/O, and 'check' for 'setImmediate'. Crucially, the microtask queue drains *after each* phase."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The Node.js event loop is a "loop" that runs as long as your application has work to do. Think of it as a manager with a specific checklist they go through in a circle. The main phases are:</p>
+          <ol class="list-decimal list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Timers:</strong> Runs callbacks for <code>setTimeout()</code> and <code>setInterval()</code> that are due.</li>
+            <li><strong>Pending Callbacks:</strong> (Internal use) Executes I/O callbacks that were deferred to the next loop.</li>
+            <li><strong>Poll:</strong> The main phase. It retrieves new I/O events (like a file read finishing) and runs their callbacks. If there's nothing, it will "poll" (wait) for new events.</li>
+            <li><strong>Check:</strong> Runs callbacks scheduled with <code>setImmediate()</code>. This phase runs right after the Poll phase.</li>
+            <li><strong>Close Callbacks:</strong> Runs cleanup code, like <code>socket.on('close', ...)</code>.</li>
+          </ol>
+          <p class="mt-2"><strong>The most important rule:</strong> After your synchronous code finishes, and *after each phase* of the event loop, Node.js <strong>immediately</strong> runs all tasks in the <strong>Microtask Queue</strong> (<code>Promise.then</code>, <code>process.nextTick</code>) until it's empty.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Timers vs. Check vs. Microtask)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+
+console.log('1. Start');
+
+// Timer (Macrotask - Timers Phase)
+setTimeout(() => {
+  console.log('5. Timer (setTimeout)');
+}, 0);
+
+// Check (Macrotask - Check Phase)
+setImmediate(() => {
+  console.log('6. Check (setImmediate)');
+});
+
+// Microtask
+Promise.resolve().then(() => {
+  console.log('3. Microtask (Promise)');
+});
+
+// I/O (Macrotask - Poll Phase)
+fs.readFile(__filename, () => {
+  console.log('4. Poll (I/O complete)');
+});
+
+console.log('2. End');
+
+// --- Expected Order: ---
+// 1. Start
+// 2. End
+// 3. Microtask (Promise) - (Runs right after sync code)
+// 4. Poll (I/O complete) - (Runs when I/O is done)
+// 5. Timer (setTimeout)  - (Runs in Timers phase)
+// 6. Check (setImmediate) - (Runs in Check phase, after Poll)
+
+// Note: The order of 4, 5, and 6 can vary based on
+// how long the I/O (4) takes. But 3 *always* runs before them.
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This explains *why* Node.js is asynchronous and how it works. Understanding this order allows you to predict your code's execution flow and debug tricky, non-deterministic bugs (like when a <code>setTimeout(0)</code> runs before or after a <code>setImmediate</code>).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What happens if you have a <code>while(true)</code> loop? (It blocks the main thread, and the event loop *never* gets to run. The server freezes).</li>
+            <li>Inside an I/O callback, what runs first: <code>setTimeout(0)</code> or <code>setImmediate()</code>? (<code>setImmediate</code>, because the Poll phase moves to the Check phase before looping back to Timers).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick" target="_blank" class="hover:underline">Node.js Docs: The Event Loop, Timers, and nextTick()</a></li>
+            <li><a href="https://www.youtube.com/watch?v=PNa9OMajw9w" target="_blank" class="hover:underline">What the heck is the event loop anyway? (Video)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Microtask vs. Macrotask Queue",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the two main task queues. Macrotasks (like 'setTimeout', I/O) are handled one at a time by the event loop's phases. Microtasks (like 'Promise.then', 'process.nextTick') are a *higher priority* queue that drains *immediately* after the current synchronous code and *after each* macrotask."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>Think of it like a to-do list at a hospital.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Macrotask Queue (or "Task Queue"):</strong>
+              <ul>
+                <li><strong>What:</strong> The "regular patients" waiting.</li>
+                <li><strong>Examples:</strong> <code>setTimeout</code>, <code>setImmediate</code>, <code>setInterval</code>, I/O (file reads, network).</li>
+                <li><strong>How:</strong> The event loop takes *one* task from this queue, runs it, and then moves on.</li>
+              </ul>
+            </li>
+            <li><strong>Microtask Queue:</strong>
+              <ul>
+                <li><strong>What:</strong> The "emergency room" (ER). These are high-priority.</li>
+                <li><strong>Examples:</strong> <code>Promise.then()</code>, <code>.catch()</code>, <code>.finally()</code>, <code>process.nextTick()</code>.</li>
+                <li><strong>How:</strong> After your main script finishes, AND after *every single macrotask* finishes, the event loop *must* check the ER. It will run *all* tasks in the microtask queue until it's empty before it's allowed to take the *next* macrotask.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (The Classic Log Order)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+console.log('1. Sync Start');
+
+// Macrotask
+setTimeout(() => {
+  console.log('5. Macrotask (setTimeout)');
+}, 0);
+
+// Microtask
+Promise.resolve().then(() => {
+  console.log('3. Microtask (Promise.then)');
+});
+
+// Special Microtask (highest priority)
+process.nextTick(() => {
+  console.log('2. Microtask (process.nextTick)');
+});
+
+console.log('4. Sync End');
+
+// --- Expected Order: ---
+// 1. Sync Start
+// 4. Sync End
+// (Sync code finishes. Now, drain microtasks.)
+// 2. Microtask (process.nextTick) - (Higher priority microtask)
+// 3. Microtask (Promise.then)
+// (Microtasks empty. Now, start event loop for macrotasks.)
+// 5. Macrotask (setTimeout) - (From Timers phase)
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This explains *why* <code>async/await</code> and Promises feel so "immediate." A <code>Promise.then()</code> will *always* run before a <code>setTimeout(0)</code>, because microtasks are a higher priority and run before the event loop's timer phase even begins.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the difference between <code>process.nextTick</code> and <code>Promise.then</code>? (Both are microtasks, but <code>nextTick</code> has a higher priority and will run before other microtasks).</li>
+            <li>What happens if a microtask queues another microtask? (It gets added to the *same* microtask queue and will also run before the next macrotask. This can "starve" the event loop).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide" target="_blank" class="hover:underline">MDN: Microtask Guide</a></li>
+            <li><a href="https.blog.risingstack.com/node-js-at-scale-understanding-the-event-loop/" target="_blank" class="hover:underline">Understanding the Event Loop (RisingStack)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "`process.nextTick()` vs. `setImmediate()`",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "This is a classic question. 'process.nextTick' is a high-priority *microtask* that runs immediately after the current operation, before the event loop continues. 'setImmediate' is a *macrotask* that runs in the 'check' phase of the event loop, after the 'poll' (I/O) phase."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>This is the clearest way to see the difference between the microtask and macrotask queues.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>process.nextTick(callback)</code>:</strong>
+              <ul>
+                <li><strong>Queue:</strong> Microtask (high priority).</li>
+                <li><strong>When it runs:</strong> "Next tick" is a bad name. It should be "right now, after this." It runs *immediately* after the current synchronous code, before the event loop is allowed to proceed to its next phase (like Timers or Poll).</li>
+              </ul>
+            </li>
+            <li><strong><code>setImmediate(callback)</code>:</strong>
+              <ul>
+                <li><strong>Queue:</strong> Macrotask (Check phase).</li>
+                <li><strong>When it runs:</strong> "Immediately" is also a bad name. It means "run on the next cycle of the event loop, specifically in the Check phase." This runs *after* the Poll (I/O) phase.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Clear Order)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+console.log('1. Start');
+
+// Macrotask
+setImmediate(() => {
+  console.log('4. setImmediate (Macrotask - Check Phase)');
+});
+
+// Microtask
+process.nextTick(() => {
+  console.log('3. process.nextTick (Microtask)');
+});
+
+console.log('2. End');
+
+// --- Expected Order: ---
+// 1. Start
+// 2. End
+// (Sync code finishes. Now, drain microtasks.)
+// 3. process.nextTick (Microtask)
+// (Microtasks empty. Now, start event loop.)
+// (Timers phase is empty)
+// (Poll phase is empty)
+// 4. setImmediate (Check Phase)
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p><code>process.nextTick</code> allows you to "cut in line" with the highest possible priority, which can be useful but also dangerous (you can starve the event loop). <code>setImmediate</code> is a "safer" way to yield to the event loop and let any I/O finish before your code runs.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>Which has higher priority: <code>process.nextTick</code> or <code>Promise.then</code>? (<code>process.nextTick</code>).</li>
+            <li>What runs first: <code>setTimeout(0)</code> or <code>setImmediate()</code>? (It's non-deterministic *unless* you are inside an I/O callback, in which case <code>setImmediate</code> *always* runs first).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/timers.html#setimmediatecallback-args" target="_blank" class="hover:underline">Node.js Docs: setImmediate()</a></li>
+            <li><a href="https://nodejs.org/api/process.html#processnexttickcallback-args" target="_blank" class="hover:underline">Node.js Docs: process.nextTick()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "The Thread Pool (libuv)",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know Node's event loop is single-threaded, but libuv uses a thread pool (default size 4) to handle *blocking* operations asynchronously. Heavy tasks like 'fs.readFile' or 'crypto.pbkdf2' are passed to this pool, so the main event loop isn't blocked. When the thread finishes, it queues a callback to run in the 'poll' phase."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The "Node.js is single-threaded" idea is only half-true. Your JavaScript code runs on one main thread (the event loop). But Node.js (via the C++ library <strong>libuv</strong>) has a <strong>Thread Pool</strong>, which is a small group of (by default, 4) other threads.</p>
+          <p class="mt-2">Analogy: The Event Loop is a manager. The Thread Pool is a team of 4 workers.</p>
+          <ol class="list-decimal list-inside ml-4 mt-2 space-y-1">
+            <li>A request comes in for a *heavy, blocking task* (like reading a file or a hard crypto calculation).</li>
+            <li>The manager (Event Loop) <strong>does not</strong> do this work. It would block the phone line.</li>
+            <li>The manager gives the task to one of the 4 workers (Thread Pool) and immediately goes back to answering the phone (handling other requests).</li>
+            <li>When the worker finishes, they put the result on the manager's desk.</li>
+            <li>The manager (in the Poll phase) sees the finished work, and runs the callback.</li>
+          </ol>
+          <p class="mt-2">This is how Node.js achieves asynchronicity for tasks that are inherently blocking at the OS level (like most <code>fs</code> and <code>crypto</code> operations).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Blocking the Thread Pool)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const crypto = require('crypto');
+const fs = require('fs');
+
+const start = Date.now();
+
+// This function is heavy and uses the thread pool
+const runHash = (id) => {
+  crypto.pbkdf2('password', 'salt', 100000, 512, 'sha512', () => {
+    console.log(\`Hash \${id} complete: \${Date.now() - start}ms\`);
+  });
+};
+
+// --- Main Thread ---
+console.log('Main thread: Running 5 hashes...');
+
+// These 4 will run in *parallel* on the 4 threads in the pool
+runHash(1);
+runHash(2);
+runHash(3);
+runHash(4);
+
+// This 5th hash must *wait* for one of the first 4 to finish
+runHash(5);
+
+// This is NOT blocked by the hashes, it runs right away
+console.log('Main thread: Hashes started, moving on...');
+
+// This I/O task ALSO uses the thread pool,
+// so it has to wait for a free thread.
+fs.readFile(__filename, () => {
+  console.log(\`FS Read complete: \${Date.now() - start}ms\`);
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This demystifies Node.js. It's not "magic." It's a single-threaded event loop *plus* a multi-threaded pool for heavy lifting. It also shows a performance bottleneck: if you have 5 heavy crypto tasks, the 5th one (and any file I/O) has to wait for the default 4 threads to finish.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How can you change the thread pool size? (Set the <code>UV_THREADPOOL_SIZE</code> environment variable).</li>
+            <li>What *doesn't* use the thread pool? (Network I/O, like <code>http.get</code>. Modern OSes handle this without blocking, so libuv uses that instead. It's much faster).</li>
+            <li>What are <code>worker_threads</code>? (A *new* way to create *more* threads for your own CPU-heavy JavaScript code).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/libuv.html#thread-pool" target="_blank" class="hover:underline">Node.js Docs: The libuv Thread Pool</a></li>
+            <li><a href="https://docs.libuv.org/en/v1.x/threadpool.html" target="_blank" class="hover:underline">libuv Docs: Thread pool</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "How Node.js Handles Concurrency",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "Node.js achieves high concurrency on a single thread by using an event-driven, non-blocking I/O model. It can handle thousands of connections at once because the main thread *never waits*. It just starts an I/O operation (like a database query) and registers a callback, then immediately moves on to the next request."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>This is the "big idea" that combines all the previous topics.</p>
+          <p class="mt-2"><strong>Concurrency vs. Parallelism:</strong></p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Parallelism:</strong> Doing multiple things at the *exact same time* (e.g., 4 CPU cores running 4 tasks).</li>
+            <li><strong>Concurrency:</strong> *Managing* multiple tasks at the same time (e.g., a chef has 10 pans on the stove, but only one set of hands. They give attention to each pan *as needed*).</li>
+          </ul>
+          <p class="mt-2">Node.js is <strong>concurrent</strong>. The Event Loop is the "chef." It handles thousands of "pans" (requests) at once.</p>
+          <p class="mt-2"><strong>How it works (The "Receptionist" Analogy):</strong></p>
+          <ol class="list-decimal list-inside ml-4 mt-1">
+            <li>The Event Loop is a receptionist at a busy office, with a single phone line.</li>
+            <li><strong>User 1 calls:</strong> "Hi, I need you to find a large file for me."</li>
+            <li><strong>Receptionist (Event Loop):</strong> "Sure!" The receptionist *doesn't* go look for the file. They send a "worker" (from the Thread Pool) to get it. "I'll call you back when it's ready." They hang up, freeing the line.</li>
+            <li><strong>User 2 calls:</strong> "Hi, I need to look up a simple database value."</li>
+            <li><strong>Receptionist:</strong> "Sure!" They send a (fast, non-blocking) request to the database. "I'll call you back." They hang up.</li>
+            <li>...This repeats for 10,000 users. The receptionist's line is always free.</li>
+            <li>The database (fast) calls back first. The receptionist (Event Loop) picks up, gets the data, and sends it to User 2.</li>
+            <li>The worker (slow) comes back with the file. The receptionist gets the file and sends it to User 1.</li>
+          </ol>
+          <p class="mt-2">The "receptionist" (main thread) is never blocked. It just takes requests and handles callbacks as they become ready.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the *entire* reason Node.js is so popular. It's incredibly efficient for I/O-bound applications (like APIs, web servers, chat apps) because it uses very little memory per connection, unlike older models (like Apache) that would create a new thread (which is very "expensive") for every single user.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is an "I/O-bound" application? (An app where the bottleneck is "waiting" for things, like a database or a file, not "thinking" (CPU)).</li>
+            <li>When would Node.js be a *bad* choice? (For heavy, CPU-bound tasks, like video encoding, where one long calculation would block the event loop for everyone).</li>
+            <li>How can you do true *parallelism* in Node.js? (Using the <code>worker_threads</code> module to run JavaScript on other CPU cores).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https.developer.ibm.com/articles/l-nodejs-concurrency/" target="_blank" class="hover:underline">Node.js concurrency model (IBM)</a></li>
+            <li><a href="https://nodejs.org/api/worker_threads.html" target="_blank" class="hover:underline">Node.js Docs: Worker Threads (for Parallelism)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Process vs. Thread",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "A process is an isolated program with its own memory, like opening Chrome. A thread is a lightweight unit of execution *within* a process that shares memory with other threads. My Node.js server runs as a single process, which itself has one main thread for the event loop, plus a small thread pool for I/O."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>This is a fundamental computer science concept. Let's use an analogy: a restaurant.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li>A <strong>Process</strong> is the entire restaurant (e.g., "McDonald's").
+              <ul>
+                <li>It's a self-contained program (<code>node my_app.js</code>).</li>
+                <li>It has its own private memory (its own kitchen, ingredients, and staff).</li>
+                <li>It is fully isolated. If "McDonald's" burns down, "Burger King" (another process) is fine.</li>
+              </ul>
+            </li>
+            <li>A <strong>Thread</strong> is a chef *inside* the restaurant.
+              <ul>
+                <li>It's a unit of execution *within* a process.</li>
+                <li>Threads *share* memory (all chefs share the *same* kitchen and ingredients).</li>
+                <li>A process can be single-threaded (one chef) or multi-threaded (many chefs).</li>
+              </ul>
+            </li>
+          </ul>
+          <p class="mt-2">A standard Node.js application is <strong>one process</strong> with <strong>one main thread</strong> (the event loop). This one chef is just very, very fast at managing tasks (non-blocking I/O).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Comparison Table</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-sm text-left">
+                <thead class="text-xs text-gray-400 uppercase bg-gray-800">
+                  <tr>
+                    <th scope="col" class="py-3 px-6">Feature</th>
+                    <th scope="col" class="py-3 px-6">Process</th>
+                    <th scope="col" class="py-3 px-6">Thread</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                  <tr class="border-b border-gray-700">
+                    <td class="py-4 px-6 font-medium text-white">Memory</td>
+                    <td class="py-4 px-6">Isolated (Does not share)</td>
+                    <td class="py-4 px-6">Shared (within the same process)</td>
+                  </tr>
+                  <tr class="border-b border-gray-700">
+                    <td class="py-4 px-6 font-medium text-white">Creation</td>
+                    <td class="py-4 px-6">"Heavy" (slow to start)</td>
+                    <td class="py-4 px-6">"Lightweight" (fast to start)</td>
+                  </tr>
+                  <tr class="border-b border-gray-700">
+                    <td class="py-4 px-6 font-medium text-white">Fault Isolation</td>
+                    <td class="py-4 px-6">High (If one process crashes, others are fine)</td>
+                    <td class="py-4 px-6">Low (If one thread crashes, the whole process crashes)</td>
+                  </tr>
+                  <tr class="border-b border-gray-700">
+                    <td class="py-4 px-6 font-medium text-white">Node.js Example</td>
+                    <td class="py-4 px-6"><code>cluster</code> module</td>
+                    <td class="py-4 px-6"><code>worker_threads</code> module</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This explains Node's limitations and how to scale it. To use all 8 cores of your CPU, you can't just run <code>node server.js</code>. You must use the <code>cluster</code> module to create 8 <strong>processes</strong> (8 "restaurants") or use <code>worker_threads</code> to create new <strong>threads</strong> (more "chefs") for heavy CPU work.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is the Note.js 'cluster' module? (A module to create multiple child processes that can all share the same server port, allowing you to use all CPU cores).</li>
+            <li>Why is sharing memory between threads hard? (It can lead to "race conditions," where two threads try to change the same value at the same time).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://www.geeksforgeeks.org/difference-between-process-and-thread/" target="_blank" class="hover:underline">Process vs. Thread (GeeksforGeeks)</a></li>
+            <li><a href="https://nodejs.org/api/cluster.html" target="_blank" class="hover:underline">Node.js Docs: Cluster</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
     title: "Buffers",
     difficulty: "Advanced",
     details: `
@@ -4349,9 +4844,488 @@ server.listen(3000, () => console.log('Server running on port 3000...'));
     `
   },
 
-    // topics by raihan
-  // 12.26pm 6th Nov 2025
-  // topics : auth 
+  {
+    title: "File Uploads (with Multer)",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "For file uploads, I don't parse 'multipart/form-data' myself. I use 'multer', the standard Express middleware, to handle it. I know how to configure 'multer' for a single file ('upload.single()') or multiple files, and how to access the file data from 'req.file' or 'req.files'."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>File uploads are sent from a client (like a browser) using a special <code>Content-Type</code> called <code>multipart/form-data</code>. This format is complex to parse manually.</p>
+          <p class="mt-2"><strong>Multer</strong> is the standard, must-have middleware for Express to handle these uploads. It parses the incoming form, saves any files to a destination (like an <code>./uploads/</code> folder), and attaches information about the files to the <code>req</code> object (as <code>req.file</code> or <code>req.files</code>).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using 'multer' for a single file)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- server.js ---
+// 1. Install: npm install express multer
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const app = express();
+
+// 2. Configure Multer's storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Save files to 'uploads/' directory
+  },
+  filename: (req, file, cb) => {
+    // Save file with a unique name (timestamp + original name)
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+// 3. Initialize Multer
+const upload = multer({ storage: storage });
+
+// 4. Create an 'uploads' directory if it doesn't exist
+const fs = require('fs');
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
+
+// 5. Create a route that uses the middleware
+// 'avatar' is the 'name' attribute of the <input type="file" name="avatar">
+app.post('/profile-upload', upload.single('avatar'), (req, res) => {
+  // 'req.file' is the 'avatar' file
+  // 'req.body' will hold the text fields, if any
+  
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  console.log('File details:', req.file);
+  res.json({
+    message: 'File uploaded successfully!',
+    filename: req.file.filename,
+    path: req.file.path
+  });
+});
+
+app.listen(3000, () => console.log('Server listening on port 3000...'));
+
+// --- public/index.html (Example client form) ---
+// &lt;form action="/profile-upload" method="POST" enctype="multipart/form-data"&gt;
+//   &lt;h2&gt;Upload Profile Picture&lt;/h2&gt;
+//   &lt;input type="file" name="avatar" /&gt;
+//   &lt;button type="submit"&gt;Upload&lt;/button&gt;
+// &lt;/form&gt;
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Handling file uploads is a core requirement for almost any modern application (profile pictures, document sharing, etc.). Using <code>multer</code> correctly is a non-negotiable skill for an Express developer. It handles parsing, streaming, and saving files, which is extremely difficult to do from scratch.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you handle multiple files? (<code>upload.array('photos', 10)</code>).</li>
+            <li>How can you restrict file types? (Using the <code>fileFilter</code> option in <code>multer({ ... })</code>).</li>
+            <li>Where is the file data in <code>req.file</code>? (<code>req.file</code> is an object with info like <code>filename</code>, <code>path</code>, <code>mimetype</code>, and <code>size</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://github.com/expressjs/multer" target="_blank" class="hover:underline">Multer NPM (Official Docs)</a></li>
+            <li><a href="https://www.digitalocean.com/community/tutorials/how-to-handle-file-uploads-in-express-using-multer" target="_blank" class="hover:underline">How To Handle File Uploads in Express (DigitalOcean)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Read File and Write file",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the 'fs' module is for file system operations. I use the async methods 'fs.readFile' and 'fs.writeFile' with an error-first callback, as they are non-blocking. I only use the sync versions, 'readFileSync' and 'writeFileSync', at the start of a script for loading config."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>fs</code> (File System) module is a core Node.js module for interacting with the file system.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>fs.readFile(path, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Reads the *entire* file into memory and passes its contents (as a Buffer or string) to the callback.</li>
+                <li>The callback is an "error-first" callback: <code>(err, data) => { ... }</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.writeFile(path, data, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Writes <code>data</code> to a file, replacing it if it exists.</li>
+                <li>The callback is <code>(err) => { ... }</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>...Sync()</code> versions:</strong> <code>fs.readFileSync()</code> and <code>fs.writeFileSync()</code> are the synchronous, blocking versions. They are fine for simple scripts but should be avoided inside a web server as they block the event loop.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Async Read/Write)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+const filePath = path.join(__dirname, 'greetings.txt');
+const newFilePath = path.join(__dirname, 'new-file.txt');
+
+// 1. Asynchronous Write
+fs.writeFile(filePath, 'Hello from Node.js!', 'utf8', (err) => {
+  if (err) {
+    return console.error('Error writing file:', err.message);
+  }
+  console.log('File written successfully.');
+
+  // 2. Asynchronous Read (chained after write)
+  // 'utf8' encoding returns a string, otherwise it's a Buffer
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      return console.error('Error reading file:', err.message);
+    }
+    console.log('File content:', data); // "Hello from Node.js!"
+
+    // 3. Example of Sync Read (Used for initial config)
+    // This blocks, but it's okay here at the top level
+    try {
+      const config = fs.readFileSync('package.json', 'utf8');
+      console.log('Loaded config file.');
+    } catch (err) {
+      console.error('Could not load config', err.message);
+    }
+  });
+});
+
+console.log('Writing file...'); // This logs *before* "File written successfully."
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is a fundamental I/O operation. Understanding the async vs. sync versions is critical. Using <code>readFileSync</code> inside an Express route is a major performance bottleneck, as it will block your entire server from handling other requests until the file is read.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What happens if you don't specify 'utf8' when reading? (You get a Buffer).</li>
+            <li>What's the difference between <code>writeFile</code> and <code>appendFile</code>? (<code>writeFile</code> overwrites the file, <code>appendFile</code> adds to the end).</li>
+            <li>What if the file is 10GB? (Don't use <code>readFile</code>! Use <code>fs.createReadStream</code> to stream it).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fsreadfilepath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.readFile()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fswritefilepath-data-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.writeFile()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "File System Operations: `stat`, `unlink`, `existsSync`",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use 'fs.stat' to get file metadata, like 'stats.isDirectory()' or 'stats.size'. I use 'fs.unlink' to delete a file, and 'fs.existsSync' for a simple, synchronous check to see if a file or directory exists before I try to operate on it."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>These are common "utility" functions in the <code>fs</code> module.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>fs.stat(path, callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Gets "stats" (metadata) about a file or directory.</li>
+                <li>The callback <code>(err, stats)</code> gives you a <code>stats</code> object. You can check <code>stats.isFile()</code>, <code>stats.isDirectory()</code>, <code>stats.size</code> (in bytes), <code>stats.mtime</code> (last modified time), etc.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.unlink(path, callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Deletes a file. The name "unlink" comes from Unix.</li>
+                <li>The callback is <code>(err) => { ... }</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.existsSync(path)</code>:</strong>
+              <ul>
+                <li><strong>Synchronous.</strong> Returns <code>true</code> or <code>false</code> if the path exists.</li>
+                <li>This is one of the few <code>Sync</code> methods that is acceptable to use in server code, because it's fast and often needed right before an async operation (e.g., "check if <code>uploads</code> folder exists before making it").</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Check, Stat, and Unlink)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+const tempFilePath = path.join(__dirname, 'temp-file.txt');
+
+// 1. Check if a file exists (SYNC)
+if (fs.existsSync(tempFilePath)) {
+  console.log('File already exists. Deleting it...');
+  
+  // 2. Delete the file (ASYNC)
+  fs.unlink(tempFilePath, (err) => {
+    if (err) return console.error('Could not delete file:', err.message);
+    console.log('File deleted.');
+    createAndStatFile();
+  });
+} else {
+  createAndStatFile();
+}
+
+function createAndStatFile() {
+  fs.writeFile(tempFilePath, 'This is temporary', (err) => {
+    if (err) return console.error('Write failed:', err.message);
+    
+    // 3. Get metadata for the file (ASYNC)
+    fs.stat(tempFilePath, (err, stats) => {
+      if (err) return console.error('Stat failed:', err.message);
+      
+      console.log('--- File Stats ---');
+      console.log('Is it a file?', stats.isFile()); // true
+      console.log('Is it a directory?', stats.isDirectory()); // false
+      console.log('File size (bytes):', stats.size);
+      console.log('Last modified:', stats.mtime);
+    });
+  });
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>These are the building blocks of file management. You need <code>stat</code> to check permissions or file types, <code>unlink</code> to clean up temporary files (like after a file upload), and <code>existsSync</code> for safe, defensive checks before creating directories or writing files.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you delete a directory? (<code>fs.rmdir()</code> for empty ones, or <code>fs.rm(path, { recursive: true })</code> for non-empty).</li>
+            <li>What's the difference between <code>fs.stat</code> and <code>fs.lstat</code>? (<code>stat</code> follows symbolic links, <code>lstat</code> gives stats about the link itself).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fsstatpath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.stat()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fsunlinkpath-callback" target="_blank" class="hover:underline">Node.js Docs: fs.unlink()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fsexistssyncpath" target="_blank" class="hover:underline">Node.js Docs: fs.existsSync()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Create or Remove Directory",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use 'fs.mkdir()' to create a directory. If I need to create nested directories, like 'a/b/c', I use the '{ recursive: true }' option. To remove a directory, I use 'fs.rmdir()' for empty ones, or 'fs.rm()' with '{ recursive: true }' for non-empty ones."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>fs</code> module provides methods for managing directories (folders).</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>fs.mkdir(path, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Creates a new directory.</li>
+                <li><strong>Options:</strong> <code>{ recursive: true }</code> is essential. It will create parent directories as needed (like <code>mkdir -p</code> in bash) and won't throw an error if the directory already exists.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.rmdir(path, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Removes a directory. This will fail if the directory is not empty.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.rm(path, [options], callback)</code>:</strong> (Modern)
+              <ul>
+                <li><strong>Asynchronous.</strong> The "new" way to remove files or directories.</li>
+                <li>To remove a non-empty directory, use: <code>fs.rm(path, { recursive: true, force: true }, cb)</code>.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Recursive Create and Remove)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+// This path is nested: 'data' contains 'logs'
+const nestedDir = path.join(__dirname, 'data', 'logs');
+
+// 1. Create a nested directory (ASYNC)
+fs.mkdir(nestedDir, { recursive: true }, (err) => {
+  if (err) return console.error('Could not create dir:', err.message);
+  
+  console.log('Directory created:', nestedDir);
+
+  // 2. Write a file inside it
+  const logFile = path.join(nestedDir, 'app.log');
+  fs.writeFile(logFile, 'Log entry', (err) => {
+    if (err) return console.error('Could not write log:', err.message);
+
+    console.log('Log file created.');
+
+    // 3. Remove the non-empty parent directory (ASYNC)
+    const dirToRemove = path.join(__dirname, 'data');
+    fs.rm(dirToRemove, { recursive: true, force: true }, (err) => {
+      if (err) return console.error('Could not remove dir:', err.message);
+      
+      console.log('Recursively removed:', dirToRemove);
+    });
+  });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is essential for setup and cleanup. You use <code>mkdir</code> to ensure your <code>uploads</code> or <code>logs</code> directories exist when your server starts. You use <code>rm</code> or <code>rmdir</code> to clean up temporary directories or user data upon deletion.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you read the contents of a directory? (<code>fs.readdir(path, callback)</code>, which gives you an array of filenames).</li>
+            <li>What's the difference between <code>fs.rmdir</code> and <code>fs.rm</code>? (<code>rmdir</code> is older and only works on empty directories. <code>rm</code> is newer, more powerful, and can remove files or non-empty directories with the <code>recursive</code> flag).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fsmkdirpath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.mkdir()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fsrmpath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.rm()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "File Permissions",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know file permissions are handled by the OS and are based on 'read', 'write', and 'execute' for the 'user', 'group', and 'other'. I can check permissions using 'fs.stat()' to get the 'mode' (like 0o755), and I can change them using 'fs.chmod()'."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>File Permissions control who can read, write, or execute a file. This is a core concept of Linux/macOS/Unix operating systems, which Node.js runs on.</p>
+          <p class="mt-2">Permissions are represented by an <strong>octal (base-8) number</strong>, like <code>0o755</code>.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li>The number is made of 3 digits: (Owner)(Group)(Others)</li>
+            <li>Each digit is a sum of permissions:
+              <ul>
+                <li><strong>4</strong> = Read</li>
+                <li><strong>2</strong> = Write</li>
+                <li><strong>1</strong> = Execute</li>
+              </ul>
+            </li>
+          </ul>
+          <p class="mt-2"><strong>Common Modes:</strong></p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><code>0o755</code> (rwx r-x r-x): Owner can do anything (4+2+1=7). Group/Others can read/execute (4+1=5). (Common for directories).</li>
+            <li><code>0o644</code> (rw- r-- r--): Owner can read/write (4+2=6). Group/Others can only read (4). (Common for files).</li>
+          </ul>
+          <p class="mt-2">In Node.js, you use <code>fs.stat</code> to read the mode, and <code>fs.chmod</code> to change it.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Check and Set Permissions)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+const scriptFile = path.join(__dirname, 'my-script.sh');
+
+// Create a dummy script file
+fs.writeFile(scriptFile, '#!/bin/bash\necho "Hello"', (err) => {
+  if (err) return console.error(err);
+  console.log('Script created.');
+
+  // 1. Check current permissions
+  fs.stat(scriptFile, (err, stats) => {
+    if (err) return console.error(err);
+    // .toString(8) converts the mode number to an octal string
+    console.log('Original mode:', (stats.mode & 0o777).toString(8)); // e.g., "644"
+
+    // 2. Make the file executable for the owner
+    // We want 744 (rwx r-- r--)
+    fs.chmod(scriptFile, 0o744, (err) => {
+      if (err) return console.error('chmod failed:', err.message);
+      
+      console.log('Mode changed to 744.');
+
+      // 3. Verify the new permissions
+      fs.stat(scriptFile, (err, newStats) => {
+        console.log('New mode:', (newStats.mode & 0o777).toString(8)); // "744"
+      });
+    });
+  });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Permissions are critical for security and operations. If your Node.js app generates a script, it must use <code>fs.chmod</code> to make it executable. If it creates a user's data file, it should set permissions (e.g., <code>0o600</code>, "read/write for owner only") to prevent other users on the system from reading it.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is <code>(stats.mode & 0o777)</code> doing? (The full <code>mode</code> contains extra data. Bitwise-ANDing with <code>0o777</code> isolates *only* the permission bits).</li>
+            <li>How do you change file ownership? (<code>fs.chown()</code>).</li>
+            <li>How does this apply to Windows? (It doesn't, really. Windows has a different, more complex ACL system. Node's <code>fs.chmod</code> has limited effect on Windows).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fschmodpath-mode-callback" target="_blank" class="hover:underline">Node.js Docs: fs.chmod()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#statsmode" target="_blank" class="hover:underline">Node.js Docs: stats.mode</a></li>
+            <li><a href="https://www.linux.com/tutorials/understanding-linux-file-permissions/" target="_blank" class="hover:underline">Understanding Linux File Permissions</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  }
+
   
 
   {
