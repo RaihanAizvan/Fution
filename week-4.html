@@ -4280,7 +4280,7 @@ console.log('4. Sync End');
     `
   },
   {
-    title: "`process.nextTick()` vs. `setImmediate()`",
+    title: "process.nextTick() vs.setImmediate()",
     difficulty: "Advanced",
     details: `
       <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
@@ -4597,6 +4597,465 @@ fs.readFile(__filename, () => {
       </div>
     `
   },
+
+// content child process, worker thread, clustering etc
+
+{
+    title: "child_process Module",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the 'child_process' module lets me run external system commands. I use 'spawn()' for streaming large data, as it's non-blocking. I use 'exec()' for simple, one-off commands that return a buffer, and I use 'fork()' to create a new Node.js process with a built-in IPC channel for communication."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>child_process</code> module is a powerful core module that lets your Node.js application run other programs on the system. This is how you can use Node.js as a "glue" for shell scripts or other tools.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>spawn(command, [args])</code>:</strong>
+              <ul>
+                <li>Runs a command in a new process. Does *not* use a shell.</li>
+                <li><strong>Streams</strong> I/O (<code>stdout</code>, <code>stderr</code>). This is the best choice for long-running processes or commands with large data output (like <code>ping</code> or <code>find /</code>).</li>
+              </ul>
+            </li>
+            <li><strong><code>exec(command, callback)</code>:</strong>
+              <ul>
+                <li>Runs a command in a new <strong>shell</strong> (like <code>bash</code>). This lets you use shell syntax like pipes (<code>|</code>) and redirects (<code>&gt;</code>).</li>
+                <li><strong>Buffers</strong> the entire output (max 1MB by default) and passes it to the callback. Good for simple commands (like <code>whoami</code> or <code>ls -l</code>).</li>
+                <li><strong>Warning:</strong> Can be dangerous if you pass un-sanitized user input, as it's vulnerable to shell injection.</li>
+              </ul>
+            </li>
+            <li><strong><code>execFile(file, [args], callback)</code>:</strong>
+              <ul>
+                <li>Similar to <code>exec</code> but safer, as it runs the command *without* a shell.</li>
+              </ul>
+            </li>
+            <li><strong><code>fork(modulePath)</code>:</strong>
+              <ul>
+                <li>A special type of <code>spawn</code> specifically for running *another Node.js script*. It creates a new process with its own V8 instance and sets up an IPC (Inter-Process Communication) channel, allowing you to pass messages back and forth with <code>.send()</code> and <code>.on('message')</code>.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (spawn vs. exec)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const { spawn, exec } = require('child_process');
+
+// --- 1. spawn() (for streaming) ---
+console.log('--- Spawning "ls -lh /" ---');
+// Arguments are passed as an array
+const ls = spawn('ls', ['-lh', '/']);
+
+// Listen to the 'data' event on the stdout stream
+ls.stdout.on('data', (data) => {
+  console.log(\`spawn stdout: ...data chunk...\`);
+});
+
+ls.stderr.on('data', (data) => {
+  console.error(\`spawn stderr: \${data}\`);
+});
+
+ls.on('close', (code) => {
+  console.log(\`spawn exited with code \${code}\`);
+});
+
+// --- 2. exec() (for buffered output) ---
+console.log('\\n--- Executing "whoami" ---');
+// Command is a single string, shell is used
+exec('whoami', (error, stdout, stderr) => {
+  if (error) {
+    console.error(\`exec error: \${error.message}\`);
+    return;
+  }
+  if (stderr) {
+    console.error(\`exec stderr: \${stderr}\`);
+    return;
+  }
+  // stdout is the *entire* buffered output
+  console.log(\`exec stdout: \${stdout.trim()}\`);
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This module is essential for integrating Node.js with the underlying operating system. You use it to run scripts (Python, Bash), perform operations (like <code>git pull</code>), or manage system processes. <code>fork()</code> is the fundamental building block of the <code>cluster</code> module.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What's the main difference between <code>spawn</code> and <code>exec</code>? (Streaming I/O vs. buffered output; Shell vs. no shell).</li>
+            <li>Why is <code>exec</code> potentially dangerous? (Shell injection attacks, if user input is part of the command string).</li>
+            <li>What is <code>fork</code>'s main use case? (Creating new Node.js processes, and it's the basis for the cluster module).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/child_process.html" target="_blank" class="hover:underline">Node.js Docs: child_process</a></li>
+            <li><a href="https://stackoverflow.com/questions/1880198/how-to-execute-shell-command-in-javascript" target="_blank" class="hover:underline">Stack Overflow: Executing shell commands</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "worker_threads (for CPU-bound tasks)",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know 'worker_threads' are for true parallelism in Node.js. They are designed for CPU-intensive JavaScript, like a complex calculation or image processing, which would otherwise block the main event loop. I communicate with them using 'postMessage()' and 'parentPort.on('message')'."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The Node.js event loop is single-threaded, which is terrible for CPU-bound tasks (tasks that require heavy "thinking"). If you try to calculate a complex Fibonacci number, your server will freeze and not respond to any other requests.</p>
+          <p class="mt-2">The <strong><code>worker_threads</code></strong> module solves this. It lets you create new threads to run JavaScript in parallel on other CPU cores. These are "real" threads, but they don't share memory like in other languages. They are isolated and pass messages to communicate, just like <code>fork</code>.</p>
+          <p class="mt-2">Use <code>worker_threads</code> for <strong>CPU-bound</strong> tasks. Do NOT use them for I/O-bound tasks (like database queries), as the event loop already handles those non-blockingly.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Main file and Worker file)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- server.js (Main Thread) ---
+const { Worker } = require('worker_threads');
+const path = require('path');
+
+function runWorker(num) {
+  return new Promise((resolve, reject) => {
+    // 1. Create a new worker, pointing to the worker file
+    const worker = new Worker(path.join(__dirname, 'cpu-worker.js'));
+
+    // 2. Listen for messages FROM the worker
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', (code) => {
+      if (code !== 0) reject(new Error(\`Worker stopped with code \${code}\`));
+    });
+
+    // 3. Send data TO the worker
+    worker.postMessage({ num: num });
+  });
+}
+
+async function main() {
+  console.log('Main: Starting slow CPU task...');
+  const result = await runWorker(40); // Offloads the slow task
+  console.log(\`Main: Worker result is \${result}\`);
+  console.log('Main: I was not blocked while the worker ran.');
+}
+main();
+
+// --- cpu-worker.js (Worker Thread) ---
+const { parentPort } = require('worker_threads');
+
+// A slow, blocking (CPU-bound) function
+function fib(n) {
+  if (n < 2) return n;
+  return fib(n - 1) + fib(n - 2);
+}
+
+// 1. Listen for messages FROM the main thread
+parentPort.on('message', (task) => {
+  console.log('Worker: Received task, calculating...');
+  const result = fib(task.num);
+  // 2. Send the result back
+  parentPort.postMessage(result);
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the modern, correct way to handle CPU-bound logic in Node.js. It's the solution to Node's oldest problem ("what if I need to do heavy math?"). Before this, you had to use <code>child_process.fork</code>, which is much "heavier" (it's a full process, not a thread).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>When should I use <code>worker_threads</code> vs. the <code>cluster</code> module? (Use workers for CPU-bound tasks. Use cluster for scaling I/O-bound (network) tasks).</li>
+            <li>Can worker threads share memory? (Yes, but it's complex. You can use <code>SharedArrayBuffer</code>, but message passing (<code>postMessage</code>) is the standard, safer way).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/worker_threads.html" target="_blank" class="hover:underline">Node.js Docs: worker_threads</a></li>
+            <li><a href="https://blog.logrocket.com/node-js-multithreading-worker-threads-tutorial/" target="_blank" class="hover:underline">Node.js multithreading tutorial</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "cluster Module (for I/O scaling)",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use the 'cluster' module to scale my Node.js server across all available CPU cores. It 'forks' my server into multiple worker processes, and the master process load-balances incoming connections between them. This is the primary way to achieve vertical scaling for I/O on a single machine."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>A single Node.js process runs on a single CPU core. If your server has 8 cores, 7 are doing nothing. The <code>cluster</code> module solves this.</p>
+          <p class="mt-2">It works by creating a "Master" process and multiple "Worker" processes (using <code>child_process.fork</code>).
+            <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+              <li>The <strong>Master Process</strong> does *not* run your server logic (e.g., your Express app). Its job is to listen on a port and act as a load balancer, passing connections to workers. It also restarts workers if they die.</li>
+              <li>The <strong>Worker Processes</strong> *do* run your server logic. Each worker is its own process with its own event loop.</li>
+            </ul>
+          This allows your app to handle many more concurrent network connections, as the load is spread across all your CPU cores. This is for <strong>I/O scaling</strong>, not CPU-bound tasks.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Clustering an HTTP Server)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const cluster = require('cluster');
+const http = require('http');
+const os = require('os');
+
+const numCPUs = os.cpus().length;
+
+if (cluster.isMaster) {
+  // This is the Master Process
+  console.log(\`Master \${process.pid} is running\`);
+  console.log(\`Forking for \${numCPUs} CPUs...\`);
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  // 2. Listen for workers dying
+  cluster.on('exit', (worker, code, signal) => {
+    console.log(\`Worker \${worker.process.pid} died. Forking another...\`);
+    cluster.fork(); // Relaunch the worker
+  });
+
+} else {
+  // This is a Worker Process
+  // Workers run the actual server
+  http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end(\`Hello from worker \${process.pid}\\n\`);
+  }).listen(8000);
+
+  console.log(\`Worker \${process.pid} started\`);
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the standard, built-in way to scale a Node.js server on a single machine (vertical scaling). Without this, your app will hit a performance ceiling on one CPU core. Process managers like <strong>PM2</strong> use this module under the hood to run your app in "cluster mode."</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>Do cluster workers share memory or state? (No. They are separate processes. They need an external tool like Redis or a database to share state).</li>
+            <li>What's the difference between <code>cluster</code> and <code>worker_threads</code>? (Cluster is for scaling I/O (network) requests by running the *whole app* multiple times. Workers are for offloading *CPU-bound* tasks, not running the server).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/cluster.html" target="_blank" class="hover:underline">Node.js Docs: cluster</a></li>
+            <li><a href="https://pm2.io/docs/runtime/guide/cluster-mode/" target="_blank" class="hover:underline">PM2 Cluster Mode</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Load Balancing",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know load balancing is about distributing traffic across multiple servers (horizontal scaling). The 'cluster' module is a load balancer for a *single* machine, while tools like Nginx, HAProxy, or an AWS ELB are external load balancers that distribute traffic to *multiple* machines."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>A <strong>Load Balancer</strong> is a "traffic cop" that sits in front of your servers and distributes incoming requests across them. This achieves two critical goals:</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Scalability:</strong> Allows you to handle more traffic by adding more servers (horizontal scaling).</li>
+            <li><strong>Reliability:</strong> If one server crashes, the load balancer detects this and sends traffic to the healthy servers, resulting in zero downtime.</li>
+          </ul>
+          <p class="mt-2"><strong>Types of Load Balancers:</strong></p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Process-Level (Single Machine):</strong> The Node.js <code>cluster</code> module is a load balancer. It distributes requests to multiple *processes* on *one* server.</li>
+            <li><strong>External (Multiple Machines):</strong> A separate piece of software (like <strong>Nginx</strong>) or hardware (like <strong>AWS ELB</strong>) that distributes requests to multiple *servers* across the network.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Nginx Config for Load Balancing)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-nginx">
+# This is an Nginx config (nginx.conf), not Node.js
+# It balances traffic between three Node.js servers
+# running on different machines.
+
+# 1. Define the group of servers (the "upstream")
+http {
+  upstream my_node_app {
+    # 'round-robin' by default
+    server 10.0.0.1:3000; # Server 1
+    server 10.0.0.2:3000; # Server 2
+    server 10.0.0.3:3000; # Server 3
+  }
+
+  # 2. Define the public-facing server
+  server {
+    listen 80;
+    server_name my-app.com;
+
+    location / {
+      # 3. Pass all requests to the upstream group
+      proxy_pass http://my_node_app;
+      proxy_set_header Host $host;
+    }
+  }
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>You *cannot* build a large-scale, highly available application without a load balancer. It's the key to horizontal scaling, which allows you to handle millions of users and survive server failures. The <code>cluster</code> module is great, but it's only the first step.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is a "sticky session"? (A load balancer setting that forces all requests from the *same user* to go to the *same server*. This is for "stateful" apps that store session data in memory).</li>
+            <li>What is "Round Robin"? (The simplest balancing algorithm: send requests to Server 1, then 2, then 3, then 1, etc.).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://www.nginx.com/resources/glossary/load-balancing/" target="_blank" class="hover:underline">Nginx: What is Load Balancing?</a></li>
+            <li><a href="https://aws.amazon.com/elasticloadbalancing/" target="_blank" class="hover:underline">AWS Elastic Load Balancing (ELB)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Vertical vs. Horizontal Scaling",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the two main scaling strategies. Vertical scaling (scaling 'up') means adding more power (CPU, RAM) to a *single server*. Horizontal scaling (scaling 'out') means adding *more servers* and distributing the load, which is generally more resilient and scalable."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>When your application gets more traffic, you need to "scale" it. There are two main ways to do this.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong>Vertical Scaling (Scaling Up):</strong>
+              <ul>
+                <li><strong>Analogy:</strong> Buying a bigger, faster delivery truck.</li>
+                <li><strong>What:</strong> Increase the resources of a *single server*. (e.g., Go from a 2-Core, 4GB RAM machine to a 16-Core, 64GB RAM machine).</li>
+                <li><strong>Pros:</strong> Simple. Your application doesn't need to change.</li>
+                <li><strong>Cons:</strong> Very expensive at the high end. You hit a hard physical limit. It's a <strong>single point of failure</strong> (if that one big server dies, your app is 100% offline).</li>
+                <li><strong>Node.js Context:</strong> Using the <code>cluster</code> module is a form of vertical scaling (it scales *up* to use all cores on *one* machine).</li>
+              </ul>
+            </li>
+            <li><strong>Horizontal Scaling (Scaling Out):</strong>
+              <ul>
+                <li><strong>Analogy:</strong> Buying *more* regular-sized delivery trucks.</li>
+                <li><strong>What:</strong> Add *more* servers (usually cheaper ones) and put a <strong>load balancer</strong> in front of them.</li>
+                <li><strong>Pros:</strong> Can be cheaper. Infinitely scalable. <strong>Resilient</strong> (if one server dies, the load balancer just sends traffic to the others).</li>
+                <li><strong>Cons:</strong> More complex. Requires a load balancer and a "stateless" application design.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Comparison Table</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-sm text-left">
+                <thead class="text-xs text-gray-400 uppercase bg-gray-800">
+                  <tr>
+                    <th scope="col" class="py-3 px-6">Feature</th>
+                    <th scope="col" class="py-3 px-6">Vertical Scaling (Scale Up)</th>
+                    <th scope="col" class="py-3 px-6">Horizontal Scaling (Scale Out)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                  <tr class="border-b border-gray-700">
+                    <td class_name="py-4 px-6 font-medium text-white">Method</td>
+                    <td class_name="py-4 px-6">Add resources (CPU, RAM) to one server</td>
+                    <td class_name="py-4 px-6">Add more servers</td>
+                  </tr>
+                  <tr class="border-b border-gray-700">
+                    <td class_name="py-4 px-6 font-medium text-white">Example</td>
+                    <td class_name="py-4 px-6">Using <code>cluster</code> on a 16-core CPU</td>
+                    <td class_name="py-4 px-6">Using Nginx to balance 4 servers</td>
+                  </tr>
+                  <tr class="border-b border-gray-700">
+                    <td class_name="py-4 px-6 font-medium text-white">Limit</td>
+                    <td class_name="py-4 px-6">Limited by hardware (hard ceiling)</td>
+                    <td class_name="py-4 px-6">Virtually unlimited</td>
+                  </tr>
+                  <tr class="border-b border-gray-700">
+                    <td class_name="py-4 px-6 font-medium text-white">Reliability</td>
+                    <td class_name="py-4 px-6">Low (Single Point of Failure)</td>
+                    <td class_name="py-4 px-6">High (Fault Tolerant)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Csection>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is the high-level strategy for how you will handle growth. Most modern, cloud-native applications are designed for horizontal scaling from day one. This requires building "stateless" applications, where user data is stored in a shared database or cache (like Redis), not in the server's memory.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is a "stateless" application and why is it important for horizontal scaling? (It's an app that doesn't store user session data in its own memory. It's crucial because the load balancer could send a user's 1st request to Server A and 2nd request to Server B).</li>
+            <li>Which is better? (Horizontal scaling is preferred for modern, resilient web apps).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://www.ibm.com/cloud/blog/horizontal-vs-vertical-scaling" target="_blank" class="hover:underline">Horizontal vs. Vertical Scaling (IBM)</a></li>
+            <li><a href="https://docs.aws.amazon.com/autoscaling/application/userguide/what-is-application-auto-scaling.html" target="_blank" class="hover:underline">AWS Auto Scaling</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+
+  },
+
   {
     title: "Buffers",
     difficulty: "Advanced",
@@ -5324,7 +5783,7 @@ fs.writeFile(scriptFile, '#!/bin/bash\necho "Hello"', (err) => {
         </section>
       </div>
     `
-  }
+  },
 
   
 
