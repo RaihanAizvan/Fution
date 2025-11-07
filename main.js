@@ -663,13 +663,15 @@ function showFusionToast(message, type = 'success') {
 
 // --- New Swipe Logic ---
 let touchstartX = 0;
+let touchstartY = 0;
 let touchendX = 0;
-const swipeThreshold = 50; // Minimum distance in pixels to register as a swipe
+const swipeThreshold = 75; // Minimum distance in pixels to register as a swipe
 
 const mainBox = document.getElementById('mainBox');
 const tabNames = Array.from(document.querySelectorAll('.tab-btn')).map(btn => btn.dataset.tab);
 
 let isSwiping = false;
+
 
 // Handle the start of a touch gesture
 mainBox.addEventListener('touchstart', e => {
@@ -679,12 +681,37 @@ mainBox.addEventListener('touchstart', e => {
 });
 
 // Handle the movement during a touch gesture
+// Handle the movement during a touch gesture
 mainBox.addEventListener('touchmove', e => {
     if (!isSwiping) return;
 
     const currentX = e.changedTouches[0].screenX;
-    const diff = currentX - touchstartX;
-    mainBox.style.transform = `translateX(${diff}px)`;
+    const currentY = e.changedTouches[0].screenY;
+    const deltaX = currentX - touchstartX;
+    const deltaY = currentY - touchstartY;
+    const absDeltaX = Math.abs(deltaX);
+    const absDeltaY = Math.abs(deltaY);
+
+    // Strict horizontal filtering (X movement must be > 2x Y movement)
+    const isHorizontalIntent = absDeltaX > absDeltaY * 2; 
+    const isReadyToCapture = absDeltaX > swipeThreshold; 
+
+    if (isHorizontalIntent && isReadyToCapture) {
+        e.preventDefault(); 
+        
+        // 1. Calculate the starting offset (where the content currently sits)
+        const currentActiveBtn = document.querySelector('.tab-btn.active-tab');
+        const currentTabName = currentActiveBtn.dataset.tab;
+        const currentOffset = getTargetOffset(currentTabName); 
+
+        // 2. Convert the pixel drag (deltaX) into a percentage offset
+        // mainBox.clientWidth ensures we calculate drag correctly relative to the viewport size
+        const dragPercentage = (deltaX / mainBox.clientWidth) * 100;
+        
+        // 3. Apply the combined transformation to the sliding content wrapper
+        contentWrapper.style.transform = `translateX(${currentOffset + dragPercentage}%)`;
+    } 
+    // Otherwise, native vertical scroll is allowed.
 });
 
 // Handle the end of a touch gesture
@@ -718,8 +745,6 @@ function handleGesture() {
 
 // --- End of New Swipe Logic ---
 
-// Existing tab logic (slightly modified)
-
 function switchTab(name) {
     // Hide all tabs and remove active state from buttons
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -752,4 +777,3 @@ window.addEventListener("DOMContentLoaded", () => {
         moveHighlight(activeBtn);
     }
 });
-

@@ -6455,6 +6455,493 @@ $ curl -X POST http://localhost:3000/api
       </div>
     `
   },
+  //made by achu
+  //fs module
+
+  {
+    title: "File Uploads (with Multer)",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "For file uploads, I don't parse 'multipart/form-data' myself. I use 'multer', the standard Express middleware, to handle it. I know how to configure 'multer' for a single file ('upload.single()') or multiple files, and how to access the file data from 'req.file' or 'req.files'."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>File uploads are sent from a client (like a browser) using a special <code>Content-Type</code> called <code>multipart/form-data</code>. This format is complex to parse manually.</p>
+          <p class="mt-2"><strong>Multer</strong> is the standard, must-have middleware for Express to handle these uploads. It parses the incoming form, saves any files to a destination (like an <code>./uploads/</code> folder), and attaches information about the files to the <code>req</code> object (as <code>req.file</code> or <code>req.files</code>).</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Using 'multer' for a single file)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+// --- server.js ---
+// 1. Install: npm install express multer
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const app = express();
+
+// 2. Configure Multer's storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Save files to 'uploads/' directory
+  },
+  filename: (req, file, cb) => {
+    // Save file with a unique name (timestamp + original name)
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+// 3. Initialize Multer
+const upload = multer({ storage: storage });
+
+// 4. Create an 'uploads' directory if it doesn't exist
+const fs = require('fs');
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
+
+// 5. Create a route that uses the middleware
+// 'avatar' is the 'name' attribute of the <input type="file" name="avatar">
+app.post('/profile-upload', upload.single('avatar'), (req, res) => {
+  // 'req.file' is the 'avatar' file
+  // 'req.body' will hold the text fields, if any
+  
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  console.log('File details:', req.file);
+  res.json({
+    message: 'File uploaded successfully!',
+    filename: req.file.filename,
+    path: req.file.path
+  });
+});
+
+app.listen(3000, () => console.log('Server listening on port 3000...'));
+
+// --- public/index.html (Example client form) ---
+// &lt;form action="/profile-upload" method="POST" enctype="multipart/form-data"&gt;
+//   &lt;h2&gt;Upload Profile Picture&lt;/h2&gt;
+//   &lt;input type="file" name="avatar" /&gt;
+//   &lt;button type="submit"&gt;Upload&lt;/button&gt;
+// &lt;/form&gt;
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Handling file uploads is a core requirement for almost any modern application (profile pictures, document sharing, etc.). Using <code>multer</code> correctly is a non-negotiable skill for an Express developer. It handles parsing, streaming, and saving files, which is extremely difficult to do from scratch.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you handle multiple files? (<code>upload.array('photos', 10)</code>).</li>
+            <li>How can you restrict file types? (Using the <code>fileFilter</code> option in <code>multer({ ... })</code>).</li>
+            <li>Where is the file data in <code>req.file</code>? (<code>req.file</code> is an object with info like <code>filename</code>, <code>path</code>, <code>mimetype</code>, and <code>size</code>).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://github.com/expressjs/multer" target="_blank" class="hover:underline">Multer NPM (Official Docs)</a></li>
+            <li><a href="https://www.digitalocean.com/community/tutorials/how-to-handle-file-uploads-in-express-using-multer" target="_blank" class="hover:underline">How To Handle File Uploads in Express (DigitalOcean)</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Read File and Write file",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know the 'fs' module is for file system operations. I use the async methods 'fs.readFile' and 'fs.writeFile' with an error-first callback, as they are non-blocking. I only use the sync versions, 'readFileSync' and 'writeFileSync', at the start of a script for loading config."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>fs</code> (File System) module is a core Node.js module for interacting with the file system.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>fs.readFile(path, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Reads the *entire* file into memory and passes its contents (as a Buffer or string) to the callback.</li>
+                <li>The callback is an "error-first" callback: <code>(err, data) => { ... }</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.writeFile(path, data, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Writes <code>data</code> to a file, replacing it if it exists.</li>
+                <li>The callback is <code>(err) => { ... }</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>...Sync()</code> versions:</strong> <code>fs.readFileSync()</code> and <code>fs.writeFileSync()</code> are the synchronous, blocking versions. They are fine for simple scripts but should be avoided inside a web server as they block the event loop.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Async Read/Write)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+const filePath = path.join(__dirname, 'greetings.txt');
+const newFilePath = path.join(__dirname, 'new-file.txt');
+
+// 1. Asynchronous Write
+fs.writeFile(filePath, 'Hello from Node.js!', 'utf8', (err) => {
+  if (err) {
+    return console.error('Error writing file:', err.message);
+  }
+  console.log('File written successfully.');
+
+  // 2. Asynchronous Read (chained after write)
+  // 'utf8' encoding returns a string, otherwise it's a Buffer
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      return console.error('Error reading file:', err.message);
+    }
+    console.log('File content:', data); // "Hello from Node.js!"
+
+    // 3. Example of Sync Read (Used for initial config)
+    // This blocks, but it's okay here at the top level
+    try {
+      const config = fs.readFileSync('package.json', 'utf8');
+      console.log('Loaded config file.');
+    } catch (err) {
+      console.error('Could not load config', err.message);
+    }
+  });
+});
+
+console.log('Writing file...'); // This logs *before* "File written successfully."
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is a fundamental I/O operation. Understanding the async vs. sync versions is critical. Using <code>readFileSync</code> inside an Express route is a major performance bottleneck, as it will block your entire server from handling other requests until the file is read.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What happens if you don't specify 'utf8' when reading? (You get a Buffer).</li>
+            <li>What's the difference between <code>writeFile</code> and <code>appendFile</code>? (<code>writeFile</code> overwrites the file, <code>appendFile</code> adds to the end).</li>
+            <li>What if the file is 10GB? (Don't use <code>readFile</code>! Use <code>fs.createReadStream</code> to stream it).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fsreadfilepath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.readFile()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fswritefilepath-data-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.writeFile()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "File System Operations: `stat`, `unlink`, `existsSync`",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use 'fs.stat' to get file metadata, like 'stats.isDirectory()' or 'stats.size'. I use 'fs.unlink' to delete a file, and 'fs.existsSync' for a simple, synchronous check to see if a file or directory exists before I try to operate on it."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>These are common "utility" functions in the <code>fs</code> module.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>fs.stat(path, callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Gets "stats" (metadata) about a file or directory.</li>
+                <li>The callback <code>(err, stats)</code> gives you a <code>stats</code> object. You can check <code>stats.isFile()</code>, <code>stats.isDirectory()</code>, <code>stats.size</code> (in bytes), <code>stats.mtime</code> (last modified time), etc.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.unlink(path, callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Deletes a file. The name "unlink" comes from Unix.</li>
+                <li>The callback is <code>(err) => { ... }</code>.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.existsSync(path)</code>:</strong>
+              <ul>
+                <li><strong>Synchronous.</strong> Returns <code>true</code> or <code>false</code> if the path exists.</li>
+                <li>This is one of the few <code>Sync</code> methods that is acceptable to use in server code, because it's fast and often needed right before an async operation (e.g., "check if <code>uploads</code> folder exists before making it").</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Check, Stat, and Unlink)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+const tempFilePath = path.join(__dirname, 'temp-file.txt');
+
+// 1. Check if a file exists (SYNC)
+if (fs.existsSync(tempFilePath)) {
+  console.log('File already exists. Deleting it...');
+  
+  // 2. Delete the file (ASYNC)
+  fs.unlink(tempFilePath, (err) => {
+    if (err) return console.error('Could not delete file:', err.message);
+    console.log('File deleted.');
+    createAndStatFile();
+  });
+} else {
+  createAndStatFile();
+}
+
+function createAndStatFile() {
+  fs.writeFile(tempFilePath, 'This is temporary', (err) => {
+    if (err) return console.error('Write failed:', err.message);
+    
+    // 3. Get metadata for the file (ASYNC)
+    fs.stat(tempFilePath, (err, stats) => {
+      if (err) return console.error('Stat failed:', err.message);
+      
+      console.log('--- File Stats ---');
+      console.log('Is it a file?', stats.isFile()); // true
+      console.log('Is it a directory?', stats.isDirectory()); // false
+      console.log('File size (bytes):', stats.size);
+      console.log('Last modified:', stats.mtime);
+    });
+  });
+}
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>These are the building blocks of file management. You need <code>stat</code> to check permissions or file types, <code>unlink</code> to clean up temporary files (like after a file upload), and <code>existsSync</code> for safe, defensive checks before creating directories or writing files.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you delete a directory? (<code>fs.rmdir()</code> for empty ones, or <code>fs.rm(path, { recursive: true })</code> for non-empty).</li>
+            <li>What's the difference between <code>fs.stat</code> and <code>fs.lstat</code>? (<code>stat</code> follows symbolic links, <code>lstat</code> gives stats about the link itself).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fsstatpath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.stat()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fsunlinkpath-callback" target="_blank" class="hover:underline">Node.js Docs: fs.unlink()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fsexistssyncpath" target="_blank" class="hover:underline">Node.js Docs: fs.existsSync()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "Create or Remove Directory",
+    difficulty: "Intermediate",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I use 'fs.mkdir()' to create a directory. If I need to create nested directories, like 'a/b/c', I use the '{ recursive: true }' option. To remove a directory, I use 'fs.rmdir()' for empty ones, or 'fs.rm()' with '{ recursive: true }' for non-empty ones."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>The <code>fs</code> module provides methods for managing directories (folders).</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><strong><code>fs.mkdir(path, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Creates a new directory.</li>
+                <li><strong>Options:</strong> <code>{ recursive: true }</code> is essential. It will create parent directories as needed (like <code>mkdir -p</code> in bash) and won't throw an error if the directory already exists.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.rmdir(path, [options], callback)</code>:</strong>
+              <ul>
+                <li><strong>Asynchronous.</strong> Removes a directory. This will fail if the directory is not empty.</li>
+              </ul>
+            </li>
+            <li><strong><code>fs.rm(path, [options], callback)</code>:</strong> (Modern)
+              <ul>
+                <li><strong>Asynchronous.</strong> The "new" way to remove files or directories.</li>
+                <li>To remove a non-empty directory, use: <code>fs.rm(path, { recursive: true, force: true }, cb)</code>.</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Recursive Create and Remove)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+// This path is nested: 'data' contains 'logs'
+const nestedDir = path.join(__dirname, 'data', 'logs');
+
+// 1. Create a nested directory (ASYNC)
+fs.mkdir(nestedDir, { recursive: true }, (err) => {
+  if (err) return console.error('Could not create dir:', err.message);
+  
+  console.log('Directory created:', nestedDir);
+
+  // 2. Write a file inside it
+  const logFile = path.join(nestedDir, 'app.log');
+  fs.writeFile(logFile, 'Log entry', (err) => {
+    if (err) return console.error('Could not write log:', err.message);
+
+    console.log('Log file created.');
+
+    // 3. Remove the non-empty parent directory (ASYNC)
+    const dirToRemove = path.join(__dirname, 'data');
+    fs.rm(dirToRemove, { recursive: true, force: true }, (err) => {
+      if (err) return console.error('Could not remove dir:', err.message);
+      
+      console.log('Recursively removed:', dirToRemove);
+    });
+  });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>This is essential for setup and cleanup. You use <code>mkdir</code> to ensure your <code>uploads</code> or <code>logs</code> directories exist when your server starts. You use <code>rm</code> or <code>rmdir</code> to clean up temporary directories or user data upon deletion.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>How would you read the contents of a directory? (<code>fs.readdir(path, callback)</code>, which gives you an array of filenames).</li>
+            <li>What's the difference between <code>fs.rmdir</code> and <code>fs.rm</code>? (<code>rmdir</code> is older and only works on empty directories. <code>rm</code> is newer, more powerful, and can remove files or non-empty directories with the <code>recursive</code> flag).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fsmkdirpath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.mkdir()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#fsrmpath-options-callback" target="_blank" class="hover:underline">Node.js Docs: fs.rm()</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  },
+  {
+    title: "File Permissions",
+    difficulty: "Advanced",
+    details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: "I know file permissions are handled by the OS and are based on 'read', 'write', and 'execute' for the 'user', 'group', and 'other'. I can check permissions using 'fs.stat()' to get the 'mode' (like 0o755), and I can change them using 'fs.chmod()'."
+      </blockquote>
+
+      <div class="space-y-6 text-gray-300">
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Short explanation</h2>
+          <p>File Permissions control who can read, write, or execute a file. This is a core concept of Linux/macOS/Unix operating systems, which Node.js runs on.</p>
+          <p class="mt-2">Permissions are represented by an <strong>octal (base-8) number</strong>, like <code>0o755</code>.</p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li>The number is made of 3 digits: (Owner)(Group)(Others)</li>
+            <li>Each digit is a sum of permissions:
+              <ul>
+                <li><strong>4</strong> = Read</li>
+                <li><strong>2</strong> = Write</li>
+                <li><strong>1</strong> = Execute</li>
+              </ul>
+            </li>
+          </ul>
+          <p class="mt-2"><strong>Common Modes:</strong></p>
+          <ul class="list-disc list-inside ml-4 mt-2 space-y-1">
+            <li><code>0o755</code> (rwx r-x r-x): Owner can do anything (4+2+1=7). Group/Others can read/execute (4+1=5). (Common for directories).</li>
+            <li><code>0o644</code> (rw- r-- r--): Owner can read/write (4+2=6). Group/Others can only read (4). (Common for files).</li>
+          </ul>
+          <p class="mt-2">In Node.js, you use <code>fs.stat</code> to read the mode, and <code>fs.chmod</code> to change it.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Example (Check and Set Permissions)</h2>
+          <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
+            <pre class="bg-gray-800 text-sm p-3 rounded text-white overflow-x-auto"><code class="language-javascript">
+const fs = require('fs');
+const path = require('path');
+
+const scriptFile = path.join(__dirname, 'my-script.sh');
+
+// Create a dummy script file
+fs.writeFile(scriptFile, '#!/bin/bash\necho "Hello"', (err) => {
+  if (err) return console.error(err);
+  console.log('Script created.');
+
+  // 1. Check current permissions
+  fs.stat(scriptFile, (err, stats) => {
+    if (err) return console.error(err);
+    // .toString(8) converts the mode number to an octal string
+    console.log('Original mode:', (stats.mode & 0o777).toString(8)); // e.g., "644"
+
+    // 2. Make the file executable for the owner
+    // We want 744 (rwx r-- r--)
+    fs.chmod(scriptFile, 0o744, (err) => {
+      if (err) return console.error('chmod failed:', err.message);
+      
+      console.log('Mode changed to 744.');
+
+      // 3. Verify the new permissions
+      fs.stat(scriptFile, (err, newStats) => {
+        console.log('New mode:', (newStats.mode & 0o777).toString(8)); // "744"
+      });
+    });
+  });
+});
+            </code></pre>
+          </div>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Why it matters</h2>
+          <p>Permissions are critical for security and operations. If your Node.js app generates a script, it must use <code>fs.chmod</code> to make it executable. If it creates a user's data file, it should set permissions (e.g., <code>0o600</code>, "read/write for owner only") to prevent other users on the system from reading it.</p>
+        </section>
+
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Related questions the reviewer may ask</h2>
+          <ul class="list-disc list-inside ml-4">
+            <li>What is <code>(stats.mode & 0o777)</code> doing? (The full <code>mode</code> contains extra data. Bitwise-ANDing with <code>0o777</code> isolates *only* the permission bits).</li>
+            <li>How do you change file ownership? (<code>fs.chown()</code>).</li>
+            <li>How does this apply to Windows? (It doesn't, really. Windows has a different, more complex ACL system. Node's <code>fs.chmod</code> has limited effect on Windows).</li>
+          </ul>
+        </section>
+        
+        <section>
+          <h2 class="text-lg font-semibold text-white mb-2">Further Reading</h2>
+          <ul class="list-disc list-inside ml-4 text-blue-400">
+            <li><a href="https://nodejs.org/api/fs.html#fschmodpath-mode-callback" target="_blank" class="hover:underline">Node.js Docs: fs.chmod()</a></li>
+            <li><a href="https://nodejs.org/api/fs.html#statsmode" target="_blank" class="hover:underline">Node.js Docs: stats.mode</a></li>
+            <li><a href="https://www.linux.com/tutorials/understanding-linux-file-permissions/" target="_blank" class="hover:underline">Understanding Linux File Permissions</a></li>
+          </ul>
+        </section>
+      </div>
+    `
+  }
+
+  //topics created by achu ends here,
+  //creating commit feat(content): add fs and fs modules
 ]
 
 
