@@ -64,6 +64,13 @@ const sidebarConfig = {
             isActive: false
         },
         // Add new weeks here as needed
+        {
+            id: 15,
+            title: "DSA - 3",
+            subtitle: "Advanced DSA",
+            href: "week-15.html",
+            isActive: false
+        }
     ],
     footer: {
         img: "logo-ryhu.png",
