@@ -130,7 +130,8 @@
           <div
             class="inline-flex items-center space-x-4 border border-gray-700 border-opacity-70 px-6 py-4 rounded-2xl mb-6">
             <div class="w-16 h-16 flex items-center justify-center">
-              <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-icon.svg" alt="Week 5 Icon" class="w-12 h-12" />
+              <img src="https://www.vectorlogo.zone/logos/mongodb/mongodb-icon.svg" alt="Week 5 Icon"
+                class="w-12 h-12" />
             </div>
             <div class="text-left">
               <h1 class="text-3xl lg:text-4xl font-bold">Week 15</h1>
@@ -182,13 +183,14 @@
 
 
       <!-- content grid layout -->
-      <div class="grid lg:grid-cols-3 gap-6 lg:gap-8" >
+      <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
 
-        <div class="lg:col-span-2 space-y-6" >
+        <div class="lg:col-span-2 space-y-6">
           <div
-            class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-220px)] lg:w-full w-[calc(100vw-10px)]" id="mainBox">
+            class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-220px)] lg:w-full w-[calc(100vw-10px)]"
+            id="mainBox">
 
-            <div class="flex items-center justify-between mb-6" >
+            <div class="flex items-center justify-between mb-6">
               <div
                 class="tab-buttons flex gap-1 relative bg-white/5 rounded-full p-1 backdrop-blur-md border border-white/10">
                 <button data-tab="topics" class="tab-btn active-tab" onclick="switchTab('topics')">Topics</button>
@@ -246,14 +248,14 @@
     window.weekKey = "week15";
 
     window.topics = [
-        {
-            type: 'heading',
-            title: "Trees",
-        },
-  {
-    title: "What is a Tree Data Structure?",
-    difficulty: "Beginner",
-    details: `
+      {
+        type: 'heading',
+        title: "Trees",
+      },
+      {
+        title: "What is a Tree Data Structure?",
+        difficulty: "Beginner",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "I'll start with the fundamentals. A tree is a non-linear data structure that simulates a hierarchy. It's composed of nodes connected by edges, with a special 'root' node at the top. Each node, except the root, has exactly one parent and can have zero or more children."
     </blockquote>
@@ -299,11 +301,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Common Applications of Trees",
-    difficulty: "Beginner",
-    details: `
+      },
+      {
+        title: "Common Applications of Trees",
+        difficulty: "Beginner",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "Trees are incredibly versatile. They're used for any data that has a natural hierarchy. Common examples include file systems, the HTML DOM, database indexing using B-Trees, and AI decision trees. Tries, a special type of tree, are perfect for autocomplete."
     </blockquote>
@@ -350,11 +352,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Tree Terminologies (Node, Edge, Depth, Height, etc.)",
-    difficulty: "Beginner",
-    details: `
+      },
+      {
+        title: "Tree Terminologies (Node, Edge, Depth, Height, etc.)",
+        difficulty: "Beginner",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "To discuss trees, we need common vocabulary. Key terms include 'root' (the start), 'leaf' (the end), 'internal node' (any node with children), and 'siblings' (nodes with the same parent). We also measure them with 'depth' and 'height'."
     </blockquote>
@@ -431,11 +433,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Types of Trees (Binary, Full, Complete, etc.)",
-    difficulty: "Beginner",
-    details: `
+      },
+      {
+        title: "Types of Trees (Binary, Full, Complete, etc.)",
+        difficulty: "Beginner",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "Trees have classifications. The most common is the 'Binary Tree', where each node has at most two children. From there, we have specific types like 'Full' (0 or 2 children), 'Complete' (filled left to right), and 'Perfect' (a full tree with all leaves at the same level)."
     </blockquote>
@@ -500,11 +502,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Time Complexity (Binary Tree)",
-    difficulty: "Intermediate",
-    details: `
+      },
+      {
+        title: "Time Complexity (Binary Tree)",
+        difficulty: "Intermediate",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "This can be a trick question. For a *general* Binary Tree, not a BST, you can't optimize. To find a node, you have to visit *every* node in the worst case, leading to an $O(n)$ time complexity for search, insertion, and deletion."
     </blockquote>
@@ -548,11 +550,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Disadvantage of Recursion in Trees",
-    difficulty: "Intermediate",
-    details: `
+      },
+      {
+        title: "Disadvantage of Recursion in Trees",
+        difficulty: "Intermediate",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "While recursion is elegant for tree traversals, its main disadvantage is the risk of stack overflow. If the tree is very deep, like a degenerate tree, each recursive call adds a frame to the call stack, which can exhaust its limited memory."
     </blockquote>
@@ -594,11 +596,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Balanced vs. Unbalanced Trees",
-    difficulty: "Intermediate",
-    details: `
+      },
+      {
+        title: "Balanced vs. Unbalanced Trees",
+        difficulty: "Intermediate",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "The performance of a Binary Search Tree depends entirely on its height. An unbalanced tree is one that has 'drifted' to one side, resembling a linked list. A balanced tree maintains a logarithmic height (height $\approx \log n$) to guarantee $O(\log n)$ operations."
     </blockquote>
@@ -661,11 +663,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "AVL Tree (vs. BST, Rotations)",
-    difficulty: "Advanced",
-    details: `
+      },
+      {
+        title: "AVL Tree (vs. BST, Rotations)",
+        difficulty: "Advanced",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "An AVL tree is a self-balancing Binary Search Tree. It's 'stricter' than a Red-Black tree. It ensures the tree remains balanced by checking the 'balance factor' of each node—the height difference between its left and right subtrees—which can be at most 1."
     </blockquote>
@@ -709,11 +711,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Red-Black Tree (Basics, Applications)",
-    difficulty: "Advanced",
-    details: `
+      },
+      {
+        title: "Red-Black Tree (Basics, Applications)",
+        difficulty: "Advanced",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "A Red-Black tree is another self-balancing BST. It's 'less strict' than an AVL tree. It uses 'color' properties (red or black) for each node to ensure that no path from the root to a leaf is more than twice as long as any other, guaranteeing an $O(\log n)$ height."
     </blockquote>
@@ -759,11 +761,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "B-Tree (Basics)",
-    difficulty: "Advanced",
-    details: `
+      },
+      {
+        title: "B-Tree (Basics)",
+        difficulty: "Advanced",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "A B-Tree is totally different from a BST. It's a self-balancing tree designed to minimize disk I/O. It's not a binary tree; its nodes can have many children (a large 'branching factor'). This makes the tree very wide and shallow."
     </blockquote>
@@ -806,11 +808,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Segment Tree (Basics)",
-    difficulty: "Advanced",
-    details: `
+      },
+      {
+        title: "Segment Tree (Basics)",
+        difficulty: "Advanced",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "A Segment Tree is a powerful tree-based structure used for 'range queries'. It's perfect for problems where you need to quickly find the sum, minimum, or maximum of a subarray, and also update elements in that array."
     </blockquote>
@@ -849,11 +851,11 @@
       </section>
     </div>
   `
-  },
-  {
-    title: "Radix Tree (Basics)",
-    difficulty: "Advanced",
-    details: `
+      },
+      {
+        title: "Radix Tree (Basics)",
+        difficulty: "Advanced",
+        details: `
     <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
       Tell the reviewer: "A Radix Tree, also known as a Patricia Trie, is a 'compressed' version of a Trie. It's used for storing strings, but it saves space by merging nodes that have only one child, combining the string labels into a single edge."
     </blockquote>
@@ -895,17 +897,24 @@
       </section>
     </div>
   `
-  }
-  
-
-]
+      }
 
 
+    ]
+    // Practical Problems
+
+
+
+
+    //practical
     window.practicals = [
-{
-    practicalTopic: "Implement a Binary Tree (with Insert) and Calculate its Height",
-    difficulty: "Beginner",
-    details: `
+
+
+      
+      {
+        difficulty: "Beginner",
+        practicalTopic: "Implement a Binary Tree (with Insert) and Calculate its Height",
+        details: `
       <div class="space-y-4 text-gray-300">
         <section>
           <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
@@ -1023,11 +1032,11 @@ class BinaryTree {
         </section>
       </div>
     `
-  },
-  {
-    practicalTopic: "Tree Traversals: Preorder, Inorder, Postorder (DFS)",
-    difficulty: "Beginner",
-    details: `
+      },
+      {
+        practicalTopic: "Tree Traversals: Preorder, Inorder, Postorder (DFS)",
+        difficulty: "Beginner",
+        details: `
       <div class="space-y-4 text-gray-300">
         <section>
           <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
@@ -1128,11 +1137,11 @@ function postorderTraversal(root) {
         </section>
       </div>
     `
-  },
-  {
-    practicalTopic: "Tree Traversal: Level Order (BFS) (LeetCode 102)",
-    difficulty: "Intermediate",
-    details: `
+      },
+      {
+        practicalTopic: "Tree Traversal: Level Order (BFS) (LeetCode 102)",
+        difficulty: "Intermediate",
+        details: `
       <div class="space-y-4 text-gray-300">
         <section>
           <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
@@ -1218,11 +1227,11 @@ function levelOrder(root) {
         </section>
       </div>
     `
-  },
-  {
-    practicalTopic: "Find and Print All Leaf Nodes",
-    difficulty: "Beginner",
-    details: `
+      },
+      {
+        practicalTopic: "Find and Print All Leaf Nodes",
+        difficulty: "Beginner",
+        details: `
       <div class="space-y-4 text-gray-300">
         <section>
           <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
@@ -1296,11 +1305,11 @@ function getLeafNodes(root) {
         </section>
       </div>
     `
-  },
-  {
-    practicalTopic: "Check if Two Trees are Identical",
-    difficulty: "Beginner",
-    details: `
+      },
+      {
+        practicalTopic: "Check if Two Trees are Identical",
+        difficulty: "Beginner",
+        details: `
       <div class="space-y-4 text-gray-300">
         <section>
           <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
@@ -1372,11 +1381,11 @@ function isSameTree(p, q) {
         </section>
       </div>
     `
-  },
-  {
-    practicalTopic: "Validate a Binary Search Tree (BST)",
-    difficulty: "Intermediate",
-    details: `
+      },
+      {
+        practicalTopic: "Validate a Binary Search Tree (BST)",
+        difficulty: "Intermediate",
+        details: `
       <div class="space-y-4 text-gray-300">
         <section>
           <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
@@ -1469,11 +1478,11 @@ function isValidBST(root) {
         </section>
       </div>
     `
-  },
-  {
-    practicalTopic: "Check if a Binary Tree is Height-Balanced",
-    difficulty: "Intermediate",
-    details: `
+      },
+      {
+        practicalTopic: "Check if a Binary Tree is Height-Balanced",
+        difficulty: "Intermediate",
+        details: `
       <div class="space-y-4 text-gray-300">
         <section>
           <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
@@ -1573,8 +1582,679 @@ function isBalanced(root) {
         </section>
       </div>
     `
+      },
+      {
+        practicalTopic: "Implement a Binary Tree (with Insert) and Calculate its Height",
+        difficulty: "Beginner",
+        details: `
+      <div class="space-y-4 text-gray-300">
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
+          <p>Create a <code class="bg-gray-700 text-sm p-1 rounded">Node</code> class and a <code class="bg-gray-700 text-sm p-1 rounded">BinaryTree</code> class. The tree class should have a <code class="bg-gray-700 text-sm p-1 rounded">root</code> property. Implement two methods:</p>
+          <ul class="list-disc list-inside ml-4">
+            <li><strong>Insertion:</strong> An <code class="bg-gray-700 text-sm p-1 rounded">insert(data)</code> method that adds a new node to the first available spot (using level-order traversal). This is for a general binary tree, *not* a BST.</li>
+            <li><strong>Height:</strong> A <code class="bg-gray-700 text-sm p-1 rounded">getHeight()</code> method that returns the height of the tree (the number of edges in the longest path from the root to a leaf).</li>
+          </ul>
+          <p class="text-sm text-yellow-400 mt-2">Interview Frequency: 12</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Examples</h3>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700">
+            <p><strong class="text-gray-400">Tree:</strong> (empty)</p>
+            <p><strong class="text-gray-400">Height:</strong> -1 (or 0, depending on convention; we'll use -1 for an empty tree)</p>
+          </div>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Tree:</strong> 1 -> 2, 3</p>
+            <p><strong class="text-gray-400">Height:</strong> 1</p>
+          </div>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Tree:</strong> 1 -> 2, 3 -> 4</p>
+            <p><strong class="text-gray-400">Height:</strong> 2</p>
+          </div>
+        </section>
+
+        <section x-data="{ open: false }">
+          <button @click="open = !open" class="w-full text-left bg-gray-800 hover:bg-gray-700 p-3 rounded-lg flex justify-between items-center">
+            <span class="font-semibold text-white">View Solution</span>
+            <svg x-show="!open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <svg x-show="open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+    
+          <div
+          x-show="open"
+          x-transition
+          x-collapse
+          class="bg-gray-900 p-4 rounded-b-lg border border-t-0 border-gray-700 mt-[-2px] overflow-x-auto"
+          >
+            <pre><code class="language-js text-sm">
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+class BinaryTree {
+  constructor() {
+    this.root = null;
   }
 
+  // Inserts in level order (first available spot)
+  insert(data) {
+    const newNode = new Node(data);
+    if (this.root === null) {
+      this.root = newNode;
+      return;
+    }
+
+    const queue = [this.root];
+    while (queue.length > 0) {
+      const current = queue.shift();
+
+      if (current.left === null) {
+        current.left = newNode;
+        return;
+      } else {
+        queue.push(current.left);
+      }
+
+      if (current.right === null) {
+        current.right = newNode;
+        return;
+      } else {
+        queue.push(current.right);
+      }
+    }
+  }
+
+  // Calculates the height of the tree
+  getHeight() {
+    return this.calculateHeight(this.root);
+  }
+
+  calculateHeight(node) {
+    if (node === null) {
+      return -1; // Height of an empty tree is -1
+    }
+
+    const leftHeight = this.calculateHeight(node.left);
+    const rightHeight = this.calculateHeight(node.right);
+
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+
+  // Helper to calculate depth of a specific node (for comparison)
+  getDepth(nodeValue) {
+    let depth = 0;
+    const queue = [{ node: this.root, d: 0 }];
+    while (queue.length > 0) {
+      const { node, d } = queue.shift();
+      if (node === null) continue;
+      if (node.data === nodeValue) return d;
+      queue.push({ node: node.left, d: d + 1 });
+      queue.push({ node: node.right, d: d + 1 });
+    }
+    return -1; // Not found
+  }
+}
+            </code></pre>
+          </div>
+        </section>
+      </div>
+    `
+      },
+      {
+        practicalTopic: "Tree Traversals: Preorder, Inorder, Postorder (DFS)",
+        difficulty: "Beginner",
+        details: `
+      <div class="space-y-4 text-gray-300">
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
+          <p>Implement the three fundamental Depth-First Search (DFS) traversals for a binary tree. These are most commonly implemented using recursion.</p>
+          <ul class="list-disc list-inside ml-4">
+            <li><strong>Preorder:</strong> Visit <span class="text-yellow-400">Root</span>, then Left, then Right.</li>
+            <li><strong>Inorder:</strong> Visit Left, then <span class="text-yellow-400">Root</span>, then Right. (For a BST, this gives a sorted list).</li>
+            <li><strong>Postorder:</strong> Visit Left, then Right, then <span class="text-yellow-400">Root</span>.</li>
+          </ul>
+          <p class="text-sm text-yellow-400 mt-2">Interview Frequency: 10</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Examples</h3>
+          <p>Given a tree:</p>
+          <pre class="bg-gray-900 text-sm p-3 rounded text-white overflow-x-auto"><code>
+      (1)
+     /   \\
+    (2)   (3)
+   / \\
+  (4) (5)
+          </code></pre>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Preorder:</strong> [1, 2, 4, 5, 3]</p>
+            <p><strong class="text-gray-400">Inorder:</strong> [4, 2, 5, 1, 3]</p>
+            <p><strong class="text-gray-400">Postorder:</strong> [4, 5, 2, 3, 1]</p>
+          </div>
+        </section>
+
+        <section x-data="{ open: false }">
+          <button @click="open = !open" class="w-full text-left bg-gray-800 hover:bg-gray-700 p-3 rounded-lg flex justify-between items-center">
+            <span class="font-semibold text-white">View Solution</span>
+            <svg x-show="!open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <svg x-show="open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+    
+          <div
+          x-show="open"
+          x-transition
+          x-collapse
+          class="bg-gray-900 p-4 rounded-b-lg border border-t-0 border-gray-700 mt-[-2px] overflow-x-auto"
+          >
+            <pre><code class="language-js text-sm">
+/*
+// Assumes this Node class definition:
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+*/
+
+// --- Preorder ---
+// (Root, Left, Right)
+function preorderTraversal(root) {
+  const result = [];
+  function traverse(node) {
+    if (node === null) return;
+    result.push(node.data); // Visit root
+    traverse(node.left);     // Visit left
+    traverse(node.right);    // Visit right
+  }
+  traverse(root);
+  return result;
+}
+
+// --- Inorder ---
+// (Left, Root, Right)
+function inorderTraversal(root) {
+  const result = [];
+  function traverse(node) {
+    if (node === null) return;
+    traverse(node.left);     // Visit left
+    result.push(node.data); // Visit root
+    traverse(node.right);    // Visit right
+  }
+  traverse(root);
+  return result;
+}
+
+// --- Postorder ---
+// (Left, Right, Root)
+function postorderTraversal(root) {
+  const result = [];
+  function traverse(node) {
+    if (node === null) return;
+    traverse(node.left);     // Visit left
+    traverse(node.right);    // Visit right
+    result.push(node.data); // Visit root
+  }
+  traverse(root);
+  return result;
+}
+            </code></pre>
+          </div>
+        </section>
+      </div>
+    `
+      },
+      {
+        practicalTopic: "Tree Traversal: Level Order (BFS) (LeetCode 102)",
+        difficulty: "Intermediate",
+        details: `
+      <div class="space-y-4 text-gray-300">
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
+          <p>Given the root of a binary tree, return the level order traversal of its nodes' values. (i.e., from left to right, level by level).</p>
+          <p>This is a classic Breadth-First Search (BFS) problem that is almost always solved iteratively (non-recursively) using a queue.</p>
+          <p class="text-sm text-yellow-400 mt-2">Interview Frequency: 10</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Examples</h3>
+          <p>Given a tree:</p>
+          <pre class="bg-gray-900 text-sm p-3 rounded text-white overflow-x-auto"><code>
+      (3)
+     /   \\
+    (9)   (20)
+         /   \\
+        (15)  (7)
+          </code></pre>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Output:</strong> [[3], [9, 20], [15, 7]]</p>
+          </div>
+        </section>
+
+        <section x-data="{ open: false }">
+          <button @click="open = !open" class="w-full text-left bg-gray-800 hover:bg-gray-700 p-3 rounded-lg flex justify-between items-center">
+            <span class="font-semibold text-white">View Solution</span>
+            <svg x-show="!open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <svg x-show="open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+    
+          <div
+          x-show="open"
+          x-transition
+          x-collapse
+          class="bg-gray-900 p-4 rounded-b-lg border border-t-0 border-gray-700 mt-[-2px] overflow-x-auto"
+          >
+            <pre><code class="language-js text-sm">
+/*
+// Assumes this Node class definition:
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+*/
+
+function levelOrder(root) {
+  if (root === null) {
+    return [];
+  }
+
+  const result = [];
+  const queue = [root]; // Use an array as a queue
+
+  while (queue.length > 0) {
+    const levelSize = queue.length;
+    const currentLevel = [];
+
+    // Process all nodes at the current level
+    for (let i = 0; i < levelSize; i++) {
+      const node = queue.shift(); // Dequeue
+      
+      currentLevel.push(node.data);
+
+      // Enqueue children for the next level
+      if (node.left !== null) {
+        queue.push(node.left);
+      }
+      if (node.right !== null) {
+        queue.push(node.right);
+      }
+    }
+    
+    result.push(currentLevel);
+  }
+
+  return result;
+}
+            </code></pre>
+          </div>
+        </section>
+      </div>
+    `
+      },
+      {
+        practicalTopic: "Find and Print All Leaf Nodes",
+        difficulty: "Beginner",
+        details: `
+      <div class="space-y-4 text-gray-300">
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
+          <p>Given the root of a binary tree, collect the values of all its leaf nodes in an array. A leaf node is a node with no children (both <code class="bg-gray-700 text-sm p-1 rounded">left</code> and <code class="bg-gray-700 text-sm p-1 rounded">right</code> child pointers are null).</p>
+          <p class="text-sm text-yellow-400 mt-2">Interview Frequency: 7</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Examples</h3>
+          <p>Given a tree:</p>
+          <pre class="bg-gray-900 text-sm p-3 rounded text-white overflow-x-auto"><code>
+      (1)
+     /   \\
+    (2)   (3)
+   / \\     /
+  (4) (5)   (6)
+          </code></pre>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Output:</strong> [4, 5, 6] (Order can vary depending on traversal)</p>
+          </div>
+        </section>
+
+        <section x-data="{ open: false }">
+          <button @click="open = !open" class="w-full text-left bg-gray-800 hover:bg-gray-700 p-3 rounded-lg flex justify-between items-center">
+            <span class="font-semibold text-white">View Solution</span>
+            <svg x-show="!open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <svg x-show="open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+    
+          <div
+          x-show="open"
+          x-transition
+          x-collapse
+          class="bg-gray-900 p-4 rounded-b-lg border border-t-0 border-gray-700 mt-[-2px] overflow-x-auto"
+          >
+            <pre><code class="language-js text-sm">
+/*
+// Assumes this Node class definition:
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+*/
+
+function getLeafNodes(root) {
+  const leaves = [];
+  
+  function findLeaves(node) {
+    if (node === null) {
+      return;
+    }
+
+    // Check if it's a leaf node
+    if (node.left === null && node.right === null) {
+      leaves.push(node.data);
+    }
+
+    // Recurse on children
+    findLeaves(node.left);
+    findLeaves(node.right);
+  }
+
+  findLeaves(root);
+  return leaves;
+}
+            </code></pre>
+          </div>
+        </section>
+      </div>
+    `
+      },
+      {
+        practicalTopic: "Check if Two Trees are Identical",
+        difficulty: "Beginner",
+        details: `
+      <div class="space-y-4 text-gray-300">
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
+          <p>Given the roots of two binary trees, <code class="bg-gray-700 text-sm p-1 rounded">p</code> and <code class="bg-gray-700 text-sm p-1 rounded">q</code>, write a function to check if they are the same or not. Two binary trees are considered the same if they are structurally identical and the nodes have the same value.</p>
+          <p class="text-sm text-yellow-400 mt-2">Interview Frequency: 6</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Examples</h3>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700">
+            <p><strong class="text-gray-400">Tree p:</strong> [1, 2, 3]</p>
+            <p><strong class="text-gray-400">Tree q:</strong> [1, 2, 3]</p>
+            <p><strong class="text-gray-400">Output:</strong> true</p>
+          </div>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Tree p:</strong> [1, 2]</p>
+            <p><strong class="text-gray-400">Tree q:</strong> [1, null, 2]</p>
+            <p><strong class="text-gray-400">Output:</strong> false</p>
+          </div>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Tree p:</strong> [1, 2, 1]</p>
+            <p><strong class="text-gray-400">Tree q:</strong> [1, 1, 2]</p>
+            <p><strong class="text-gray-400">Output:</strong> false</p>
+          </div>
+        </section>
+
+        <section x-data="{ open: false }">
+          <button @click="open = !open" class="w-full text-left bg-gray-800 hover:bg-gray-700 p-3 rounded-lg flex justify-between items-center">
+            <span class="font-semibold text-white">View Solution</span>
+            <svg x-show="!open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <svg x-show="open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+    
+          <div
+          x-show="open"
+          x-transition
+          x-collapse
+          class="bg-gray-900 p-4 rounded-b-lg border border-t-0 border-gray-700 mt-[-2px] overflow-x-auto"
+          >
+            <pre><code class="language-js text-sm">
+/*
+// Assumes this Node class definition:
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+*/
+
+function isSameTree(p, q) {
+  // 1. Base case: Both nodes are null (end of a branch)
+  if (p === null && q === null) {
+    return true;
+  }
+
+  // 2. Structural or value mismatch
+  if (p === null || q === null || p.data !== q.data) {
+    return false;
+  }
+
+  // 3. Recurse on children
+  // Both left subtrees AND right subtrees must be identical
+  return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+}
+            </code></pre>
+          </div>
+        </section>
+      </div>
+    `
+      },
+      {
+        practicalTopic: "Validate a Binary Search Tree (BST)",
+        difficulty: "Intermediate",
+        details: `
+      <div class="space-y-4 text-gray-300">
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
+          <p>Given the root of a binary tree, determine if it is a valid Binary Search Tree (BST). A valid BST is defined as:</p>
+          <ul class="list-disc list-inside ml-4">
+            <li>The left subtree of a node contains only nodes with values <span class="text-yellow-400">less than</span> the node's value.</li>
+            <li>The right subtree of a node contains only nodes with values <span class="text-yellow-400">greater than</span> the node's value.</li>
+            <li>Both the left and right subtrees must also be valid BSTs.</li>
+          </ul>
+          <p class="text-sm text-yellow-400 mt-2">Interview Frequency: 4</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Examples</h3>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700">
+            <p><strong class="text-gray-400">Tree:</strong> [2, 1, 3]</p>
+            <p><strong class="text-gray-400">Output:</strong> true</p>
+          </div>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Tree:</strong> [5, 1, 4, null, null, 3, 6]</p>
+            <pre class="bg-gray-900 text-sm p-3 rounded text-white overflow-x-auto"><code>
+      (5)
+     /   \\
+    (1)   (4) &lt;-- Invalid: 4 is not > 5
+         /   \\
+        (3)   (6)
+            </code></pre>
+            <p><strong class="text-gray-400">Output:</strong> false</p>
+            <p class="text-sm text-gray-500 mt-1"><strong>Explanation:</strong> The root's right child (4) is less than the root (5), violating the BST property.</p>
+          </div>
+        </section>
+
+        <section x-data="{ open: false }">
+          <button @click="open = !open" class="w-full text-left bg-gray-800 hover:bg-gray-700 p-3 rounded-lg flex justify-between items-center">
+            <span class="font-semibold text-white">View Solution</span>
+            <svg x-show="!open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <svg x-show="open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+    
+          <div
+          x-show="open"
+          x-transition
+          x-collapse
+          class="bg-gray-900 p-4 rounded-b-lg border border-t-0 border-gray-700 mt-[-2px] overflow-x-auto"
+          >
+            <pre><code class="language-js text-sm">
+/*
+// Assumes this Node class definition:
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+*/
+
+// A simple check (node.left.data < node.data) is NOT enough.
+// We must pass down the valid range (min, max) for each node.
+
+function isValidBST(root) {
+  // Helper function that checks if a node's value is within
+  // the valid (min, max) range.
+  function validate(node, min, max) {
+    // An empty node is valid.
+    if (node === null) {
+      return true;
+    }
+
+    // Check current node's value against the range
+    // Note: We use <= and >= to handle invalid ranges.
+    if (node.data <= min || node.data >= max) {
+      return false;
+    }
+
+    // Recurse on children, updating the range:
+    // - Left child's max value must be the current node's data.
+    // - Right child's min value must be the current node's data.
+    return (
+      validate(node.left, min, node.data) &&
+      validate(node.right, node.data, max)
+    );
+  }
+
+  // Start the validation with an infinite range.
+  return validate(root, -Infinity, Infinity);
+}
+            </code></pre>
+          </div>
+        </section>
+      </div>
+    `
+      },
+      {
+        practicalTopic: "Check if a Binary Tree is Height-Balanced",
+        difficulty: "Intermediate",
+        details: `
+      <div class="space-y-4 text-gray-300">
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Problem Description</h3>
+          <p>Given a binary tree, determine if it is <span class="text-yellow-400">height-balanced</span>. A tree is height-balanced if the depth of the two subtrees of <span class="text-yellow-400">every</span> node never differs by more than one.</p>
+          <p class="text-sm text-yellow-400 mt-2">Interview Frequency: 9</p>
+        </section>
+
+        <section>
+          <h3 class="text-lg font-semibold text-white mb-2">Examples</h3>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700">
+            <p><strong class="text-gray-400">Tree:</strong> [3, 9, 20, null, null, 15, 7]</p>
+            <p><strong class="text-gray-400">Output:</strong> true</p>
+          </div>
+          <div class="bg-gray-900 p-3 rounded-lg border border-gray-700 mt-2">
+            <p><strong class="text-gray-400">Tree:</strong> [1, 2, 2, 3, 3, null, null, 4, 4]</p>
+             <pre class="bg-gray-900 text-sm p-3 rounded text-white overflow-x-auto"><code>
+        (1)
+       /   \\
+      (2)   (2)
+     /   \\
+    (3)   (3)
+   /   \\
+  (4)   (4)
+            </code></pre>
+            <p><strong class="text-gray-400">Output:</strong> false</p>
+            <p class="text-sm text-gray-500 mt-1"><strong>Explanation:</strong> The subtree rooted at (2) is balanced. However, the subtree rooted at the main root (1) is unbalanced (left height 3, right height 1, diff = 2).</p>
+          </div>
+        </section>
+
+        <section x-data="{ open: false }">
+          <button @click="open = !open" class="w-full text-left bg-gray-800 hover:bg-gray-700 p-3 rounded-lg flex justify-between items-center">
+            <span class="font-semibold text-white">View Solution</span>
+            <svg x-show="!open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <svg x-show="open" class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+          </button>
+    
+          <div
+          x-show="open"
+          x-transition
+          x-collapse
+          class="bg-gray-900 p-4 rounded-b-lg border border-t-0 border-gray-700 mt-[-2px] overflow-x-auto"
+          >
+            <pre><code class="language-js text-sm">
+/*
+// Assumes this Node class definition:
+class Node {
+  constructor(data) {
+    this.data = data;
+    this.left = null;
+    this.right = null;
+  }
+}
+*/
+
+// This is the efficient O(n) solution using a bottom-up DFS.
+// A naive top-down solution would be O(n^2).
+
+function isBalanced(root) {
+  
+  /**
+   * Helper function to check height and balance simultaneously.
+   * Returns the height of the node if balanced.
+   * Returns Infinity if unbalanced.
+   */
+  function checkHeight(node) {
+    if (node === null) {
+      return 0; // Height of a null node is 0
+    }
+
+    // Check left subtree
+    const leftHeight = checkHeight(node.left);
+    if (leftHeight === Infinity) {
+      return Infinity; // Propagate imbalance signal up
+    }
+
+    // Check right subtree
+    const rightHeight = checkHeight(node.right);
+    if (rightHeight === Infinity) {
+      return Infinity; // Propagate imbalance signal up
+    }
+
+    // Check balance at the current node
+    if (Math.abs(leftHeight - rightHeight) > 1) {
+      return Infinity; // Signal imbalance
+    }
+
+    // Return the actual height of this node
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+
+  // The tree is balanced if the checkHeight function
+  // does not return Infinity.
+  return checkHeight(root) !== Infinity;
+}
+            </code></pre>
+          </div>
+        </section>
+      </div>
+    `
+      }
     ];
 
     window.proTips = [
