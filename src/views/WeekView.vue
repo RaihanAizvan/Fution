@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
-import { loadWeekData } from '@/data'
-import { useWeekTracker } from '@/composables/useWeekTracker'
-import type { WeekData } from '@/data/types'
+import { ref, computed, watch } from 'vue'
+import { loadWeekData } from '../data'
+import { useWeekTracker } from '../composables/useWeekTracker'
+import type { WeekData } from '../data/types'
 
-import WeekHeader from '@/components/week/WeekHeader.vue'
-import TopicItem from '@/components/week/TopicItem.vue'
-import AddTopicBar from '@/components/week/AddTopicBar.vue'
-import ProTipsList from '@/components/week/ProTipsList.vue'
+import WeekHeader from '../components/week/WeekHeader.vue'
+import TopicItem from '../components/week/TopicItem.vue'
+import AddTopicBar from '../components/week/AddTopicBar.vue'
+import ProTipsList from '../components/week/ProTipsList.vue'
 
 const props = defineProps<{
   id: number
 }>()
 
-const route = useRoute()
 const weekData = ref<WeekData | null>(null)
 const loading = ref(true)
 const error = ref<string | null>(null)
