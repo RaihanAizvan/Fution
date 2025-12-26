@@ -7,7 +7,7 @@ import { computed } from 'vue'
 export function useProgressCircle(radius: number) {
   const circumference = computed(() => 2 * Math.PI * radius)
 
-  const getStrokeDashoffset = (percentage: number) => {
+  const getStrokeDashoffset = (percentage: number): number => {
     return (1 - percentage / 100) * circumference.value
   }
 
