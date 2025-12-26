@@ -1,253 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+import type { WeekData } from '../types'
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fution - Week 15</title>
-  <!-- tailwindcss CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- bootstrap CDN -->
-  <!-- emailjs CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+export const week15Data: WeekData = {
+  weekKey: 'week15',
+  weekNumber: 15,
+  title: 'DSA - 3',
+  subtitle: 'Advanced DSA',
 
-  <!-- alpine js -->
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
-  <!-- collapse js -->
-  <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-
-  <script>
-    emailjs.init("-XBrVlizt4Jkdh9W-"); // Emailjs public key
-  </script>
-  <link rel="icon" href="logo.png" type="image/x-icon">
-  <!-- external stylesheet -->
-  <link rel="stylesheet" href="style.css">
-  <!-- highlight.js CDN for code syntax highlighting -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/go.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</head>
-
-<body class="h-dvh overflow-hidden flex font-sans text-white bluue scrollbar-thin-gray pb-0">
-  <div id="page-loader"
-    class="fixed inset-0 bg-gray-900/10 backdrop-blur-sm z-50 flex flex-col items-center justify-center transition-opacity duration-500 opacity-100">
-    <div class="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-    <p class="mt-4 text-gray-300 text-xs uppercase tracking-widest">Loading Fution...</p>
-  </div>
-  <!-- mobile overlay for menu -->
-  <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden"></div>
-
-  <!-- top header for mobile -->
-  <div class="fixed top-0 left-0 right-0 z-50 flex lg:hidden">
-    <!-- mobile menu toggle button -->
-    <button id="mobile-menu-toggle"
-      class="w-12 h-16 bg-gradient-to-t from-gray-800 to-gray-900 border-b border-gray-700 flex items-center justify-center hover:bg-gray-700/50 transition-all duration-200 bg-gray-800">
-      <div class="w-6 h-6 flex flex-col justify-center space-y-1">
-        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar1"></span>
-        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar2"></span>
-        <span class="block w-6 h-0.5 bg-white transition-all duration-200" id="bar3"></span>
-      </div>
-    </button>
-    <!-- mobile header content -->
-    <header
-      class="flex-1 bg-gradient-to-t from-gray-800 to-gray-900 h-16 border-b border-gray-700 border-opacity-70 flex items-center justify-between px-4 rounded-r-lg">
-      <div class="flex items-center gap-2">
-        <img src="logo.png" alt="Fution Logo" class="w-10 h-10 rounded-lg" />
-        <h2 class="text-lg font-bold">Fution - Week 15</h2>
-      </div>
-  </div>
-  </header>
-  </div>
-
-
-  <!-- Modal Wrapper -->
-  <div id="requestModal"
-    class="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[9999] opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out">
-
-    <div
-      class="bg-gradient-to-br from-gray-900/90 to-gray-800/90 text-white rounded-2xl w-full max-w-lg shadow-2xl border border-blue-500/20 p-6 relative transform scale-95 transition-all duration-300 ease-out animate-fade-in">
-
-      <!-- Close Button -->
-      <button id="closeModal"
-        class="absolute top-3 right-3 text-gray-400 hover:text-red-400 text-2xl transition-all duration-200">&times;</button>
-
-      <!-- Modal Title -->
-      <h2 class="text-2xl font-bold  text-blue-400 tracking-wide">Request to add a New Pending</h2>
-      <p class="text-gray-400 mb-6">Please fill out the form below to request a new pending topic.</p>
-
-      <!-- Form -->
-      <form id="topicRequestForm" class="space-y-5">
-
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Your Email</label>
-          <input type="email" id="email" name="email" required
-            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 transition placeholder:text-gray-500"
-            placeholder="gandhiji@nehru.com">
-        </div>
-
-        <div>
-          <label for="topic" class="block text-sm font-medium text-gray-300 mb-1">Pending Title</label>
-          <input type="text" id="topic" name="topic" required
-            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 transition placeholder:text-gray-500"
-            placeholder="e.g., Responsive Grid Systems">
-        </div>
-
-        <div>
-          <label for="description" class="block text-sm font-medium text-gray-300 mb-1">Description (HTML
-            allowed)</label>
-          <textarea id="description" name="description" rows="4" required
-            class="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-400 transition placeholder:text-gray-500"
-            placeholder="<p>A responsive grid system is a layout structure that adapts its columns and rows to different screen sizes, ensuring content remains well-organized and visually appealing across various devices</p>"></textarea>
-        </div>
-
-        <button type="submit"
-          class="w-full px-5 py-2.5 rounded-lg border border-gray-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-500/40 transition font-semibold text-white tracking-wide">
-          Submit Request
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- toast -->
-  <div id="fusionToast"
-    class="fixed top-5 right-5 z-50 hidden px-6 py-4 rounded-lg shadow-lg text-white bg-gradient-to-r from-blue-900/60 to-black/60 border border-gray-700 animate-slide-in">
-    <p id="toastMessage" class="font-sans"></p>
-  </div>
-
-
-
-
-  <!-- main content area -->
-  <main class="lg:ml-96 flex-1 relative overflow-hidden">
-
-    <div class="p-2 lg:p-8 pt-20 lg:pt-2 lg:pb-2 overflow-y-auto h-full">
-      <!-- week header section -->
-      <div class="grid lg:grid-cols-3 gap-6 text-center mb-8 sm:mt-10 fade-up lg:pr-24">
-        <!-- Week Header - takes 2 columns on large screens -->
-        <div class="lg:col-span-2">
-          <div
-            class="inline-flex items-center space-x-4 border border-gray-700 border-opacity-70 px-6 py-4 rounded-2xl mb-6">
-            <div
-              class="w-16 h-16 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 1052 1052"><path fill="#f0db4f" d="M0 0h1052v1052H0z"/><path d="M965.9 801.1c-7.7-48-39-88.3-131.7-125.9-32.2-14.8-68.1-25.399-78.8-49.8-3.8-14.2-4.3-22.2-1.9-30.8 6.9-27.9 40.2-36.6 66.6-28.6 17 5.7 33.1 18.801 42.8 39.7 45.4-29.399 45.3-29.2 77-49.399-11.6-18-17.8-26.301-25.4-34-27.3-30.5-64.5-46.2-124-45-10.3 1.3-20.699 2.699-31 4-29.699 7.5-58 23.1-74.6 44-49.8 56.5-35.6 155.399 25 196.1 59.7 44.8 147.4 55 158.6 96.9 10.9 51.3-37.699 67.899-86 62-35.6-7.4-55.399-25.5-76.8-58.4-39.399 22.8-39.399 22.8-79.899 46.1 9.6 21 19.699 30.5 35.8 48.7 76.2 77.3 266.899 73.5 301.1-43.5 1.399-4.001 10.6-30.801 3.199-72.101zm-394-317.6h-98.4c0 85-.399 169.4-.399 254.4 0 54.1 2.8 103.7-6 118.9-14.4 29.899-51.7 26.2-68.7 20.399-17.3-8.5-26.1-20.6-36.3-37.699-2.8-4.9-4.9-8.7-5.601-9-26.699 16.3-53.3 32.699-80 49 13.301 27.3 32.9 51 58 66.399 37.5 22.5 87.9 29.4 140.601 17.3 34.3-10 63.899-30.699 79.399-62.199 22.4-41.3 17.6-91.3 17.4-146.6.5-90.2 0-180.4 0-270.9z" fill="#323330"/></svg>
-            </div>
-            <div class="text-left">
-              <h1 class="text-3xl lg:text-4xl font-bold">Week 15</h1>
-              <p class="text-gray-400 text-lg">DSA 03</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Progress Tracker - takes 1 column on large screens -->
-        <div class="flex items-center pr-12 justify-center gap-6">
-          <div class="relative">
-            <svg class="w-24 h-24" viewBox="0 0 96 96">
-              <defs>
-                <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25" />
-                  <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
-                </radialGradient>
-              </defs>
-              <g transform="rotate(-90 48 48)">
-                <circle cx="48" cy="48" r="40" fill="url(#glow)" />
-                <circle cx="48" cy="48" r="44" stroke="currentColor" stroke-width="1" fill="transparent"
-                  class="text-gray-700/10" />
-                <circle cx="48" cy="48" r="34" stroke="currentColor" stroke-width="1.5" fill="transparent"
-                  class="text-gray-700/30" />
-                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent"
-                  class="text-gray-700/60" />
-                <circle cx="48" cy="48" r="40" stroke="currentColor" stroke-width="6" fill="transparent"
-                  stroke-dasharray="251.2" stroke-dashoffset="251.2" class="text-blue-500" id="main-progress"
-                  style="transition: stroke-dashoffset 0.6s cubic-bezier(.4,2,.6,1);" stroke-linecap="round" />
-              </g>
-            </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <span class="text-2xl font-extrabold text-white drop-shadow" id="progress-text">0%</span>
-              <span class="text-xs text-gray-400 mt-1 tracking-wide" id="progress-count">0 / 0</span>
-            </div>
-          </div>
-          <div class="flex flex-col justify-center">
-            <div class="text-lg font-semibold text-white/90 tracking-tight flex items-center gap-2">
-              Progress Tracker
-            </div>
-            <div class="text-sm text-gray-400 mt-1">Track your weekly mastery</div>
-            <div class="flex items-center gap-2 mt-2">
-              <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-              <span class="text-xs text-gray-500">Auto-saves progress</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- content grid layout -->
-      <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
-
-        <div class="lg:col-span-2 space-y-6">
-          <div
-            class="border border-gray-700 border-opacity-70 rounded-2xl lg:p-5 p-3 pt-5 slide-left lg:h-[calc(100vh-220px)] lg:w-full w-[calc(100vw-10px)]"
-            id="mainBox">
-
-            <div class="flex items-center justify-between mb-6">
-              <div
-                class="tab-buttons flex gap-1 relative bg-white/5 rounded-full p-1 backdrop-blur-md border border-white/10">
-                <button data-tab="topics" class="tab-btn active-tab" onclick="switchTab('topics')">Topics</button>
-                <button data-tab="practicals" class="tab-btn" onclick="switchTab('practicals')">Practicals</button>
-                <span class="tab-highlight"></span>
-              </div>
-
-              <button id="requestTopicBtn"
-                class="text-sm px-4 py-2 rounded-lg bg-transparent border border-gray-700 hover:bg-blue-700 transition text-white font-medium">
-                Add Pending
-              </button>
-            </div>
-
-            <div id="tab-topics"
-              class="tab-content lg:overflow-y-auto lg:h-[calc(100vh-350px)] lg:px-4 space-y-3 scrollbar-thin-gray">
-              <div id="topicsContainer"></div>
-            </div>
-
-            <div id="tab-practicals"
-              class="tab-content hidden lg:overflow-y-auto lg:h-[calc(100vh-350px)] lg:px-4 space-y-3 scrollbar-thin-gray">
-              <div id="practicalsContainer" class="grid grid-cols-1 gap-4">
-                <!-- Practicals will be rendered dynamically here -->
-              </div>
-            </div>
-
-
-          </div>
-        </div>
-
-
-        <!-- pro tips  -->
-
-        <div class="space-y-6">
-          <div
-            class="border border-gray-700 border-opacity-70 rounded-2xl p-6 slide-right lg:overflow-y-auto h-[calc(100vh-220px)] scrollbar-thin-gray ">
-            <div class="flex items-center space-x-3 mb-6">
-              <div
-                class="w-10 h-10 bg-blue-500 bg-opacity-20 border border-blue-500 border-opacity-40 rounded-lg flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
-                  </path>
-                </svg>
-              </div>
-              <h2 class="text-xl font-bold">Pro Tips</h2>
-            </div>
-            <div id="pro-tips-list" class="space-y-4"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    window.weekKey = "week15";
-
-    window.topics = [
+  topics: [
       {
         type: 'heading',
         title: "Trees",
@@ -900,14 +659,14 @@
       }
 
 
-    ]
+    ],
     // Practical Problems
 
 
 
 
     //practical
-    window.practicals = [
+    practicals : [
 
 
       
@@ -2255,18 +2014,16 @@ function isValidBST(root) {
       </div>
     `
       },
-    ];
+    ],
+  proTips: [
+    { text: "Practice on LeetCode, HackerRank, or CodeForces daily. Start with easy problems and gradually increase difficulty.", color: "green" },
+    { text: "Master the basics before jumping to advanced topics. Strong foundation in arrays, strings, and linked lists is crucial.", color: "blue" },
+    { text: "Draw diagrams! Visualizing trees, graphs, and recursion trees helps understand the problem better.", color: "blue" },
+    { text: "Learn to identify problem patterns: Two Pointers, Sliding Window, Fast & Slow Pointers, etc. Many problems follow similar patterns.", color: "green" },
+    { text: "Time and space complexity matter! Always analyze your solution's Big O notation. Interviewers expect this.", color: "red" },
+    { text: "Don't just memorize solutions. Understand the 'why' behind each algorithm. This helps in solving variations.", color: "blue" },
+    { text: "Use recursion wisely. Sometimes iterative solutions are better. Consider stack space for recursive calls.", color: "blue" },
+    { text: "For graph problems, always clarify: Is it directed or undirected? Weighted or unweighted? Connected or disconnected?", color: "green" }
+  ],
 
-    window.proTips = [
-
-
-    ];
-
-
-
-  </script>
-  <script src="sidebar.js"></script>
-  <script src="main.js"></script>
-</body>
-
-</html>
+}
