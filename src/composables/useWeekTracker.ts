@@ -1,5 +1,5 @@
-import { ref, computed, watch } from 'vue'
-import type { Topic, TopicsState, UserTopic } from '@/data/types'
+import { ref, computed } from 'vue'
+import type { Topic, TopicsState, UserTopic } from '../data/types'
 
 /**
  * Core week tracking logic - replaces WeekLearningTracker class
@@ -47,7 +47,9 @@ export function useWeekTracker(weekKey: string, topics: Topic[]) {
   // Computed properties (no manual updates needed!)
   const allTopics = computed(() => [...topics, ...userTopics.value])
   
-  const totalTopics = computed(() => allTopics.value.filter(t => t.type !== 'heading').length)
+  const allTitles = computed(() => allTopics.value.map((t: Topic) => t.title))
+  
+  const totalTopics = computed(() => allTopics.value.filter((t: Topic) => t.type !== 'heading').length)
   
   const completedTopics = computed(() => 
     Object.values(topicsState.value).filter(Boolean).length
@@ -72,8 +74,7 @@ export function useWeekTracker(weekKey: string, topics: Topic[]) {
 
   // Add custom topic
   const addTopic = (title: string) => {
-    const allTitles = allTopics.value.map(t => t.title)
-    if (allTitles.includes(title)) {
+    if (allTitles.value.includes(title)) {
       throw new Error('This topic already exists!')
     }
     
