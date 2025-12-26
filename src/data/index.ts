@@ -10,17 +10,16 @@ export const loadWeekData = async (weekNumber: number): Promise<WeekData> => {
   switch (weekNumber) {
     case 1:
       return (await import('./weeks/week-1')).week1Data
+    case 2:
+      return (await import('./weeks/week-2')).week2Data
     case 3:
       return (await import('./weeks/week-3')).week3Data
-    // TODO: Add remaining week data files
-    // case 2:
-    //   return (await import('./weeks/week-2')).week2Data
-    // case 4:
-    //   return (await import('./weeks/week-4')).week4Data
-    // case 5:
-    //   return (await import('./weeks/week-5')).week5Data
-    // case 15:
-    //   return (await import('./weeks/week-15')).week15Data
+    case 4:
+      return (await import('./weeks/week-4')).week4Data
+    case 5:
+      return (await import('./weeks/week-5')).week5Data
+    case 15:
+      return (await import('./weeks/week-15')).week15Data
     default:
       throw new Error(`Week ${weekNumber} not found`)
   }
