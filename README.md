@@ -1,15 +1,6 @@
-# Fution Vue 3 Migration
+# Fution
 
-A modern Vue 3 + TypeScript + Tailwind CSS migration of the Fution learning tracker app.
-
-## 🎯 Migration Goals
-
-- **Single UI Template**: One reusable Vue template for all weeks
-- **CMS-like Data**: Separate data files per week (`week-1.ts`, `week-2.ts`, etc.)
-- **Dynamic Rendering**: Load week data based on route (`/week/:id`)
-- **No Globals**: Eliminate all `window.*` dependencies
-- **SPA Navigation**: Vue Router with no page reloads
-- **Performance**: Lazy-load week data, computed properties, minimal re-renders
+Your personal learning tracker for mastering web development. Track progress, manage topics, and stay organized throughout your learning journey.
 
 ## 🚀 Quick Start
 
@@ -17,130 +8,62 @@ A modern Vue 3 + TypeScript + Tailwind CSS migration of the Fution learning trac
 # Install dependencies
 npm install
 
-# Start development server
+# Start development
 npm run dev
 
 # Build for production
 npm run build
 ```
 
-## 📁 Project Structure
+## ✨ Features
 
-```
-src/
-├── data/
-│   ├── types.ts              # TypeScript interfaces
-│   ├── sidebar-config.ts     # Navigation config
-│   ├── weeks/
-│   │   ├── week-1.ts         # Week 1 data
-│   │   ├── week-3.ts         # Week 3 data
-│   │   └── ...               # Additional weeks
-│   └── index.ts              # Data loader
-│
-├── components/
-│   ├── layout/               # Sidebar, Header
-│   ├── week/                 # Topics, Progress
-│   └── shared/               # Reusable components
-│
-├── composables/              # Reactive logic
-│   ├── useWeekTracker.ts     # Core tracking
-│   ├── useProgressCircle.ts  # Progress calculations
-│   └── useLocalStorage.ts    # Storage utilities
-│
-├── views/
-│   ├── WeekView.vue          # Dynamic week page
-│   └── FutionSpace.vue       # Personal space
-│
-├── router/
-│   └── index.ts              # Route configuration
-│
-└── App.vue                   # Root component
-```
+- **Progress Tracking** - Visual progress circles for each week
+- **Custom Topics** - Add your own learning topics
+- **Pro Tips** - Weekly tips and best practices
+- **Fution Space** - Personal journal, resources, and goals
+- **Multi-Domain Support** - MERN, Python, Java, and more (coming soon)
+- **Dark Theme** - Beautiful gradient UI
+- **Mobile Responsive** - Works on all devices
 
-## 🔄 Key Migrations
+## 🎯 What's Inside
 
-### From Class to Composable
+### MERN Stack Learning Path
+- **Week 1**: HTML & CSS Fundamentals
+- **Week 2**: Bootstrap & Portfolio
+- **Week 3**: JavaScript Manipulation
+- **Week 4**: Node.js & Express
+- **Week 5**: MongoDB Database
+- **Week 15**: Advanced DSA
 
-**Before:**
-```javascript
-class WeekLearningTracker {
-  constructor() {
-    this.topics = window.topics
-    this.init()
-  }
-  updateProgress() {
-    this.elements.progressText.innerText = `${this.calculateProgress()}%`
-  }
-}
-```
-
-**After:**
-```typescript
-function useWeekTracker(weekKey: string, topics: Topic[]) {
-  const topicsState = ref<TopicsState>({})
-  const progressPercentage = computed(() => /* auto-calculates */)
-  
-  return { topicsState, progressPercentage, toggleTopic, ... }
-}
-```
-
-### From Static HTML to Dynamic Routes
-
-**Before:**
-- `index.html` (Week 1)
-- `week-2.html` (Week 2)
-- `week-3.html` (Week 3)
-- ... 9 separate files
-
-**After:**
-- `/week/1` → Loads `week-1.ts`
-- `/week/2` → Loads `week-2.ts`
-- `/week/3` → Loads `week-3.ts`
-- Single `WeekView.vue` component
-
-## 🎨 Features
-
-- ✅ Progress tracking with animated SVG circles
-- ✅ Custom topic addition/deletion
-- ✅ Accordion details expansion
-- ✅ Auto-hiding add topic bar
-- ✅ localStorage persistence
-- ✅ Mobile-responsive design
-- ✅ Dark theme with gradient backgrounds
-- ✅ Pro tips sidebar
-- ✅ JavaScript practicals (Week 3+)
+### Track Your Progress
+- Check off completed topics
+- View progress percentage
+- Add custom learning goals
+- Export your learning data
 
 ## 🛠️ Tech Stack
 
-- **Vue 3** - Composition API with `<script setup>`
-- **TypeScript** - Type safety and better DX
-- **Vue Router 4** - SPA navigation
-- **Vite** - Fast dev server and build
-- **Tailwind CSS** - Utility-first styling
-- **No external state management** - Composables only
+- Vue 3 + TypeScript
+- Tailwind CSS
+- Vue Router
+- Vite
 
-## 📝 Next Steps
+## 📱 Usage
 
-1. **Extract remaining week data** from HTML files
-2. **Implement Fution Space view** (Journal, Resources, Goals)
-3. **Add practicals rendering** for JavaScript weeks
-4. **Create modal components** for Add Pending
-5. **Add page loader component**
-6. **Test mobile interactions**
-
-## 📚 Documentation
-
-- [Migration Guide](./MIGRATION-GUIDE.md) - Detailed migration strategy
-- [Implementation Summary](./IMPLEMENTATION-SUMMARY.md) - What's been built
+Navigate to `/mern/week/1` to start your learning journey. Each week includes:
+- Topics to learn
+- Detailed explanations
+- Pro tips from experienced developers
+- Progress tracking
 
 ## 🤝 Contributing
 
-This is a learning project. Feel free to explore the code structure and patterns used for migrating vanilla JS to Vue 3.
+Contributions welcome! Feel free to submit issues or pull requests.
 
 ## 📄 License
 
-Same as original Fution project.
+MIT License
 
 ---
 
-Made with ❤️ by converting vanilla JS to Vue 3
+**Fution** = Future + Education 🚀
