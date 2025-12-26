@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory('/'),
   routes: [
     {
       path: '/',
@@ -10,13 +10,13 @@ const router = createRouter({
     {
       path: '/week/:id',
       name: 'week',
-      component: () => import('@/views/WeekView.vue'),
+      component: () => import('../views/WeekView.vue'),
       props: route => ({ id: Number(route.params.id) })
     },
     {
       path: '/fution-space',
       name: 'fution-space',
-      component: () => import('@/views/FutionSpace.vue')
+      component: () => import('../views/FutionSpace.vue')
     },
     {
       path: '/:pathMatch(.*)*',
@@ -26,9 +26,9 @@ const router = createRouter({
 })
 
 // Optional: Add navigation guards for analytics or page transitions
-router.beforeEach((to, from, next) => {
-  // Could add page loader logic here
-  next()
-})
+// router.beforeEach((to, from, next) => {
+//   // Could add page loader logic here
+//   next()
+// })
 
 export default router
