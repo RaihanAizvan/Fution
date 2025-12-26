@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useProgressCircle } from '@/composables/useProgressCircle'
+import { useProgressCircle } from '../../composables/useProgressCircle'
 
 const props = defineProps<{
   weekNumber: number

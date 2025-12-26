@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { ProTip } from '@/data/types'
+import type { ProTip } from '../../data/types'
 
-const props = defineProps<{
+defineProps<{
   proTips: ProTip[]
 }>()
 

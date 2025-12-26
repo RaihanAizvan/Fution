@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { sidebarConfig, motivationalQuotes } from '@/data'
+import { sidebarConfig, motivationalQuotes } from '../../data'
 
 // Get current route to determine active week
 const route = useRoute()

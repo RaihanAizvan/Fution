@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { Topic } from '@/data/types'
+import type { Topic } from '../../data/types'
 
 const props = defineProps<{
   topic: Topic
