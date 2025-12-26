@@ -1,8 +1,10 @@
 # Fution
+## Overview
 
-Your personal learning tracker for mastering web development. Track progress, manage topics, and stay organized throughout your learning journey.
+Fution is a lightweight web application designed to help anyone build web development skills. It provides an interactive learning path with key concepts and guidance for self-directed learning. The application runs entirely client-side for optimal performance.
 
-## 🚀 Quick Start
+
+## Quick Start
 
 ```bash
 # Install dependencies
@@ -15,7 +17,7 @@ npm run dev
 npm run build
 ```
 
-## ✨ Features
+##  Features
 
 - **Progress Tracking** - Visual progress circles for each week
 - **Custom Topics** - Add your own learning topics
@@ -25,7 +27,7 @@ npm run build
 - **Dark Theme** - Beautiful gradient UI
 - **Mobile Responsive** - Works on all devices
 
-## 🎯 What's Inside
+##  What's Inside
 
 ### MERN Stack Learning Path
 - **Week 1**: HTML & CSS Fundamentals
@@ -41,14 +43,14 @@ npm run build
 - Add custom learning goals
 - Export your learning data
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - Vue 3 + TypeScript
 - Tailwind CSS
 - Vue Router
 - Vite
 
-## 📱 Usage
+##  Usage
 
 Navigate to `/mern/week/1` to start your learning journey. Each week includes:
 - Topics to learn
@@ -56,14 +58,14 @@ Navigate to `/mern/week/1` to start your learning journey. Each week includes:
 - Pro tips from experienced developers
 - Progress tracking
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions welcome! Feel free to submit issues or pull requests.
 
-## 📄 License
+##  License
 
 MIT License
 
 ---
 
-**Fution** = Future + Education 🚀
+**Fution** = Future + Education 
