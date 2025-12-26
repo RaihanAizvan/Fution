@@ -5,22 +5,26 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/week/1'
+      redirect: '/mern/week/1'
     },
     {
-      path: '/week/:id',
+      path: '/mern',
+      redirect: '/mern/week/1'
+    },
+    {
+      path: '/mern/week/:id',
       name: 'week',
       component: () => import('../views/WeekView.vue'),
       props: route => ({ id: Number(route.params.id) })
     },
     {
-      path: '/fution-space',
+      path: '/mern/fution-space',
       name: 'fution-space',
       component: () => import('../views/FutionSpace.vue')
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/week/1'
+      redirect: '/mern/week/1'
     }
   ]
 })

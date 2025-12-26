@@ -12,63 +12,63 @@ export const sidebarConfig: SidebarConfig = {
       id: 1,
       title: 'HTML & CSS',
       subtitle: 'Fundamentals',
-      href: '/week/1',
+      href: '/mern/week/1',
       isActive: false
     },
     {
       id: 2,
       title: 'Bootstrap & Portfolio',
       subtitle: 'Basics',
-      href: '/week/2',
+      href: '/mern/week/2',
       isActive: false
     },
     {
       id: 3,
       title: 'JAVAASCRIPT',
       subtitle: 'Manipulation',
-      href: '/week/3',
+      href: '/mern/week/3',
       isActive: false
     },
     {
       id: 4,
       title: 'Node JS & Express',
       subtitle: 'The Backend World',
-      href: '/week/4',
+      href: '/mern/week/4',
       isActive: false
     },
     {
       id: 5,
       title: 'MongoDB',
       subtitle: 'Database',
-      href: '/week/5',
+      href: '/mern/week/5',
       isActive: false
     },
     {
       id: 6,
       title: 'Full Domain',
       subtitle: 'Things Gets Stuck Here',
-      href: '/week/6',
+      href: '/mern/week/6',
       isActive: false
     },
     {
       id: 7,
       title: 'Figma, API, DB Design',
       subtitle: 'First step to real world',
-      href: '/week/7',
+      href: '/mern/week/7',
       isActive: false
     },
     {
       id: 8,
       title: 'Project 1',
       subtitle: 'Building',
-      href: '/week/8',
+      href: '/mern/week/8',
       isActive: false
     },
     {
       id: 15,
       title: 'DSA - 3',
       subtitle: 'Advanced DSA',
-      href: '/week/15',
+      href: '/mern/week/15',
       isActive: false
     }
   ],
