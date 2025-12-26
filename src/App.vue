@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Sidebar from '@/components/layout/Sidebar.vue'
+import Sidebar from './components/layout/Sidebar.vue'
 
 const sidebarOpen = ref(false)
 const mobileMenuToggle = () => {
@@ -91,5 +91,5 @@ const closeSidebar = () => {
 
 <style>
 /* Import Tailwind and custom styles */
-@import '@/assets/styles/main.css';
+@import './assets/styles/main.css';
 </style>
