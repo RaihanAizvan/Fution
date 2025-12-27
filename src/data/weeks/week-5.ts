@@ -5,7 +5,7 @@ export const week5Data: WeekData = {
   weekNumber: 5,
   title: 'MongoDB',
   subtitle: 'Database',
-  
+
   topics: [
     {
       type: 'heading',
@@ -135,10 +135,7 @@ User.find({ $or: [{ age: 18 }, { age: 21 }] });
 User.find({ tags: { $in: ['javascript', 'node'] } });</code></pre>
         </div>
       </div>`
-    }
-  ],
-  
-  topics: [
+    },
     {
       type: 'heading',
       title: 'Collections & Views'
@@ -1154,7 +1151,7 @@ const newCollection = db.collection('users')</code></pre>
       </div>`
     }
   ],
-  
+
   proTips: [
     { text: "Always use MongoDB Atlas for production. It provides automatic backups, monitoring, and scaling.", color: "green" },
     { text: "Use indexes to improve query performance. Add them to fields you frequently query. Example: <code>userSchema.index({ email: 1 })</code>.", color: "blue" },
@@ -1163,6 +1160,6 @@ const newCollection = db.collection('users')</code></pre>
     { text: "Enable mongoose debug mode during development: <code>mongoose.set('debug', true)</code>. It shows all database queries.", color: "blue" },
     { text: "Use virtual properties for computed fields that don't need to be stored in the database.", color: "blue" }
   ],
-  
+
   practicals: []
 }
