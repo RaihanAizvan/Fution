@@ -135,6 +135,56 @@ User.find({ $or: [{ age: 18 }, { age: 21 }] });
 User.find({ tags: { $in: ['javascript', 'node'] } });</code></pre>
         </div>
       </div>`
+    },
+    {
+      type: 'heading',
+      title: 'Core Fundamentals & Data Structure'
+    },
+    {
+      title: 'SQL vs NoSQL Databases',
+      difficulty: 'Beginner',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: SQL and NoSQL are two different approaches to database design. Understanding their differences helps choose the right database for your project.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p><strong class="text-blue-400">SQL Databases (Relational):</strong></p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Structured data with fixed schemas</li>
+          <li>Tables with rows and columns</li>
+          <li>Use SQL query language</li>
+          <li>ACID transactions (Atomicity, Consistency, Isolation, Durability)</li>
+          <li>Vertical scaling (increase server power)</li>
+          <li>Examples: MySQL, PostgreSQL, SQL Server</li>
+        </ul>
+        
+        <p class="mt-4"><strong class="text-green-400">NoSQL Databases (Non-Relational):</strong></p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Flexible, dynamic schemas</li>
+          <li>Document, key-value, graph, or column-family stores</li>
+          <li>Different query languages (MongoDB uses MQL)</li>
+          <li>Eventually consistent (in distributed systems)</li>
+          <li>Horizontal scaling (add more servers)</li>
+          <li>Examples: MongoDB, Redis, Cassandra, Neo4j</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">When to use SQL:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>Complex queries and relationships</li>
+            <li>Data integrity is critical (banking, finance)</li>
+            <li>Structured data with clear relationships</li>
+          </ul>
+          
+          <p class="text-yellow-300 font-semibold mb-2 mt-3">When to use NoSQL:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>Rapid development with changing requirements</li>
+            <li>Large volumes of unstructured data</li>
+            <li>Need for horizontal scaling</li>
+            <li>Real-time applications (social media, IoT)</li>
+          </ul>
+        </div>
+      </div>`
     }
   ],
   
