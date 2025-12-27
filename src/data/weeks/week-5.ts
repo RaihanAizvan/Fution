@@ -941,6 +941,217 @@ db.productAnalytics.find({ category: "Electronics" })
           daily depending on your needs. Perfect trade-off between speed and freshness.
         </p>
       </div>`
+    },
+    {
+      title: 'Renaming a Collection',
+      difficulty: 'Beginner → Intermediate',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: Renaming collections in MongoDB is straightforward but requires caution. The operation is atomic but can impact running applications if not handled properly.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">Why Rename Collections?</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Fix typos or naming mistakes</li>
+          <li>Follow new naming conventions</li>
+          <li>Improve clarity and consistency</li>
+          <li>Reorganize database structure</li>
+          <li>Implement versioning (e.g., users_v2)</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <p class="text-yellow-300 font-semibold mb-2">Basic Rename Operation:</p>
+          <pre><code class="text-white">// Rename within same database
+db.oldCollectionName.renameCollection("newCollectionName")
+
+// Example: Fix typo
+db.usres.renameCollection("users")
+
+// Rename with dropTarget option (careful!)
+db.oldName.renameCollection("newName", true)  // true = drop target if exists</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Using renameCollection Command:</p>
+          <pre><code class="text-white">// More flexible approach
+db.adminCommand({
+  renameCollection: "myDatabase.oldCollection",
+  to: "myDatabase.newCollection",
+  dropTarget: false  // Default: false (don't drop existing target)
+})
+
+// Rename across databases (replica set only)
+db.adminCommand({
+  renameCollection: "db1.collection",
+  to: "db2.collection"
+})  // Only works in replica sets, not standalone</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">What Happens During Rename:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Atomic operation:</strong> All or nothing (no partial rename)</li>
+            <li><strong>Preserves data:</strong> All documents transferred</li>
+            <li><strong>Preserves indexes:</strong> All indexes maintained</li>
+            <li><strong>Brief lock:</strong> Database briefly locked during operation</li>
+            <li><strong>Namespace change:</strong> Collection gets new namespace</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Safe Rename Pattern:</p>
+          <pre><code class="text-white">// 1. Check if target collection name already exists
+db.getCollectionNames().includes("newName")  // Should return false
+
+// 2. Perform rename
+try {
+  db.oldCollection.renameCollection("newCollection")
+  print("Rename successful!")
+} catch (err) {
+  print("Rename failed:", err.message)
+}
+
+// 3. Verify rename
+db.getCollectionNames()  // Check both old and new names</code></pre>
+        </div>
+
+        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mt-4">
+          <p class="text-red-300 font-semibold mb-2">⚠️ Important Warnings:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Update application code:</strong> Change collection name in all code</li>
+            <li><strong>Active connections:</strong> Existing queries to old name will fail</li>
+            <li><strong>Database lock:</strong> Brief write blocking during operation</li>
+            <li><strong>Cannot undo:</strong> No rollback (rename back manually if needed)</li>
+            <li><strong>Sharded collections:</strong> Cannot rename sharded collections</li>
+            <li><strong>System collections:</strong> Cannot rename system.* collections</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Rename with Mongoose:</p>
+          <pre><code class="text-white">// Get MongoDB connection
+const db = mongoose.connection.db
+
+// Rename collection
+await db.renameCollection('oldUsers', 'newUsers')
+
+// Update model to use new collection name
+const User = mongoose.model('User', userSchema, 'newUsers')
+
+// Or update existing model
+mongoose.model('User').collection.name = 'newUsers'</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Best Practices for Production:</p>
+          <pre><code class="text-white">// 1. Maintenance window approach
+// - Schedule during low traffic
+// - Notify users of brief downtime
+// - Have rollback plan ready
+
+// 2. Blue-Green deployment
+// - Create new collection with correct name
+// - Copy data: db.oldCollection.find().forEach(doc => db.newCollection.insert(doc))
+// - Test with new collection
+// - Switch application to use new collection
+// - Drop old collection after verification
+
+// 3. Alias approach (if supported by driver)
+// - Keep old name as alias temporarily
+// - Gradually migrate code to new name
+// - Remove alias after full migration</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Handling Errors:</p>
+          <pre><code class="text-white">// Check for common errors
+try {
+  db.products.renameCollection("items")
+} catch (err) {
+  if (err.code === 48) {
+    print("Error: Target collection already exists")
+  } else if (err.code === 26) {
+    print("Error: Source collection doesn't exist")
+  } else if (err.code === 20) {
+    print("Error: Invalid collection name")
+  } else {
+    print("Unexpected error:", err.message)
+  }
+}</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">✅ Deployment Checklist:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>[ ] Backup database before rename</li>
+            <li>[ ] Update all application code references</li>
+            <li>[ ] Update database migration scripts</li>
+            <li>[ ] Update API documentation</li>
+            <li>[ ] Test in staging environment first</li>
+            <li>[ ] Schedule during maintenance window</li>
+            <li>[ ] Notify team and users</li>
+            <li>[ ] Monitor for errors after rename</li>
+            <li>[ ] Verify indexes preserved</li>
+            <li>[ ] Check application logs</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Example: Versioned Collection Migration:</p>
+          <pre><code class="text-white">// Scenario: Upgrading users collection to v2 with new schema
+
+// 1. Create new collection with correct name
+db.createCollection("users_v2")
+
+// 2. Copy and transform data
+db.users.find().forEach(doc => {
+  db.users_v2.insert({
+    _id: doc._id,
+    // Transform data to new schema
+    fullName: doc.firstName + " " + doc.lastName,
+    email: doc.email,
+    // Add new fields with defaults
+    verified: false,
+    createdAt: doc._id.getTimestamp()
+  })
+})
+
+// 3. Create indexes on new collection
+db.users_v2.createIndex({ email: 1 }, { unique: true })
+
+// 4. Update application to use users_v2
+
+// 5. After verification, rename for clean namespace
+db.users.renameCollection("users_old_backup")
+db.users_v2.renameCollection("users")
+
+// 6. Keep backup for a while, then drop
+// db.users_old_backup.drop()  // After 30 days</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Alternative: Collection Aliases (driver-specific):</p>
+          <pre><code class="text-white">// Some drivers support aliases (not native MongoDB feature)
+// Example with application-level aliasing
+
+// Old code
+const oldCollection = db.collection('usres')  // typo
+
+// Transition code (works with both)
+const collectionName = process.env.USE_NEW_NAME ? 'users' : 'usres'
+const collection = db.collection(collectionName)
+
+// New code (after rename)
+const newCollection = db.collection('users')</code></pre>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Pro Tip:</strong> For production systems, consider the blue-green approach instead of 
+          direct rename. Create new collection, migrate data, test thoroughly, then switch. This gives 
+          you a safe rollback path and zero downtime. Direct rename is best for development or maintenance 
+          windows.
+        </p>
+      </div>`
     }
   ],
   
