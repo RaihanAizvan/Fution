@@ -185,6 +185,73 @@ User.find({ tags: { $in: ['javascript', 'node'] } });</code></pre>
           </ul>
         </div>
       </div>`
+    },
+    {
+      title: 'BSON vs JSON',
+      difficulty: 'Beginner',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: MongoDB stores data in BSON (Binary JSON) format, not plain JSON. Understanding the difference is important for working with MongoDB effectively.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p><strong class="text-blue-400">JSON (JavaScript Object Notation):</strong></p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Human-readable text format</li>
+          <li>Lightweight data interchange format</li>
+          <li>Supports: String, Number, Boolean, Array, Object, null</li>
+          <li>Easy to read and write</li>
+          <li>Widely used in APIs and web applications</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <pre><code class="text-white">// JSON Example
+{
+  "name": "John Doe",
+  "age": 25,
+  "active": true,
+  "hobbies": ["coding", "gaming"]
+}</code></pre>
+        </div>
+        
+        <p class="mt-4"><strong class="text-green-400">BSON (Binary JSON):</strong></p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Binary-encoded serialization of JSON-like documents</li>
+          <li>Designed for efficient storage and traversal</li>
+          <li>Supports additional data types: Date, Binary, ObjectId, Decimal128, etc.</li>
+          <li>Faster to parse and encode than JSON</li>
+          <li>Used internally by MongoDB</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <pre><code class="text-white">// BSON supports additional types
+{
+  "_id": ObjectId("507f1f77bcf86cd799439011"),
+  "name": "John Doe",
+  "age": NumberInt(25),
+  "salary": NumberDecimal("50000.50"),
+  "joinDate": ISODate("2024-01-15T10:30:00Z"),
+  "active": true,
+  "profilePic": BinData(0, "base64data...")
+}</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Key Differences:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Format:</strong> JSON is text, BSON is binary</li>
+            <li><strong>Size:</strong> BSON is usually larger but faster to process</li>
+            <li><strong>Data Types:</strong> BSON has more types (Date, ObjectId, Binary, etc.)</li>
+            <li><strong>Speed:</strong> BSON is faster for encoding/decoding</li>
+            <li><strong>Use:</strong> JSON for APIs, BSON for MongoDB storage</li>
+          </ul>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Why MongoDB uses BSON:</strong> BSON allows MongoDB to support rich data types, 
+          perform efficient indexing, and traverse documents quickly. When you insert JSON into MongoDB, 
+          it's automatically converted to BSON for storage.
+        </p>
+      </div>`
     }
   ],
   
