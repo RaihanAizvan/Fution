@@ -340,6 +340,91 @@ db.collection.find({ field: { $type: ["string", "int"] } })</code></pre>
           precision issues. Use ObjectId for document references instead of strings for better performance.
         </p>
       </div>`
+    },
+    {
+      title: 'The _id Field',
+      difficulty: 'Beginner',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: Every MongoDB document must have an _id field that serves as the primary key. It's automatically generated if not provided.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">What is _id?</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Unique identifier for each document in a collection</li>
+          <li>Acts as the primary key</li>
+          <li>Automatically indexed for fast lookups</li>
+          <li>Immutable - cannot be changed after creation</li>
+          <li>Automatically generated if not provided</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <pre><code class="text-white">// MongoDB automatically generates _id
+db.users.insertOne({ name: "John" })
+// Result: { "_id": ObjectId("507f1f77bcf86cd799439011"), "name": "John" }
+
+// You can provide your own _id
+db.users.insertOne({ _id: "user123", name: "Jane" })
+db.users.insertOne({ _id: 42, name: "Bob" })
+
+// _id must be unique within a collection
+db.users.insertOne({ _id: "user123", name: "Alice" }) // ERROR: Duplicate key</code></pre>
+        </div>
+
+        <p class="mt-4 text-yellow-300 font-semibold">ObjectId Structure (12 bytes):</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">ObjectId("507f1f77bcf86cd799439011")
+         └─┬─┘└─┬┘└┬┘└──┬─┘
+           │    │  │    └─ 3-byte counter (random)
+           │    │  └────── 2-byte process id
+           │    └───────── 3-byte machine identifier
+           └────────────── 4-byte timestamp (seconds since epoch)</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">ObjectId Properties:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Globally unique:</strong> No collisions across different machines/processes</li>
+            <li><strong>Time-sortable:</strong> Documents inserted later have higher ObjectIds</li>
+            <li><strong>Lightweight:</strong> Only 12 bytes</li>
+            <li><strong>Embedded timestamp:</strong> Creation time is built-in</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Working with ObjectId:</p>
+          <pre><code class="text-white">// Get timestamp from ObjectId
+const id = ObjectId("507f1f77bcf86cd799439011");
+id.getTimestamp() // Returns Date object
+
+// Convert to string
+id.toString() // "507f1f77bcf86cd799439011"
+
+// Query by _id
+db.users.findOne({ _id: ObjectId("507f1f77bcf86cd799439011") })
+
+// In Mongoose
+const user = await User.findById("507f1f77bcf86cd799439011");
+// Mongoose automatically converts string to ObjectId</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Custom _id Types:</p>
+          <p class="text-sm mb-2">You can use different types for _id:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>String:</strong> <code>_id: "user_john_123"</code></li>
+            <li><strong>Number:</strong> <code>_id: 12345</code></li>
+            <li><strong>Date:</strong> <code>_id: ISODate("2024-01-15")</code></li>
+            <li><strong>Custom:</strong> <code>_id: { userId: 123, version: 1 }</code></li>
+          </ul>
+          <p class="text-sm mt-2 text-gray-400">However, ObjectId is recommended for most use cases.</p>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Important:</strong> The _id field is automatically indexed. Don't create another index on it. 
+          Always use _id for lookups instead of custom identifier fields for best performance.
+        </p>
+      </div>`
     }
   ],
   
