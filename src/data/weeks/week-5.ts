@@ -690,6 +690,257 @@ const users = await ActiveUser.find({ age: { $gt: 25 } })
           exposing internal fields. Views are great for security and abstraction!
         </p>
       </div>`
+    },
+    {
+      title: 'Materialized Views',
+      difficulty: 'Advanced',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: Materialized views store pre-computed aggregation results in a collection. Unlike standard views, they cache results for faster queries but need manual refresh.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">What are Materialized Views?</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Pre-computed and stored aggregation results</li>
+          <li>Created using $merge or $out in aggregation pipeline</li>
+          <li>Much faster than standard views (data already computed)</li>
+          <li>Can be indexed for even better performance</li>
+          <li>Need manual refresh to update (not automatic)</li>
+          <li>Consume storage space (unlike standard views)</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <p class="text-yellow-300 font-semibold mb-2">Creating a Materialized View with $merge:</p>
+          <pre><code class="text-white">// Create/update materialized view
+db.orders.aggregate([
+  {
+    $group: {
+      _id: "$userId",
+      totalOrders: { $sum: 1 },
+      totalSpent: { $sum: "$amount" },
+      lastOrderDate: { $max: "$orderDate" }
+    }
+  },
+  {
+    $merge: {
+      into: "userOrderStats",  // Target collection (materialized view)
+      whenMatched: "replace",   // Replace existing docs
+      whenNotMatched: "insert"  // Insert new docs
+    }
+  }
+])
+
+// Now query the materialized view (very fast!)
+db.userOrderStats.find({ totalOrders: { $gte: 10 } })</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Creating with $out (Replaces entire collection):</p>
+          <pre><code class="text-white">// Completely replace materialized view
+db.products.aggregate([
+  {
+    $lookup: {
+      from: "reviews",
+      localField: "_id",
+      foreignField: "productId",
+      as: "reviews"
+    }
+  },
+  {
+    $addFields: {
+      avgRating: { $avg: "$reviews.rating" },
+      reviewCount: { $size: "$reviews" }
+    }
+  },
+  {
+    $project: {
+      name: 1,
+      category: 1,
+      price: 1,
+      avgRating: 1,
+      reviewCount: 1
+    }
+  },
+  { $out: "productRatings" }  // Replaces entire collection
+])
+
+// Query materialized view
+db.productRatings.find({ avgRating: { $gte: 4.5 } })</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Standard View vs Materialized View:</p>
+          <div class="bg-gray-900 text-sm p-3 rounded border border-gray-700 mt-2">
+            <pre><code class="text-white">Standard View:
+✓ Always current (real-time)
+✓ No storage overhead
+✗ Slower queries (computed on-demand)
+✗ Cannot be indexed
+✗ Read-only
+
+Materialized View:
+✓ Very fast queries (pre-computed)
+✓ Can be indexed
+✓ Can have additional fields
+✗ Stale data (needs refresh)
+✗ Storage overhead
+✗ Manual maintenance required</code></pre>
+          </div>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">✅ Best Use Cases:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Analytics dashboards:</strong> Pre-compute complex reports</li>
+            <li><strong>Expensive aggregations:</strong> Cache results of slow queries</li>
+            <li><strong>Historical snapshots:</strong> Capture data at specific time</li>
+            <li><strong>Data denormalization:</strong> Join and flatten related data</li>
+            <li><strong>Search indexes:</strong> Pre-process data for full-text search</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Refreshing Materialized Views:</p>
+          <pre><code class="text-white">// Option 1: Scheduled refresh (cron job)
+// Run aggregation pipeline periodically
+setInterval(() => {
+  db.orders.aggregate([
+    { /* pipeline */ },
+    { $merge: { into: "userOrderStats" } }
+  ])
+}, 3600000) // Every hour
+
+// Option 2: Trigger-based refresh
+// Refresh after data changes
+db.orders.insertOne({ /* new order */ })
+refreshMaterializedView('userOrderStats')
+
+// Option 3: On-demand refresh
+// Refresh when user requests
+app.get('/api/stats/refresh', async (req, res) => {
+  await refreshUserStats()
+  res.json({ message: 'Stats refreshed' })
+})</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Incremental Updates with $merge:</p>
+          <pre><code class="text-white">// Update only changed documents
+db.orders.aggregate([
+  // Only process recent orders
+  { $match: { orderDate: { $gte: new Date('2024-01-01') } } },
+  {
+    $group: {
+      _id: "$userId",
+      totalOrders: { $sum: 1 },
+      totalSpent: { $sum: "$amount" }
+    }
+  },
+  {
+    $merge: {
+      into: "userOrderStats",
+      on: "_id",  // Match on userId
+      whenMatched: "merge",  // Merge new values
+      whenNotMatched: "insert"
+    }
+  }
+])
+
+// Much faster than full rebuild!</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Adding Indexes to Materialized Views:</p>
+          <pre><code class="text-white">// Materialized views are regular collections - you can index them!
+db.userOrderStats.createIndex({ totalSpent: -1 })
+db.userOrderStats.createIndex({ lastOrderDate: -1 })
+db.userOrderStats.createIndex({ totalOrders: 1 })
+
+// Now queries are lightning fast
+db.userOrderStats.find({ totalSpent: { $gte: 1000 } })
+  .sort({ totalSpent: -1 })
+  .limit(100)
+// Uses index, super fast!</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Example: E-commerce Product Analytics:</p>
+          <pre><code class="text-white">// Create materialized view combining products, orders, and reviews
+db.orders.aggregate([
+  { $unwind: "$items" },
+  {
+    $group: {
+      _id: "$items.productId",
+      totalSold: { $sum: "$items.quantity" },
+      totalRevenue: { $sum: "$items.total" },
+      uniqueCustomers: { $addToSet: "$userId" }
+    }
+  },
+  {
+    $lookup: {
+      from: "products",
+      localField: "_id",
+      foreignField: "_id",
+      as: "product"
+    }
+  },
+  { $unwind: "$product" },
+  {
+    $lookup: {
+      from: "reviews",
+      localField: "_id",
+      foreignField: "productId",
+      as: "reviews"
+    }
+  },
+  {
+    $project: {
+      productName: "$product.name",
+      category: "$product.category",
+      totalSold: 1,
+      totalRevenue: 1,
+      customerCount: { $size: "$uniqueCustomers" },
+      avgRating: { $avg: "$reviews.rating" },
+      reviewCount: { $size: "$reviews" }
+    }
+  },
+  { $merge: { into: "productAnalytics" } }
+])
+
+// Fast analytics queries
+db.productAnalytics.find({ category: "Electronics" })
+  .sort({ totalRevenue: -1 })
+  .limit(10)</code></pre>
+        </div>
+
+        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mt-4">
+          <p class="text-red-300 font-semibold mb-2">⚠️ Considerations:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Stale data:</strong> Results outdated until refresh</li>
+            <li><strong>Storage cost:</strong> Duplicates data (uses disk space)</li>
+            <li><strong>Maintenance:</strong> Need strategy for refreshing</li>
+            <li><strong>Consistency:</strong> May show outdated results during refresh</li>
+            <li><strong>Write conflicts:</strong> Be careful with concurrent refreshes</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Refresh Strategies:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Scheduled:</strong> Refresh every X minutes/hours (cron)</li>
+            <li><strong>Event-driven:</strong> Refresh after significant data changes</li>
+            <li><strong>Hybrid:</strong> Scheduled + manual trigger for urgent updates</li>
+            <li><strong>Incremental:</strong> Update only changed data ($merge)</li>
+            <li><strong>Time-based:</strong> Refresh during off-peak hours</li>
+          </ul>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Pro Tip:</strong> Use materialized views for dashboards and reports that don't need 
+          real-time data. The query performance improvement can be 10-100x faster! Refresh hourly or 
+          daily depending on your needs. Perfect trade-off between speed and freshness.
+        </p>
+      </div>`
     }
   ],
   
