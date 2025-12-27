@@ -477,6 +477,219 @@ const Sensor = mongoose.model('Sensor', sensorSchema)
           for sequential scans. Combine with ObjectId timestamps for best results!
         </p>
       </div>`
+    },
+    {
+      title: 'Views (Standard)',
+      difficulty: 'Intermediate',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: MongoDB Views are virtual collections based on aggregation pipelines. They don't store data themselves but compute results dynamically from underlying collections.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">What are MongoDB Views?</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Read-only virtual collections</li>
+          <li>Defined using aggregation pipeline</li>
+          <li>Compute results on-the-fly from source collection(s)</li>
+          <li>No data duplication (no storage overhead)</li>
+          <li>Automatically updated when source data changes</li>
+          <li>Can be queried like regular collections</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <p class="text-yellow-300 font-semibold mb-2">Creating a View:</p>
+          <pre><code class="text-white">// Basic view: Active users only
+db.createView(
+  "activeUsers",           // View name
+  "users",                 // Source collection
+  [                        // Aggregation pipeline
+    { $match: { active: true } },
+    { $project: { password: 0 } }  // Hide password field
+  ]
+)
+
+// Complex view: User statistics
+db.createView(
+  "userStats",
+  "orders",
+  [
+    {
+      $group: {
+        _id: "$userId",
+        totalOrders: { $sum: 1 },
+        totalSpent: { $sum: "$amount" },
+        avgOrderValue: { $avg: "$amount" }
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "userInfo"
+      }
+    },
+    { $unwind: "$userInfo" },
+    {
+      $project: {
+        userName: "$userInfo.name",
+        totalOrders: 1,
+        totalSpent: 1,
+        avgOrderValue: 1
+      }
+    }
+  ]
+)</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">✅ Best Use Cases:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Data security:</strong> Hide sensitive fields from specific users</li>
+            <li><strong>Simplified queries:</strong> Pre-define complex aggregations</li>
+            <li><strong>Data transformation:</strong> Present data in different format</li>
+            <li><strong>Join collections:</strong> Create denormalized view of related data</li>
+            <li><strong>Business logic:</strong> Encapsulate filtering/calculation logic</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Querying Views:</p>
+          <pre><code class="text-white">// Query view like a regular collection
+db.activeUsers.find({ age: { $gt: 25 } })
+
+db.activeUsers.find().limit(10).sort({ name: 1 })
+
+// Aggregation on views
+db.userStats.aggregate([
+  { $match: { totalOrders: { $gt: 10 } } },
+  { $sort: { totalSpent: -1 } }
+])
+
+// Count documents
+db.activeUsers.countDocuments()
+
+// Views automatically apply their pipeline first,
+// then your query is applied to the result</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">View Management:</p>
+          <pre><code class="text-white">// List all views
+db.getCollectionNames().filter(name => {
+  return db.getCollectionInfos({ name })[0].type === "view"
+})
+
+// Get view definition
+db.getCollectionInfos({ name: "activeUsers" })
+
+// Drop a view
+db.activeUsers.drop()
+
+// Modify view (drop and recreate)
+db.activeUsers.drop()
+db.createView("activeUsers", "users", [
+  { $match: { active: true, verified: true } }
+])</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Advantages of Views:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>No storage:</strong> Don't consume disk space</li>
+            <li><strong>Always current:</strong> Reflect latest source data</li>
+            <li><strong>Reusable logic:</strong> Define complex query once, use many times</li>
+            <li><strong>Security:</strong> Hide sensitive fields or filter data</li>
+            <li><strong>Simplicity:</strong> Abstract complex joins and transformations</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mt-4">
+          <p class="text-red-300 font-semibold mb-2">⚠️ Limitations:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Read-only:</strong> Cannot insert, update, or delete documents</li>
+            <li><strong>Performance:</strong> Computed on every query (can be slower)</li>
+            <li><strong>No indexes:</strong> Cannot create indexes on views</li>
+            <li><strong>Pipeline restrictions:</strong> Some stages not allowed ($out, $merge)</li>
+            <li><strong>No collation:</strong> Use source collection's collation</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Example: E-commerce Dashboard View:</p>
+          <pre><code class="text-white">// Create view for product sales summary
+db.createView(
+  "productSales",
+  "orders",
+  [
+    { $unwind: "$items" },
+    {
+      $group: {
+        _id: "$items.productId",
+        totalSold: { $sum: "$items.quantity" },
+        revenue: { $sum: "$items.total" },
+        avgPrice: { $avg: "$items.price" }
+      }
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id",
+        foreignField: "_id",
+        as: "product"
+      }
+    },
+    { $unwind: "$product" },
+    {
+      $project: {
+        productName: "$product.name",
+        category: "$product.category",
+        totalSold: 1,
+        revenue: 1,
+        avgPrice: 1
+      }
+    }
+  ]
+)
+
+// Query the view
+db.productSales.find({ category: "Electronics" })
+  .sort({ revenue: -1 })
+  .limit(10)</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Using Views with Mongoose:</p>
+          <pre><code class="text-white">// Views are queryable like regular models
+const ActiveUser = mongoose.model('ActiveUser', new Schema({}, { 
+  collection: 'activeUsers',
+  strict: false 
+}))
+
+// Query the view
+const users = await ActiveUser.find({ age: { $gt: 25 } })
+
+// Note: You still need to create the view using MongoDB shell or driver
+// Mongoose doesn't have built-in view creation yet</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Performance Considerations:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>Views execute pipeline on every query (no caching)</li>
+            <li>Use indexes on source collection for better performance</li>
+            <li>Keep pipelines simple for faster execution</li>
+            <li>For frequently accessed computed data, consider materialized views</li>
+            <li>Monitor query performance with explain()</li>
+          </ul>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Pro Tip:</strong> Use views to create a "public" version of your collections that hides 
+          sensitive data. Perfect for giving read access to analytics tools or external systems without 
+          exposing internal fields. Views are great for security and abstraction!
+        </p>
+      </div>`
     }
   ],
   
