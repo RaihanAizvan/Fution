@@ -138,6 +138,158 @@ User.find({ tags: { $in: ['javascript', 'node'] } });</code></pre>
     }
   ],
   
+  topics: [
+    {
+      type: 'heading',
+      title: 'Collections & Views'
+    },
+    {
+      title: 'Capped Collections',
+      difficulty: 'Intermediate',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: Capped collections are fixed-size collections that maintain insertion order and automatically remove oldest documents when size limit is reached. They're perfect for logging and caching.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">What are Capped Collections?</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Fixed-size collections with a maximum size or document count</li>
+          <li>Maintain insertion order (documents stored in order they were inserted)</li>
+          <li>Automatically delete oldest documents when limit reached (FIFO - First In, First Out)</li>
+          <li>High-performance for insert and read operations</li>
+          <li>Cannot be sharded</li>
+          <li>Documents cannot grow in size after insertion</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <p class="text-yellow-300 font-semibold mb-2">Creating a Capped Collection:</p>
+          <pre><code class="text-white">// Create with size limit (in bytes)
+db.createCollection("logs", {
+  capped: true,
+  size: 5242880,  // 5MB
+  max: 5000       // Maximum 5000 documents (optional)
+})
+
+// Create with only document count limit
+db.createCollection("recentActivity", {
+  capped: true,
+  size: 1048576,  // Still need to specify size
+  max: 100
+})</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">✅ Best Use Cases:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Logging:</strong> Store recent application logs (auto-delete old logs)</li>
+            <li><strong>Cache:</strong> Keep recent data in memory-like storage</li>
+            <li><strong>Message queues:</strong> FIFO queue implementation</li>
+            <li><strong>Real-time feeds:</strong> Recent tweets, posts, notifications</li>
+            <li><strong>Session storage:</strong> Temporary user session data</li>
+            <li><strong>Metrics:</strong> Recent performance or monitoring data</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Operations on Capped Collections:</p>
+          <pre><code class="text-white">// Insert (works normally)
+db.logs.insertOne({
+  timestamp: new Date(),
+  level: "INFO",
+  message: "User logged in"
+})
+
+// Read with tailable cursor (like tail -f in Unix)
+const cursor = db.logs.find().tailable({ awaitData: true })
+
+// Check if collection is capped
+db.logs.isCapped()  // Returns true
+
+// Get collection stats
+db.logs.stats()</code></pre>
+        </div>
+
+        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mt-4">
+          <p class="text-red-300 font-semibold mb-2">⚠️ Limitations:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>No deletes:</strong> Cannot manually delete individual documents</li>
+            <li><strong>No updates that increase size:</strong> Updates must not make document larger</li>
+            <li><strong>No _id index removal:</strong> _id index is mandatory</li>
+            <li><strong>Cannot be sharded:</strong> Not suitable for distributed collections</li>
+            <li><strong>Fixed size:</strong> Cannot resize after creation (must recreate)</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Converting Regular to Capped Collection:</p>
+          <pre><code class="text-white">// Convert existing collection to capped
+db.runCommand({
+  convertToCapped: "regularCollection",
+  size: 10485760  // 10MB
+})
+
+// Warning: This operation locks the database!
+// Better approach: Create new capped collection and migrate data</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Tailable Cursors (Real-time Streaming):</p>
+          <pre><code class="text-white">// Node.js with MongoDB driver
+const cursor = db.collection('logs').find({}, {
+  tailable: true,
+  awaitData: true
+})
+
+cursor.on('data', (doc) => {
+  console.log('New log:', doc)
+})
+
+// Like tail -f for log files!
+// Cursor stays open and receives new documents as they're inserted</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Performance Benefits:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Fast inserts:</strong> No index updates on deletions (auto-managed)</li>
+            <li><strong>Predictable size:</strong> Won't grow beyond specified limit</li>
+            <li><strong>Sequential reads:</strong> Natural ordering makes scans faster</li>
+            <li><strong>Memory efficient:</strong> Old data automatically purged</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Example: Application Logging System:</p>
+          <pre><code class="text-white">// Create capped collection for logs
+db.createCollection("appLogs", {
+  capped: true,
+  size: 52428800,  // 50MB
+  max: 10000       // Keep only last 10,000 logs
+})
+
+// Insert logs (oldest auto-deleted when limit reached)
+db.appLogs.insertOne({
+  timestamp: new Date(),
+  level: "ERROR",
+  service: "payment-api",
+  message: "Payment gateway timeout",
+  userId: "user123"
+})
+
+// Query recent logs
+db.appLogs.find().sort({ $natural: -1 }).limit(100)
+// $natural: -1 returns newest first (reverse insertion order)</code></pre>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Pro Tip:</strong> Use capped collections for data you don't need to keep forever. 
+          They're much faster than regular collections with TTL indexes for auto-expiring data. 
+          Perfect for logs, cache, and real-time streams!
+        </p>
+      </div>`
+    }
+  ],
+  
   proTips: [
     { text: "Always use MongoDB Atlas for production. It provides automatic backups, monitoring, and scaling.", color: "green" },
     { text: "Use indexes to improve query performance. Add them to fields you frequently query. Example: <code>userSchema.index({ email: 1 })</code>.", color: "blue" },
