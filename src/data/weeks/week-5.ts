@@ -287,6 +287,196 @@ db.appLogs.find().sort({ $natural: -1 }).limit(100)
           Perfect for logs, cache, and real-time streams!
         </p>
       </div>`
+    },
+    {
+      title: 'Clustered Collections',
+      difficulty: 'Advanced',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: Clustered collections store documents physically ordered by cluster key (usually _id). This improves query performance for range queries and reduces index size. Introduced in MongoDB 5.3+.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">What are Clustered Collections?</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Documents stored in order of cluster key (typically _id)</li>
+          <li>No separate index needed for cluster key</li>
+          <li>Improved performance for range queries on cluster key</li>
+          <li>Reduced storage size (no duplicate _id in index)</li>
+          <li>Available in MongoDB 5.3 and later</li>
+          <li>Cannot convert existing collections to clustered</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <p class="text-yellow-300 font-semibold mb-2">Creating a Clustered Collection:</p>
+          <pre><code class="text-white">// Basic clustered collection
+db.createCollection("timeseries", {
+  clusteredIndex: {
+    key: { _id: 1 },
+    unique: true
+  }
+})
+
+// With custom cluster key name (must be _id)
+db.createCollection("events", {
+  clusteredIndex: {
+    key: { _id: 1 },
+    unique: true,
+    name: "events_cluster_idx"
+  }
+})
+
+// Clustered collection with validator
+db.createCollection("metrics", {
+  clusteredIndex: { key: { _id: 1 }, unique: true },
+  validator: {
+    $jsonSchema: {
+      required: ["timestamp", "value"],
+      properties: {
+        timestamp: { bsonType: "date" },
+        value: { bsonType: "number" }
+      }
+    }
+  }
+})</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">✅ Best Use Cases:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Time-series data:</strong> IoT sensor data, logs with timestamps</li>
+            <li><strong>Event streams:</strong> Ordered events by timestamp</li>
+            <li><strong>Audit logs:</strong> Sequential log entries</li>
+            <li><strong>Financial transactions:</strong> Ordered by transaction time</li>
+            <li><strong>Range queries:</strong> Frequent queries on date/time ranges</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Clustered vs Regular Collections:</p>
+          <pre><code class="text-white">// Regular Collection
+// - _id stored in documents
+// - Separate B-tree index for _id
+// - Documents stored in insertion order
+// - Range queries require index scan
+
+// Clustered Collection  
+// - Documents physically sorted by _id
+// - No separate index needed
+// - Direct access via cluster key
+// - Range queries are faster (sequential reads)</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Performance Benefits:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Reduced storage:</strong> No duplicate _id data in index</li>
+            <li><strong>Faster range queries:</strong> Sequential disk reads</li>
+            <li><strong>Better cache efficiency:</strong> Related data stored together</li>
+            <li><strong>Fewer index updates:</strong> One less index to maintain</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Example: Time-Series Events:</p>
+          <pre><code class="text-white">// Create clustered collection with ObjectId containing timestamp
+db.createCollection("sensorData", {
+  clusteredIndex: { key: { _id: 1 }, unique: true }
+})
+
+// Insert with timestamp-based _id
+db.sensorData.insertOne({
+  _id: new ObjectId(), // Contains timestamp
+  sensor: "temp_01",
+  temperature: 23.5,
+  humidity: 60
+})
+
+// Efficient range query (uses cluster key)
+const start = ObjectId.createFromTime(Date.now() / 1000 - 3600) // 1 hour ago
+const end = ObjectId()
+
+db.sensorData.find({
+  _id: { $gte: start, $lte: end }
+})
+// This query is VERY fast in clustered collections!</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Check if Collection is Clustered:</p>
+          <pre><code class="text-white">// Using listCollections
+db.runCommand({
+  listCollections: 1,
+  filter: { name: "timeseries" }
+})
+
+// Response includes clusteredIndex info
+{
+  "cursor": {
+    "firstBatch": [{
+      "name": "timeseries",
+      "type": "collection",
+      "options": {
+        "clusteredIndex": {
+          "key": { "_id": 1 },
+          "unique": true
+        }
+      }
+    }]
+  }
+}
+
+// Using collStats
+db.timeseries.stats()</code></pre>
+        </div>
+
+        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mt-4">
+          <p class="text-red-300 font-semibold mb-2">⚠️ Limitations:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>MongoDB 5.3+:</strong> Not available in older versions</li>
+            <li><strong>Creation only:</strong> Cannot convert existing collections</li>
+            <li><strong>_id only:</strong> Cluster key must be _id field</li>
+            <li><strong>Unique constraint:</strong> Cluster key must be unique</li>
+            <li><strong>No benefits for random access:</strong> Best for sequential/range queries</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Mongoose with Clustered Collections:</p>
+          <pre><code class="text-white">// Define schema with clustered option
+const sensorSchema = new mongoose.Schema({
+  sensor: String,
+  temperature: Number,
+  timestamp: Date
+}, {
+  clusteredIndex: {
+    key: { _id: 1 },
+    unique: true
+  }
+})
+
+// Create model
+const Sensor = mongoose.model('Sensor', sensorSchema)
+
+// Mongoose automatically uses clustered collection if supported</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">When NOT to Use Clustered Collections:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>Documents accessed randomly (not by _id ranges)</li>
+            <li>Frequent updates that change document size</li>
+            <li>Need to cluster by field other than _id</li>
+            <li>Using MongoDB version older than 5.3</li>
+            <li>Small collections (overhead not worth it)</li>
+          </ul>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Pro Tip:</strong> Use clustered collections for time-series or event data where you 
+          frequently query by time ranges. The performance improvement can be significant (2-3x faster) 
+          for sequential scans. Combine with ObjectId timestamps for best results!
+        </p>
+      </div>`
     }
   ],
   
