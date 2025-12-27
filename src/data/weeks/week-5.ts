@@ -609,6 +609,173 @@ mongodb://user:password@localhost:27017/admin</code></pre>
           and encryption.
         </p>
       </div>`
+    },
+    {
+      title: 'GridFS',
+      difficulty: 'Intermediate',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: GridFS is a specification for storing and retrieving large files (>16MB) in MongoDB. It splits files into chunks and stores them across multiple documents.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">What is GridFS?</p>
+        <ul class="list-disc list-inside ml-4">
+          <li>Storage system for files larger than 16MB (BSON document size limit)</li>
+          <li>Divides files into chunks (typically 255KB each)</li>
+          <li>Stores chunks in separate collection</li>
+          <li>Useful for storing videos, images, PDFs, audio files</li>
+          <li>Supports streaming and range queries</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <p class="text-yellow-300 font-semibold mb-2">GridFS Collections:</p>
+          <pre><code class="text-white">// GridFS creates two collections automatically:
+// 1. fs.files - Stores file metadata
+{
+  "_id": ObjectId("..."),
+  "filename": "video.mp4",
+  "length": 52428800,        // 50MB in bytes
+  "chunkSize": 261120,       // 255KB
+  "uploadDate": ISODate("..."),
+  "contentType": "video/mp4",
+  "metadata": { "author": "John" }
+}
+
+// 2. fs.chunks - Stores file data in chunks
+{
+  "_id": ObjectId("..."),
+  "files_id": ObjectId("..."), // Reference to fs.files
+  "n": 0,                      // Chunk number (0, 1, 2...)
+  "data": BinData(0, "...")    // Binary chunk data
+}</code></pre>
+        </div>
+
+        <p class="mt-4 text-yellow-300 font-semibold">When to Use GridFS:</p>
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl">
+          <p class="text-green-300 font-semibold mb-2">✅ Good Use Cases:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>Files larger than 16MB (MongoDB document limit)</li>
+            <li>Need to store file metadata with the file</li>
+            <li>Want to access file parts without loading entire file</li>
+            <li>Streaming large files</li>
+            <li>File versioning and management</li>
+          </ul>
+        </div>
+
+        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mt-3">
+          <p class="text-red-300 font-semibold mb-2">❌ Not Recommended:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>Files smaller than 16MB (store directly in document)</li>
+            <li>Frequently updated files (GridFS is optimized for reads)</li>
+            <li>When you need high-performance file serving (use CDN instead)</li>
+            <li>Simple file storage needs (use cloud storage like S3, Cloudinary)</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Using GridFS with Node.js:</p>
+          <pre><code class="text-white">const mongoose = require('mongoose');
+const Grid = require('gridfs-stream');
+
+// Connect to MongoDB
+const conn = mongoose.createConnection('mongodb://localhost:27017/myDB');
+
+// Initialize GridFS
+let gfs;
+conn.once('open', () => {
+  gfs = Grid(conn.db, mongoose.mongo);
+  gfs.collection('uploads'); // Collection name
+});
+
+// Upload file
+const writeStream = gfs.createWriteStream({
+  filename: 'video.mp4',
+  content_type: 'video/mp4',
+  metadata: { author: 'John' }
+});
+
+fs.createReadStream('path/to/video.mp4').pipe(writeStream);
+
+writeStream.on('close', (file) => {
+  console.log('File uploaded:', file.filename);
+});
+
+// Download file
+const readStream = gfs.createReadStream({
+  filename: 'video.mp4'
+});
+
+readStream.pipe(fs.createWriteStream('downloaded-video.mp4'));
+
+// Delete file
+gfs.remove({ filename: 'video.mp4' }, (err) => {
+  if (err) console.error(err);
+  console.log('File deleted');
+});</code></pre>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Using multer-gridfs-storage (Modern Approach):</p>
+          <pre><code class="text-white">const multer = require('multer');
+const { GridFsStorage } = require('multer-gridfs-storage');
+
+// Configure storage
+const storage = new GridFsStorage({
+  url: 'mongodb://localhost:27017/myDB',
+  options: { useNewUrlParser: true, useUnifiedTopology: true },
+  file: (req, file) => {
+    return {
+      filename: file.originalname,
+      bucketName: 'uploads' // Collection prefix (uploads.files, uploads.chunks)
+    };
+  }
+});
+
+const upload = multer({ storage });
+
+// Express route
+app.post('/upload', upload.single('file'), (req, res) => {
+  res.json({ file: req.file });
+});</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">GridFS Advantages:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>No size limit:</strong> Store files of any size</li>
+            <li><strong>Automatic chunking:</strong> Files split automatically</li>
+            <li><strong>Streaming support:</strong> Stream files without loading fully</li>
+            <li><strong>Range queries:</strong> Retrieve specific file parts</li>
+            <li><strong>Integrated:</strong> Files stored with your MongoDB data</li>
+            <li><strong>Replication:</strong> Files replicated with database</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Query GridFS Files:</p>
+          <pre><code class="text-white">// Find all files
+db.fs.files.find()
+
+// Find by filename
+db.fs.files.find({ filename: "video.mp4" })
+
+// Find by metadata
+db.fs.files.find({ "metadata.author": "John" })
+
+// Find files larger than 10MB
+db.fs.files.find({ length: { $gt: 10485760 } })
+
+// Get chunks for a specific file
+db.fs.chunks.find({ files_id: ObjectId("...") }).sort({ n: 1 })</code></pre>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Modern Alternative:</strong> For most applications, consider using cloud storage services 
+          (AWS S3, Google Cloud Storage, Cloudinary) instead of GridFS. They offer better performance, CDN 
+          integration, and are easier to scale. Use GridFS when you need tight integration with MongoDB or 
+          can't use external services.
+        </p>
+      </div>`
     }
   ],
   
