@@ -425,6 +425,91 @@ const user = await User.findById("507f1f77bcf86cd799439011");
           Always use _id for lookups instead of custom identifier fields for best performance.
         </p>
       </div>`
+    },
+    {
+      title: 'Namespace',
+      difficulty: 'Beginner',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: In MongoDB, a namespace is the concatenation of database name and collection name. It uniquely identifies a collection within a MongoDB instance.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">Namespace Format:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">// Namespace format: database.collection
+myDatabase.users
+myDatabase.products
+testDB.orders
+
+// Example
+use myDatabase
+db.users.insertOne({ name: "John" })
+// Namespace: myDatabase.users</code></pre>
+        </div>
+
+        <p class="mt-4 text-yellow-300 font-semibold">Understanding Namespaces:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li><strong>Database:</strong> Container for collections (like a folder)</li>
+          <li><strong>Collection:</strong> Group of MongoDB documents (like a table in SQL)</li>
+          <li><strong>Namespace:</strong> Full path to a collection (database.collection)</li>
+          <li><strong>Unique identifier:</strong> Each namespace is unique in a MongoDB instance</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <pre><code class="text-white">// Different namespaces
+ecommerce.users        // Users in ecommerce database
+ecommerce.products     // Products in ecommerce database
+blog.users             // Users in blog database (different from ecommerce.users)
+
+// Commands using namespaces
+show dbs               // List all databases
+use ecommerce          // Switch to database
+show collections       // List collections in current database
+
+// In MongoDB shell
+db.users.find()        // Current database: ecommerce, Collection: users
+                       // Namespace: ecommerce.users</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">Namespace Limits:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Length:</strong> Namespace (database.collection) cannot exceed 120 bytes</li>
+            <li><strong>Database name:</strong> Max 64 characters</li>
+            <li><strong>Collection name:</strong> Should be meaningful and descriptive</li>
+            <li><strong>Reserved names:</strong> Don't use "system" prefix (reserved by MongoDB)</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">System Namespaces:</p>
+          <pre><code class="text-white">// MongoDB creates special system collections
+myDatabase.system.indexes    // Deprecated in MongoDB 4.4+
+myDatabase.system.profile    // Profiling data
+myDatabase.system.users      // User authentication data
+
+// Don't manually modify system collections!</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Namespace in Connection String:</p>
+          <pre><code class="text-white">// MongoDB Connection String includes database
+mongodb://localhost:27017/myDatabase
+
+// Using Mongoose
+mongoose.connect('mongodb://localhost:27017/ecommerce');
+// Default namespace: ecommerce.[collection]
+
+// Accessing specific collection
+const User = mongoose.model('User', userSchema);
+// Namespace: ecommerce.users (lowercase, pluralized)</code></pre>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Best Practice:</strong> Use clear, descriptive names for databases and collections. 
+          Avoid special characters and spaces. Use camelCase or snake_case consistently.
+        </p>
+      </div>`
     }
   ],
   
