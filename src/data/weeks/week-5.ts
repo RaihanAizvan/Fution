@@ -510,6 +510,105 @@ const User = mongoose.model('User', userSchema);
           Avoid special characters and spaces. Use camelCase or snake_case consistently.
         </p>
       </div>`
+    },
+    {
+      title: 'Default Port Number',
+      difficulty: 'Beginner',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: MongoDB runs on port 27017 by default. Understanding port configuration is essential for connecting applications and managing multiple MongoDB instances.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-blue-400 font-semibold">MongoDB Default Ports:</p>
+        <ul class="list-disc list-inside ml-4">
+          <li><strong>27017:</strong> Default MongoDB server port</li>
+          <li><strong>27018:</strong> Default port for MongoDB shard server</li>
+          <li><strong>27019:</strong> Default port for MongoDB config server</li>
+          <li><strong>28017:</strong> Default port for web status page (deprecated)</li>
+        </ul>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-3">
+          <pre><code class="text-white">// Default connection string
+mongodb://localhost:27017
+
+// With database name
+mongodb://localhost:27017/myDatabase
+
+// MongoDB Atlas (cloud)
+mongodb+srv://username:password@cluster.mongodb.net/myDatabase</code></pre>
+        </div>
+
+        <p class="mt-4 text-yellow-300 font-semibold">Changing the Default Port:</p>
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">// Start MongoDB on custom port
+mongod --port 27018
+
+// In configuration file (mongod.conf)
+net:
+  port: 27018
+  bindIp: 127.0.0.1
+
+// Connect to custom port
+mongodb://localhost:27018/myDatabase</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">Why Change the Port?</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>Multiple instances:</strong> Run several MongoDB servers on same machine</li>
+            <li><strong>Security:</strong> Use non-standard port to reduce automated attacks</li>
+            <li><strong>Port conflicts:</strong> Another application already using 27017</li>
+            <li><strong>Network policies:</strong> Firewall restrictions on certain ports</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Connecting with Different Ports:</p>
+          <pre><code class="text-white">// Node.js with Mongoose
+mongoose.connect('mongodb://localhost:27018/myDB');
+
+// MongoDB Shell
+mongosh "mongodb://localhost:27018"
+
+// Python with PyMongo
+client = MongoClient('mongodb://localhost:27018/')
+
+// Check which port MongoDB is running on
+netstat -an | grep 27017
+# or
+lsof -i :27017</code></pre>
+        </div>
+
+        <div class="bg-blue-900/20 border border-blue-500/30 p-4 rounded-xl mt-4">
+          <p class="text-blue-300 font-semibold mb-2">Production Configuration:</p>
+          <pre><code class="text-white">// MongoDB Atlas (managed service)
+// Uses SRV record, port is handled automatically
+mongodb+srv://cluster.mongodb.net/
+
+// Replica Set with multiple ports
+mongodb://host1:27017,host2:27017,host3:27017/?replicaSet=myReplSet
+
+// With authentication
+mongodb://user:password@localhost:27017/admin</code></pre>
+        </div>
+
+        <div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mt-4">
+          <p class="text-red-300 font-semibold mb-2">⚠️ Security Warning:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li>Never expose MongoDB directly to the internet</li>
+            <li>Always use authentication in production</li>
+            <li>Use firewall rules to restrict access</li>
+            <li>Bind to specific IPs, not 0.0.0.0 (all interfaces)</li>
+            <li>Use SSL/TLS for encrypted connections</li>
+          </ul>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Pro Tip:</strong> In production, use MongoDB Atlas or ensure your MongoDB instance is 
+          behind a firewall. Never leave port 27017 open to the public internet without proper authentication 
+          and encryption.
+        </p>
+      </div>`
     }
   ],
   
