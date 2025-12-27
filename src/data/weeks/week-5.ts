@@ -252,6 +252,94 @@ User.find({ tags: { $in: ['javascript', 'node'] } });</code></pre>
           it's automatically converted to BSON for storage.
         </p>
       </div>`
+    },
+    {
+      title: 'MongoDB Data Types',
+      difficulty: 'Beginner → Intermediate',
+      details: `
+      <blockquote class="italic text-gray-400 border-l-4 border-blue-500 pl-4 mb-4">
+        Tell the reviewer: MongoDB supports a rich set of data types through BSON. Understanding these types helps in proper data modeling and querying.
+      </blockquote>
+      <div class="space-y-3 text-gray-300">
+        <p class="text-yellow-300 font-semibold">Common MongoDB Data Types:</p>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700">
+          <pre><code class="text-white">// 1. String - UTF-8 encoded text
+{ "name": "John Doe" }
+
+// 2. Number
+{ "age": NumberInt(25) }        // 32-bit integer
+{ "price": NumberLong(99999) }  // 64-bit integer
+{ "salary": NumberDecimal("50000.99") } // Decimal128
+
+// 3. Boolean
+{ "isActive": true }
+
+// 4. Date
+{ "createdAt": ISODate("2024-01-15T10:30:00Z") }
+
+// 5. ObjectId - 12-byte unique identifier
+{ "_id": ObjectId("507f1f77bcf86cd799439011") }
+
+// 6. Array
+{ "hobbies": ["coding", "gaming", "reading"] }
+
+// 7. Embedded Document (Object)
+{ 
+  "address": {
+    "street": "123 Main St",
+    "city": "New York",
+    "zip": "10001"
+  }
+}
+
+// 8. Null
+{ "middleName": null }
+
+// 9. Binary Data
+{ "profilePic": BinData(0, "iVBORw0KGgoAAAANS...") }
+
+// 10. Regular Expression
+{ "pattern": /^test/i }
+
+// 11. JavaScript Code
+{ "function": Code("function() { return 1; }") }
+
+// 12. Timestamp - Internal MongoDB type
+{ "ts": Timestamp(1672531200, 1) }
+
+// 13. MinKey and MaxKey - Comparison purposes
+{ "min": MinKey(), "max": MaxKey() }</code></pre>
+        </div>
+
+        <div class="bg-green-900/20 border border-green-500/30 p-4 rounded-xl mt-4">
+          <p class="text-green-300 font-semibold mb-2">Most Frequently Used Types:</p>
+          <ul class="list-disc list-inside ml-4 text-sm">
+            <li><strong>String:</strong> Text data (names, descriptions)</li>
+            <li><strong>Number:</strong> Ages, quantities, prices</li>
+            <li><strong>ObjectId:</strong> Unique document identifiers</li>
+            <li><strong>Date:</strong> Timestamps and dates</li>
+            <li><strong>Boolean:</strong> True/false flags</li>
+            <li><strong>Array:</strong> Lists of values</li>
+            <li><strong>Object:</strong> Nested documents</li>
+          </ul>
+        </div>
+
+        <div class="bg-gray-900 text-sm p-4 rounded-xl border border-gray-700 mt-4">
+          <p class="text-yellow-300 font-semibold mb-2">Type Checking in MongoDB:</p>
+          <pre><code class="text-white">// Check data type using $type operator
+db.users.find({ age: { $type: "int" } })
+db.users.find({ createdAt: { $type: "date" } })
+
+// Multiple types
+db.collection.find({ field: { $type: ["string", "int"] } })</code></pre>
+        </div>
+
+        <p class="mt-4 text-gray-400 text-sm">
+          <strong>Pro Tip:</strong> Use NumberDecimal for financial calculations to avoid floating-point 
+          precision issues. Use ObjectId for document references instead of strings for better performance.
+        </p>
+      </div>`
     }
   ],
   
