@@ -8,12 +8,7 @@
       <template #sidebar>
         <SubjectSidebar v-model:selectedTopicId="selectedTopicId" />
       </template>
-      <SubjectMainContent
-        :title="subject.title"
-        :introBlock="introBlock"
-        :codeBlock="codeBlock"
-        :accordionBlock="accordionBlock"
-      />
+      <SubjectMainContent :title="subject.title" :blocks="selectedBlocks" />
     </SubjectLayout>
   </section>
 </template>
@@ -24,50 +19,17 @@ import SubjectMainContent from '../features/subjects/components/SubjectMainConte
 import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
 import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
 import { useSubjectDetail } from '../composables/useSubjectDetail'
-import { useSubjectTopics } from '../composables/useSubjectTopics'
+import { topicBlocks } from '../features/subjects/data/topicBlocks'
 
 const { subject, isLoading, hasError } = useSubjectDetail()
-const { topics } = useSubjectTopics()
 
 const selectedTopicId = ref<string | null>(null)
-const selectedTopicTitle = computed(() => {
-  const match = topics.value.find((topic) => topic.id === selectedTopicId.value)
-  return match?.title ?? null
-})
 
-const introBlock = computed(() => {
-  if (!selectedTopicTitle.value) {
-    return null
+const selectedBlocks = computed(() => {
+  if (!selectedTopicId.value) {
+    return []
   }
 
-  return {
-    type: 'intro',
-    title: `${selectedTopicTitle.value} Overview`,
-    description: `Intro content for ${selectedTopicTitle.value} will appear here.`
-  }
-})
-
-const codeBlock = computed(() => {
-  if (!selectedTopicTitle.value) {
-    return null
-  }
-
-  return {
-    type: 'code',
-    language: 'javascript',
-    code: `// ${selectedTopicTitle.value} example\nconsole.log('Hello from ${selectedTopicTitle.value}');`
-  }
-})
-
-const accordionBlock = computed(() => {
-  if (!selectedTopicTitle.value) {
-    return null
-  }
-
-  return {
-    type: 'accordion',
-    title: `${selectedTopicTitle.value} details`,
-    content: `More details about ${selectedTopicTitle.value} will appear here.`
-  }
+  return topicBlocks[selectedTopicId.value] ?? []
 })
 </script>

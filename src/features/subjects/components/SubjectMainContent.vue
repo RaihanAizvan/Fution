@@ -14,40 +14,18 @@
 import { computed } from 'vue'
 import BlockRenderer from './BlockRenderer.vue'
 
-interface IntroBlock {
-  type: 'intro'
-  title: string
-  description: string
-}
-
-interface CodeBlock {
-  type: 'code'
-  language: string
-  code: string
-}
-
-interface AccordionBlock {
-  type: 'accordion'
-  title: string
-  content: string
-}
-
-type Block = IntroBlock | CodeBlock | AccordionBlock
+import type { TopicBlock } from '../data/topicBlocks'
 
 interface Props {
   title: string
-  introBlock: IntroBlock | null
-  codeBlock: CodeBlock | null
-  accordionBlock: AccordionBlock | null
+  blocks: TopicBlock[]
 }
 
 const props = defineProps<Props>()
 
-const blocks = computed(() =>
-  [props.introBlock, props.codeBlock, props.accordionBlock].filter(Boolean) as Block[]
-)
+const blocks = computed(() => props.blocks)
 
-const blockKey = (block: Block) => {
+const blockKey = (block: TopicBlock) => {
   if (block.type === 'intro') {
     return `${block.type}-${block.title}`
   }
