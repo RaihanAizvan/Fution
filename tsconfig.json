@@ -22,7 +22,6 @@
     "ignoreDeprecations": "5.0",
 
     /* Path aliases */
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
