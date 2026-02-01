@@ -12,6 +12,7 @@
         :title="subject.title"
         :introBlock="introBlock"
         :codeBlock="codeBlock"
+        :accordionBlock="accordionBlock"
       />
     </SubjectLayout>
   </section>
@@ -55,6 +56,18 @@ const codeBlock = computed(() => {
     type: 'code',
     language: 'javascript',
     code: `// ${selectedTopicTitle.value} example\nconsole.log('Hello from ${selectedTopicTitle.value}');`
+  }
+})
+
+const accordionBlock = computed(() => {
+  if (!selectedTopicTitle.value) {
+    return null
+  }
+
+  return {
+    type: 'accordion',
+    title: `${selectedTopicTitle.value} details`,
+    content: `More details about ${selectedTopicTitle.value} will appear here.`
   }
 })
 </script>

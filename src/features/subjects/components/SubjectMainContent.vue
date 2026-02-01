@@ -26,23 +26,36 @@ interface CodeBlock {
   code: string
 }
 
-type Block = IntroBlock | CodeBlock
+interface AccordionBlock {
+  type: 'accordion'
+  title: string
+  content: string
+}
+
+type Block = IntroBlock | CodeBlock | AccordionBlock
 
 interface Props {
   title: string
   introBlock: IntroBlock | null
   codeBlock: CodeBlock | null
+  accordionBlock: AccordionBlock | null
 }
 
 const props = defineProps<Props>()
 
-const blocks = computed(() => [props.introBlock, props.codeBlock].filter(Boolean) as Block[])
+const blocks = computed(() =>
+  [props.introBlock, props.codeBlock, props.accordionBlock].filter(Boolean) as Block[]
+)
 
 const blockKey = (block: Block) => {
   if (block.type === 'intro') {
     return `${block.type}-${block.title}`
   }
 
-  return `${block.type}-${block.language}-${block.code}`
+  if (block.type === 'code') {
+    return `${block.type}-${block.language}-${block.code}`
+  }
+
+  return `${block.type}-${block.title}`
 }
 </script>
