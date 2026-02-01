@@ -8,7 +8,7 @@
       <template #sidebar>
         <SubjectSidebar v-model:selectedTopicId="selectedTopicId" />
       </template>
-      <SubjectMainContent :title="subject.title" :topicTitle="selectedTopicTitle" />
+      <SubjectMainContent :title="subject.title" :introBlock="introBlock" />
     </SubjectLayout>
   </section>
 </template>
@@ -28,5 +28,17 @@ const selectedTopicId = ref<string | null>(null)
 const selectedTopicTitle = computed(() => {
   const match = topics.value.find((topic) => topic.id === selectedTopicId.value)
   return match?.title ?? null
+})
+
+const introBlock = computed(() => {
+  if (!selectedTopicTitle.value) {
+    return null
+  }
+
+  return {
+    type: 'intro',
+    title: `${selectedTopicTitle.value} Overview`,
+    description: `Intro content for ${selectedTopicTitle.value} will appear here.`
+  }
 })
 </script>
