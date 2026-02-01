@@ -1,6 +1,6 @@
 <template>
   <RouterLink class="subject-list-item" :to="destination">
-    <span class="subject-list-item__label">Subject</span>
+    <span class="subject-list-item__label">{{ label }}</span>
   </RouterLink>
 </template>
 
@@ -10,6 +10,7 @@ import { RouterLink } from 'vue-router'
 
 interface Props {
   slug: string
+  label: string
 }
 
 const props = defineProps<Props>()
