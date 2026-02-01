@@ -14,21 +14,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import SubjectMainContent from '../features/subjects/components/SubjectMainContent.vue'
 import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
 import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
-import { useSubjects } from '../composables/useSubjects'
+import { useSubjectDetail } from '../composables/useSubjectDetail'
 
-const route = useRoute()
-const slug = computed(() => route.params.slug as string)
-
-const { subject, isLoading, hasError, loadSubject } = useSubjects()
-
-onMounted(() => {
-  if (slug.value) {
-    void loadSubject(slug.value)
-  }
-})
+const { subject, isLoading, hasError } = useSubjectDetail()
 </script>
