@@ -1,5 +1,9 @@
 <template>
-  <div class="min-h-screen bg-black text-white">
-    v2 booted
-  </div>
+  <AppShell>
+    <div class="app-root" />
+  </AppShell>
 </template>
+
+<script setup lang="ts">
+import AppShell from './app/AppShell.vue'
+</script>
