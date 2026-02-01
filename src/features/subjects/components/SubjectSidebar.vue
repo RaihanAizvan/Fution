@@ -23,14 +23,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useSubjectTopics } from '../../../composables/useSubjectTopics'
 
+interface Props {
+  selectedTopicId: string | null
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<{
+  (event: 'update:selectedTopicId', value: string | null): void
+}>()
+
 const { topics, isLoading, hasError } = useSubjectTopics()
-const selectedTopicId = ref<string | null>(null)
+
+const selectedTopicId = computed(() => props.selectedTopicId)
 
 const selectTopic = (topicId: string) => {
-  selectedTopicId.value = topicId
+  emit('update:selectedTopicId', topicId)
 }
 </script>
 

@@ -6,18 +6,27 @@
 
     <SubjectLayout v-else>
       <template #sidebar>
-        <SubjectSidebar />
+        <SubjectSidebar v-model:selectedTopicId="selectedTopicId" />
       </template>
-      <SubjectMainContent :title="subject.title" />
+      <SubjectMainContent :title="subject.title" :topicTitle="selectedTopicTitle" />
     </SubjectLayout>
   </section>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import SubjectMainContent from '../features/subjects/components/SubjectMainContent.vue'
 import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
 import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
 import { useSubjectDetail } from '../composables/useSubjectDetail'
+import { useSubjectTopics } from '../composables/useSubjectTopics'
 
 const { subject, isLoading, hasError } = useSubjectDetail()
+const { topics } = useSubjectTopics()
+
+const selectedTopicId = ref<string | null>(null)
+const selectedTopicTitle = computed(() => {
+  const match = topics.value.find((topic) => topic.id === selectedTopicId.value)
+  return match?.title ?? null
+})
 </script>
