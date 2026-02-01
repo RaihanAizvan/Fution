@@ -1,9 +1,17 @@
 <template>
   <article class="block-renderer">
-    <header class="block-renderer__header">
-      <h2>{{ block.title }}</h2>
-    </header>
-    <p class="block-renderer__description">{{ block.description }}</p>
+    <template v-if="block.type === 'intro'">
+      <header class="block-renderer__header">
+        <h2>{{ block.title }}</h2>
+      </header>
+      <p class="block-renderer__description">{{ block.description }}</p>
+    </template>
+    <template v-else>
+      <header class="block-renderer__header">
+        <h2>{{ block.language }}</h2>
+      </header>
+      <pre class="block-renderer__code"><code>{{ block.code }}</code></pre>
+    </template>
   </article>
 </template>
 
@@ -14,8 +22,16 @@ interface IntroBlock {
   description: string
 }
 
+interface CodeBlock {
+  type: 'code'
+  language: string
+  code: string
+}
+
+type Block = IntroBlock | CodeBlock
+
 interface Props {
-  block: IntroBlock
+  block: Block
 }
 
 defineProps<Props>()
@@ -28,6 +44,10 @@ defineProps<Props>()
 }
 
 .block-renderer__description {
+  margin: 0;
+}
+
+.block-renderer__code {
   margin: 0;
 }
 </style>

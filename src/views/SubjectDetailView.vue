@@ -8,7 +8,11 @@
       <template #sidebar>
         <SubjectSidebar v-model:selectedTopicId="selectedTopicId" />
       </template>
-      <SubjectMainContent :title="subject.title" :introBlock="introBlock" />
+      <SubjectMainContent
+        :title="subject.title"
+        :introBlock="introBlock"
+        :codeBlock="codeBlock"
+      />
     </SubjectLayout>
   </section>
 </template>
@@ -39,6 +43,18 @@ const introBlock = computed(() => {
     type: 'intro',
     title: `${selectedTopicTitle.value} Overview`,
     description: `Intro content for ${selectedTopicTitle.value} will appear here.`
+  }
+})
+
+const codeBlock = computed(() => {
+  if (!selectedTopicTitle.value) {
+    return null
+  }
+
+  return {
+    type: 'code',
+    language: 'javascript',
+    code: `// ${selectedTopicTitle.value} example\nconsole.log('Hello from ${selectedTopicTitle.value}');`
   }
 })
 </script>
