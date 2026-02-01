@@ -8,7 +8,12 @@
       <template #sidebar>
         <SubjectSidebar v-model:selectedTopicId="selectedTopicId" />
       </template>
-      <SubjectMainContent :title="subject.title" :blocks="selectedBlocks" />
+      <SubjectMainContent
+        :title="subject.title"
+        :blocks="selectedBlocks"
+        :isLoading="blocksLoading"
+        :hasError="blocksHasError"
+      />
     </SubjectLayout>
   </section>
 </template>
