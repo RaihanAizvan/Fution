@@ -8,7 +8,7 @@
       <template #sidebar>
         <SubjectSidebar />
       </template>
-      <SubjectMainContent />
+      <SubjectMainContent :title="subject.title" />
     </SubjectLayout>
   </section>
 </template>
