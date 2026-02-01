@@ -1,7 +1,7 @@
 <template>
   <section class="subject-detail">
-    <p v-if="isLoading">Loading subject…</p>
-    <p v-else-if="hasError">Unable to load subject.</p>
+    <p v-if="isContentLoading">Loading subject…</p>
+    <p v-else-if="hasContentError">Unable to load subject.</p>
     <p v-else-if="!subject">Subject not found.</p>
 
     <SubjectLayout v-else>
@@ -19,17 +19,17 @@ import SubjectMainContent from '../features/subjects/components/SubjectMainConte
 import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
 import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
 import { useSubjectDetail } from '../composables/useSubjectDetail'
-import { topicBlocks } from '../features/subjects/data/topicBlocks'
+import { useTopicBlocks } from '../composables/useTopicBlocks'
 
 const { subject, isLoading, hasError } = useSubjectDetail()
 
 const selectedTopicId = ref<string | null>(null)
+const {
+  blocks: selectedBlocks,
+  isLoading: blocksLoading,
+  hasError: blocksHasError
+} = useTopicBlocks(() => selectedTopicId.value)
 
-const selectedBlocks = computed(() => {
-  if (!selectedTopicId.value) {
-    return []
-  }
-
-  return topicBlocks[selectedTopicId.value] ?? []
-})
+const isContentLoading = computed(() => isLoading.value || blocksLoading.value)
+const hasContentError = computed(() => hasError.value || blocksHasError.value)
 </script>
