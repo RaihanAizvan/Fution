@@ -6,7 +6,7 @@
 
     <SubjectLayout v-else>
       <template #sidebar>
-        <SubjectSidebar v-model:selectedTopicId="selectedTopicId" />
+        <SubjectSidebar />
       </template>
       <SubjectMainContent
         :title="subject.title"
@@ -19,21 +19,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import SubjectMainContent from '../features/subjects/components/SubjectMainContent.vue'
 import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
 import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
 import { useSubjectDetail } from '../composables/useSubjectDetail'
 import { useTopicBlocks } from '../composables/useTopicBlocks'
 
+const route = useRoute()
 const { subject, isLoading, hasError } = useSubjectDetail()
 
-const selectedTopicId = ref<string | null>(null)
+const selectedTopicSlug = computed(() => route.params.topicSlug as string | null)
 const {
   blocks: selectedBlocks,
   isLoading: blocksLoading,
   hasError: blocksHasError
-} = useTopicBlocks(() => selectedTopicId.value)
+} = useTopicBlocks(() => selectedTopicSlug.value)
 
 const isContentLoading = computed(() => isLoading.value || blocksLoading.value)
 const hasContentError = computed(() => hasError.value || blocksHasError.value)

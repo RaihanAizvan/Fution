@@ -7,41 +7,32 @@
       <p v-if="isLoading">Loading topics…</p>
       <p v-else-if="hasError">Unable to load topics.</p>
       <p v-else-if="topics.length === 0">No topics available.</p>
-      <button
+      <RouterLink
         v-else
         v-for="topic in topics"
         :key="topic.id"
         class="subject-sidebar__topic"
-        type="button"
-        :class="{ 'is-selected': topic.id === selectedTopicId }"
-        @click="selectTopic(topic.id)"
+        :class="{ 'is-selected': topic.id === selectedTopicSlug }"
+        :to="getTopicLink(topic.id)"
       >
         {{ topic.title }}
-      </button>
+      </RouterLink>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
 import { useSubjectTopics } from '../../../composables/useSubjectTopics'
 
-interface Props {
-  selectedTopicId: string | null
-}
-
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  (event: 'update:selectedTopicId', value: string | null): void
-}>()
-
+const route = useRoute()
 const { topics, isLoading, hasError } = useSubjectTopics()
 
-const selectedTopicId = computed(() => props.selectedTopicId)
+const selectedTopicSlug = computed(() => route.params.topicSlug as string | undefined)
+const subjectSlug = computed(() => route.params.slug as string)
 
-const selectTopic = (topicId: string) => {
-  emit('update:selectedTopicId', topicId)
-}
+const getTopicLink = (topicId: string) => `/subjects/${subjectSlug.value}/${topicId}`
 </script>
 
 <style scoped>

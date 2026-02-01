@@ -14,6 +14,12 @@ const routes = [
     name: 'subject-detail',
     component: SubjectDetailView,
     props: true
+  },
+  {
+    path: '/subjects/:slug/:topicSlug',
+    name: 'subject-topic',
+    component: SubjectDetailView,
+    props: true
   }
 ]
 
