@@ -1,17 +1,24 @@
 <template>
   <section class="subject-detail">
-    <header class="subject-detail__header">
-      <h1>Subject</h1>
-    </header>
     <p v-if="isLoading">Loading subject…</p>
     <p v-else-if="hasError">Unable to load subject.</p>
     <p v-else-if="!subject">Subject not found.</p>
+
+    <SubjectLayout v-else>
+      <template #sidebar>
+        <SubjectSidebar />
+      </template>
+      <SubjectMainContent />
+    </SubjectLayout>
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
+import SubjectMainContent from '../features/subjects/components/SubjectMainContent.vue'
+import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
+import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
 import { useSubjects } from '../composables/useSubjects'
 
 const route = useRoute()
