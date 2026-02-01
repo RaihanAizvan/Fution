@@ -24,7 +24,7 @@ const mapBlocks = (response: BlocksApiResponse): TopicBlock[] =>
       if (!data.title || !data.description) {
         return []
       }
-      return [{ type: 'intro', title: data.title, description: data.description }]
+      return [{ type: 'intro', data: { title: data.title, description: data.description } }]
     }
 
     if (block.type === 'code') {
@@ -32,16 +32,26 @@ const mapBlocks = (response: BlocksApiResponse): TopicBlock[] =>
       if (!data.language || !data.code) {
         return []
       }
-      return [{ type: 'code', language: data.language, code: data.code }]
+      return [{ type: 'code', data: { language: data.language, code: data.code } }]
     }
 
     const data = block.data as { items?: Array<{ title?: string; content?: string }> }
-    const firstItem = data.items?.[0]
-    if (!firstItem?.title || !firstItem.content) {
+    const items = data.items?.filter((item) => item.title && item.content) ?? []
+    if (items.length === 0) {
       return []
     }
 
-    return [{ type: 'accordion', title: firstItem.title, content: firstItem.content }]
+    return [
+      {
+        type: 'accordion',
+        data: {
+          items: items.map((item) => ({
+            title: item.title as string,
+            content: item.content as string
+          }))
+        }
+      }
+    ]
   })
 
 export const createBlocksSource = (): BlocksSource => ({

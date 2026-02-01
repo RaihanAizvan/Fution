@@ -31,13 +31,14 @@ const blocks = computed(() => props.blocks)
 
 const blockKey = (block: TopicBlock) => {
   if (block.type === 'intro') {
-    return `${block.type}-${block.title}`
+    return `${block.type}-${block.data.title}`
   }
 
   if (block.type === 'code') {
-    return `${block.type}-${block.language}-${block.code}`
+    return `${block.type}-${block.data.language}-${block.data.code}`
   }
 
-  return `${block.type}-${block.title}`
+  const firstItem = block.data.items[0]
+  return `${block.type}-${firstItem?.title ?? 'item'}`
 }
 </script>

@@ -2,63 +2,58 @@
   <article class="block-renderer">
     <template v-if="block.type === 'intro'">
       <header class="block-renderer__header">
-        <h2>{{ block.title }}</h2>
+        <h2>{{ block.data.title }}</h2>
       </header>
-      <p class="block-renderer__description">{{ block.description }}</p>
+      <p class="block-renderer__description">{{ block.data.description }}</p>
     </template>
     <template v-else-if="block.type === 'code'">
       <header class="block-renderer__header">
-        <h2>{{ block.language }}</h2>
+        <h2>{{ block.data.language }}</h2>
       </header>
-      <pre class="block-renderer__code"><code>{{ block.code }}</code></pre>
+      <pre class="block-renderer__code"><code>{{ block.data.code }}</code></pre>
     </template>
-    <template v-else>
-      <header class="block-renderer__header">
-        <button class="block-renderer__toggle" type="button" @click="toggleAccordion">
-          {{ block.title }}
-        </button>
-      </header>
-      <div v-if="isAccordionOpen" class="block-renderer__accordion">
-        {{ block.content }}
-      </div>
+    <template v-else-if="block.type === 'accordion'">
+      <AccordionBlock :items="block.data.items" />
     </template>
   </article>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import AccordionBlock from './AccordionBlock.vue'
 
 interface IntroBlock {
   type: 'intro'
-  title: string
-  description: string
+  data: {
+    title: string
+    description: string
+  }
 }
 
 interface CodeBlock {
   type: 'code'
-  language: string
-  code: string
+  data: {
+    language: string
+    code: string
+  }
 }
 
-interface AccordionBlock {
+interface AccordionBlockType {
   type: 'accordion'
-  title: string
-  content: string
+  data: {
+    items: Array<{
+      title: string
+      content: string
+    }>
+  }
 }
 
-type Block = IntroBlock | CodeBlock | AccordionBlock
+type Block = IntroBlock | CodeBlock | AccordionBlockType
 
 interface Props {
   block: Block
 }
 
 defineProps<Props>()
-
-const isAccordionOpen = ref(false)
-
-const toggleAccordion = () => {
-  isAccordionOpen.value = !isAccordionOpen.value
-}
 </script>
 
 <style scoped>
@@ -73,14 +68,5 @@ const toggleAccordion = () => {
 
 .block-renderer__code {
   margin: 0;
-}
-
-.block-renderer__toggle {
-  background: none;
-  border: 0;
-  padding: 0;
-  text-align: left;
-  font: inherit;
-  cursor: pointer;
 }
 </style>
