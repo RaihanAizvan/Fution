@@ -1,10 +1,10 @@
 import { computed, ref } from 'vue'
-import { createSubjectsRepository, subjectsApi } from '../services/subjects'
-import type { SubjectDetail, SubjectSummary } from '../services/subjects'
+import { createSubjectsSource } from '../services/subjects'
+import type { SubjectDetail, SubjectSummary, SubjectsSource } from '../services/subjects'
 
-const repository = createSubjectsRepository(subjectsApi)
+const defaultSource = createSubjectsSource()
 
-export const useSubjects = () => {
+export const useSubjects = (source: SubjectsSource = defaultSource) => {
   const subjects = ref<SubjectSummary[]>([])
   const subject = ref<SubjectDetail | null>(null)
   const isLoading = ref(false)
@@ -17,7 +17,7 @@ export const useSubjects = () => {
     error.value = null
 
     try {
-      subjects.value = await repository.getSubjects()
+      subjects.value = await source.listSubjects()
     } catch (err) {
       error.value = err as Error
     } finally {
@@ -30,7 +30,7 @@ export const useSubjects = () => {
     error.value = null
 
     try {
-      subject.value = await repository.getSubjectBySlug(slug)
+      subject.value = await source.getSubject(slug)
     } catch (err) {
       error.value = err as Error
     } finally {

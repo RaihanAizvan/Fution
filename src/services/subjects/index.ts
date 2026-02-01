@@ -1,3 +1,6 @@
 export { subjectsApi } from './subjectsApi'
 export { createSubjectsRepository } from './subjectsRepository'
+export { createSubjectsSource } from './subjectsSourceFactory'
+export { createEmptySubjectsSource } from './subjectsSource'
 export type { SubjectDetail, SubjectSummary, SubjectsRepository } from './subjectsRepository'
+export type { SubjectsSource } from './subjectsSource'
