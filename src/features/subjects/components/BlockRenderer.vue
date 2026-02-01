@@ -4,21 +4,32 @@
       <header class="block-renderer__header">
         <h2>{{ block.data.title }}</h2>
       </header>
-      <p class="block-renderer__description">{{ block.data.description }}</p>
+      <p class="block-renderer__description">
+        {{ isLoading ? 'Loading content…' : block.data.description }}
+      </p>
     </template>
     <template v-else-if="block.type === 'code'">
       <header class="block-renderer__header">
         <h2>{{ block.data.language }}</h2>
       </header>
-      <pre class="block-renderer__code"><code>{{ block.data.code }}</code></pre>
+      <pre class="block-renderer__code">
+        <code>{{ isLoading ? 'Loading content…' : block.data.code }}</code>
+      </pre>
     </template>
     <template v-else-if="block.type === 'accordion'">
-      <AccordionBlock :items="block.data.items" />
+      <AccordionBlock
+        :items="
+          isLoading
+            ? [{ title: 'Loading', content: 'Loading content…' }]
+            : block.data.items
+        "
+      />
     </template>
   </article>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import AccordionBlock from './AccordionBlock.vue'
 
 interface IntroBlock {
@@ -51,9 +62,12 @@ type Block = IntroBlock | CodeBlock | AccordionBlockType
 
 interface Props {
   block: Block
+  isLoading?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const isLoading = computed(() => props.isLoading ?? false)
 </script>
 
 <style scoped>

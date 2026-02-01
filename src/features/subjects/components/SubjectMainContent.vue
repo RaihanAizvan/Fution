@@ -4,10 +4,16 @@
       <h1>{{ title }}</h1>
     </header>
     <div class="subject-main__content">
-      <p v-if="isLoading">Loading blocks…</p>
-      <p v-else-if="hasError">Unable to load blocks.</p>
-      <p v-else-if="blocks.length === 0">Content will load here.</p>
-      <BlockRenderer v-else v-for="block in blocks" :key="blockKey(block)" :block="block" />
+      <p v-if="hasError">Unable to load blocks.</p>
+      <p v-else-if="!isLoading && blocks.length === 0">Content will load here.</p>
+      <template v-else>
+        <BlockRenderer
+          v-for="block in renderedBlocks"
+          :key="blockKey(block)"
+          :block="block"
+          :isLoading="isLoading"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -28,6 +34,23 @@ interface Props {
 const props = defineProps<Props>()
 
 const blocks = computed(() => props.blocks)
+
+const loadingBlocks: TopicBlock[] = [
+  {
+    type: 'intro',
+    data: { title: 'Loading', description: 'Loading content…' }
+  },
+  {
+    type: 'code',
+    data: { language: 'Loading', code: 'Loading content…' }
+  },
+  {
+    type: 'accordion',
+    data: { items: [{ title: 'Loading', content: 'Loading content…' }] }
+  }
+]
+
+const renderedBlocks = computed(() => (props.isLoading ? loadingBlocks : blocks.value))
 
 const blockKey = (block: TopicBlock) => {
   if (block.type === 'intro') {

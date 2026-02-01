@@ -1,7 +1,7 @@
 <template>
   <section class="subject-detail">
-    <p v-if="isContentLoading">Loading subject…</p>
-    <p v-else-if="hasContentError">Unable to load subject.</p>
+    <p v-if="isLoading">Loading subject…</p>
+    <p v-else-if="hasError">Unable to load subject.</p>
     <p v-else-if="!subject">Subject not found.</p>
 
     <SubjectLayout v-else>
@@ -36,7 +36,4 @@ const {
   isLoading: blocksLoading,
   hasError: blocksHasError
 } = useTopicBlocks(() => selectedTopicSlug.value)
-
-const isContentLoading = computed(() => isLoading.value || blocksLoading.value)
-const hasContentError = computed(() => hasError.value || blocksHasError.value)
 </script>
