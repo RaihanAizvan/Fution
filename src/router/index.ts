@@ -1,0 +1,25 @@
+import { createRouter, createWebHistory } from 'vue-router'
+
+import SubjectDetailView from '../views/SubjectDetailView.vue'
+import SubjectsView from '../views/SubjectsView.vue'
+
+const routes = [
+  {
+    path: '/subjects',
+    name: 'subjects',
+    component: SubjectsView
+  },
+  {
+    path: '/subjects/:slug',
+    name: 'subject-detail',
+    component: SubjectDetailView,
+    props: true
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes
+})
+
+export default router
