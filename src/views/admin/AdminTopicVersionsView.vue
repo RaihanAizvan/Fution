@@ -10,7 +10,9 @@
       <ul v-else>
         <li v-for="version in versions" :key="version.id">
           <span>{{ version.status }} ({{ version.createdAt }})</span>
-          <RouterLink :to="`/admin/topics/${topicId}/versions/${version.id}`">
+          <RouterLink
+            :to="`/admin/topics/${topicId}/versions/${version.id}?subjectId=${subjectId}`"
+          >
             Manage blocks
           </RouterLink>
           <button
