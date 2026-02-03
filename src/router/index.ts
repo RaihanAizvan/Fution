@@ -4,6 +4,7 @@ import SubjectDetailView from '../views/SubjectDetailView.vue'
 import SubjectsView from '../views/SubjectsView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
 import AdminSubjectsView from '../views/admin/AdminSubjectsView.vue'
+import AdminTopicsView from '../views/admin/AdminTopicsView.vue'
 
 const routes = [
   {
@@ -32,6 +33,11 @@ const routes = [
     path: '/admin/subjects',
     name: 'admin-subjects',
     component: AdminSubjectsView
+  },
+  {
+    path: '/admin/subjects/:subjectId/topics',
+    name: 'admin-topics',
+    component: AdminTopicsView
   }
 ]
 
