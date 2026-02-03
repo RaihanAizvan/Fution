@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SubjectDetailView from '../views/SubjectDetailView.vue'
 import SubjectsView from '../views/SubjectsView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
+import AdminSubjectsView from '../views/admin/AdminSubjectsView.vue'
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminDashboardView
+  },
+  {
+    path: '/admin/subjects',
+    name: 'admin-subjects',
+    component: AdminSubjectsView
   }
 ]
 
