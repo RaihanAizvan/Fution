@@ -28,7 +28,11 @@
           <form class="admin-form" @submit.prevent="updateTopic(topic)">
             <input v-model="topic.title" type="text" />
             <input v-model="topic.slug" type="text" />
-            <RouterLink :to="`/admin/topics/${topic.id}/versions`">Manage versions</RouterLink>
+            <RouterLink
+              :to="`/admin/topics/${topic.id}/versions?subjectId=${subjectId}`"
+            >
+              Manage versions
+            </RouterLink>
             <button type="submit">Save</button>
           </form>
         </li>

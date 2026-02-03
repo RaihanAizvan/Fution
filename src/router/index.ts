@@ -5,6 +5,7 @@ import SubjectsView from '../views/SubjectsView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
 import AdminSubjectsView from '../views/admin/AdminSubjectsView.vue'
 import AdminTopicsView from '../views/admin/AdminTopicsView.vue'
+import AdminTopicVersionsView from '../views/admin/AdminTopicVersionsView.vue'
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
     path: '/admin/subjects/:subjectId/topics',
     name: 'admin-topics',
     component: AdminTopicsView
+  },
+  {
+    path: '/admin/topics/:topicId/versions',
+    name: 'admin-topic-versions',
+    component: AdminTopicVersionsView
   }
 ]
 
