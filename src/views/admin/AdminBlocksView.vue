@@ -39,37 +39,8 @@
             <textarea v-model="newBlock.data.code" />
           </label>
         </div>
-        <div v-else-if="newBlock.type === 'accordion'">
-          <div v-for="(item, index) in newBlock.data.accordionItems" :key="index">
-            <label>
-              Item Title
-              <input v-model="item.title" type="text" />
-            </label>
-            <label>
-              Item Content
-              <textarea v-model="item.content" />
-            </label>
-            <button type="button" @click="removeAccordionItem(newBlock.data.accordionItems, index)">
-              Remove item
-            </button>
-          </div>
-          <button type="button" @click="addAccordionItem(newBlock.data.accordionItems)">
-            Add item
-          </button>
-        </div>
-        <div v-else-if="newBlock.type === 'checklist'">
-          <div v-for="(item, index) in newBlock.data.checklistItems" :key="index">
-            <input v-model="item.text" type="text" />
-            <button type="button" @click="removeChecklistItem(newBlock.data.checklistItems, index)">
-              Remove
-            </button>
-          </div>
-          <button type="button" @click="addChecklistItem(newBlock.data.checklistItems)">
-            Add item
-          </button>
-        </div>
-        <div v-else-if="newBlock.type === 'pitfalls'">
-          <div v-for="(item, index) in newBlock.data.pitfallItems" :key="index">
+        <div v-else-if="['accordion', 'checklist', 'pitfalls'].includes(newBlock.type)">
+          <div v-for="(item, index) in newBlock.data.items" :key="index">
             <label>
               Title
               <input v-model="item.title" type="text" />
@@ -78,11 +49,11 @@
               Description
               <textarea v-model="item.description" />
             </label>
-            <button type="button" @click="removePitfallItem(newBlock.data.pitfallItems, index)">
-              Remove
+            <button type="button" @click="removeListItem(newBlock.data.items, index)">
+              Remove item
             </button>
           </div>
-          <button type="button" @click="addPitfallItem(newBlock.data.pitfallItems)">
+          <button type="button" @click="addListItem(newBlock.data.items)">
             Add item
           </button>
         </div>
@@ -126,38 +97,15 @@
               <input v-model="block.data.language" type="text" />
               <textarea v-model="block.data.code" />
             </div>
-            <div v-else-if="block.type === 'accordion'">
-              <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
-                <input v-model="item.title" type="text" />
-                <textarea v-model="item.content" />
-                <button type="button" @click="removeAccordionItem(block.data.items, itemIndex)">
-                  Remove item
-                </button>
-              </div>
-              <button type="button" @click="addAccordionItem(block.data.items)">
-                Add item
-              </button>
-            </div>
-            <div v-else-if="block.type === 'checklist'">
-              <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
-                <input v-model="item.text" type="text" />
-                <button type="button" @click="removeChecklistItem(block.data.items, itemIndex)">
-                  Remove
-                </button>
-              </div>
-              <button type="button" @click="addChecklistItem(block.data.items)">
-                Add item
-              </button>
-            </div>
-            <div v-else-if="block.type === 'pitfalls'">
+            <div v-else-if="['accordion', 'checklist', 'pitfalls'].includes(block.type)">
               <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
                 <input v-model="item.title" type="text" />
                 <textarea v-model="item.description" />
-                <button type="button" @click="removePitfallItem(block.data.items, itemIndex)">
-                  Remove
+                <button type="button" @click="removeListItem(block.data.items, itemIndex)">
+                  Remove item
                 </button>
               </div>
-              <button type="button" @click="addPitfallItem(block.data.items)">
+              <button type="button" @click="addListItem(block.data.items)">
                 Add item
               </button>
             </div>
@@ -210,9 +158,7 @@ const newBlock = reactive({
     description: '',
     language: '',
     code: '',
-    accordionItems: [{ title: '', content: '' }],
-    checklistItems: [{ text: '' }],
-    pitfallItems: [{ title: '', description: '' }],
+    items: [{ title: '', description: '' }],
     resourceItems: [{ title: '', url: '' }]
   }
 })
@@ -248,24 +194,14 @@ const normalizeBlockData = (block: BlockRecord) => {
       code: (block.data as any).code ?? ''
     }
   }
-  if (block.type === 'accordion') {
+  if (block.type === 'accordion' || block.type === 'checklist' || block.type === 'pitfalls') {
     return {
-      items: (block.data as any).items ?? [{ title: '', content: '' }]
+      items: (block.data as any).items ?? [{ title: '', description: '' }]
     }
   }
   if (block.type === 'resources') {
     return {
       items: (block.data as any).items ?? [{ title: '', url: '' }]
-    }
-  }
-  if (block.type === 'checklist') {
-    return {
-      items: (block.data as any).items ?? [{ text: '' }]
-    }
-  }
-  if (block.type === 'pitfalls') {
-    return {
-      items: (block.data as any).items ?? [{ title: '', description: '' }]
     }
   }
   return {
@@ -352,57 +288,21 @@ const buildPayload = (type: BlockType, data: any) => {
   if (type === 'code') {
     return { type, data: { language: data.language, code: data.code } }
   }
-  if (type === 'accordion') {
-    const items = data.accordionItems ?? data.items
-    return { type, data: { items } }
+  if (type === 'accordion' || type === 'checklist' || type === 'pitfalls') {
+    return { type, data: { items: data.items } }
   }
   if (type === 'resources') {
     const items = data.resourceItems ?? data.items
     return { type, data: { items } }
   }
-  if (type === 'checklist') {
-    const items = data.checklistItems ?? data.items
-    return {
-      type,
-      data: { items: items.map((item: { text: string }) => ({ text: item.text })) }
-    }
-  }
-  if (type === 'pitfalls') {
-    const items = data.pitfallItems ?? data.items
-    return {
-      type,
-      data: {
-        items: items.map((item: { title: string; description: string }) => ({
-          title: item.title,
-          description: item.description
-        }))
-      }
-    }
-  }
   return { type, data: { items: data.items } }
 }
 
-const addAccordionItem = (items: Array<{ title: string; content: string }>) => {
-  items.push({ title: '', content: '' })
-}
-
-const removeAccordionItem = (items: Array<{ title: string; content: string }>, index: number) => {
-  items.splice(index, 1)
-}
-
-const addChecklistItem = (items: Array<{ text: string }>) => {
-  items.push({ text: '' })
-}
-
-const removeChecklistItem = (items: Array<{ text: string }>, index: number) => {
-  items.splice(index, 1)
-}
-
-const addPitfallItem = (items: Array<{ title: string; description: string }>) => {
+const addListItem = (items: Array<{ title: string; description: string }>) => {
   items.push({ title: '', description: '' })
 }
 
-const removePitfallItem = (items: Array<{ title: string; description: string }>, index: number) => {
+const removeListItem = (items: Array<{ title: string; description: string }>, index: number) => {
   items.splice(index, 1)
 }
 
