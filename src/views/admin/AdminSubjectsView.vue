@@ -4,7 +4,17 @@
       <h2>Subjects</h2>
       
       <div class="admin-section">
-        <h3>Add New Subject</h3>
+        <div class="section-header">
+          <h3>Add New Subject</h3>
+          <button
+            type="button"
+            class="btn-secondary"
+            @click="toggleImport"
+          >
+            {{ showImport ? 'Close JSON Upload' : 'Upload JSON' }}
+          </button>
+        </div>
+
         <form class="admin-form" @submit.prevent="createSubject">
           <div class="form-field">
             <label>
@@ -22,6 +32,33 @@
           </div>
           <button type="submit" class="btn-primary">Create Subject</button>
         </form>
+
+        <div v-if="showImport" class="import-panel">
+          <h4>Upload Subject JSON</h4>
+          <p class="helper-text">
+            Paste a full subject tree JSON payload to import subjects, topics, versions, and blocks.
+          </p>
+          <form class="admin-form" @submit.prevent="submitImport">
+            <div class="form-field">
+              <label>
+                JSON Payload
+                <textarea
+                  v-model="importPayload"
+                  rows="10"
+                  placeholder="{ ... }"
+                  required
+                />
+              </label>
+              <p v-for="error in importErrors" :key="error" class="error">{{ error }}</p>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Import JSON</button>
+              <button type="button" class="btn-secondary" @click="resetImport">Clear</button>
+            </div>
+            <p v-if="importMessage" class="success">{{ importMessage }}</p>
+            <p v-if="importErrorMessage" class="error">{{ importErrorMessage }}</p>
+          </form>
+        </div>
       </div>
 
       <div class="admin-section">
@@ -96,6 +133,12 @@ const errorMessage = ref('')
 const fieldErrors = reactive<{ title?: string[]; slug?: string[] }>({})
 const newSubject = reactive({ title: '', slug: '' })
 
+const showImport = ref(false)
+const importPayload = ref('')
+const importErrors = ref<string[]>([])
+const importErrorMessage = ref('')
+const importMessage = ref('')
+
 const editingId = ref<string | null>(null)
 const editingOriginal = ref<SubjectRecord | null>(null)
 const editError = ref('')
@@ -135,6 +178,42 @@ const createSubject = async () => {
     const validation = mapValidationErrors(error)
     fieldErrors.title = validation['title'] ?? []
     fieldErrors.slug = validation['slug'] ?? []
+  }
+}
+
+const toggleImport = () => {
+  showImport.value = !showImport.value
+  importErrorMessage.value = ''
+  importMessage.value = ''
+}
+
+const resetImport = () => {
+  importPayload.value = ''
+  importErrors.value = []
+  importErrorMessage.value = ''
+  importMessage.value = ''
+}
+
+const submitImport = async () => {
+  importErrors.value = []
+  importErrorMessage.value = ''
+  importMessage.value = ''
+
+  try {
+    const parsed = JSON.parse(importPayload.value)
+    await subjectsApi.importTree(parsed)
+    importMessage.value = 'Import completed successfully.'
+    importPayload.value = ''
+    await loadSubjects()
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      importErrorMessage.value = 'Invalid JSON. Please check the syntax.'
+      return
+    }
+
+    importErrorMessage.value = getErrorMessage(error)
+    const validation = mapValidationErrors(error)
+    importErrors.value = Object.values(validation).flat()
   }
 }
 
@@ -211,6 +290,44 @@ onMounted(() => {
 .admin-section h3 {
   margin-top: 0;
   margin-bottom: 1rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.import-panel {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px dashed #c0c0c0;
+  border-radius: 4px;
+  background-color: #fafafa;
+}
+
+.helper-text {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: #555;
+}
+
+textarea {
+  min-height: 200px;
+  resize: vertical;
+  font-family: monospace;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.success {
+  color: #155724;
+  background-color: #d4edda;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
 }
 
 .admin-form {

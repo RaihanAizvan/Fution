@@ -17,5 +17,7 @@ export const subjectsApi = {
     adminClient.post<SubjectRecord>('/admin/subjects', payload),
   update: (id: string, payload: SubjectPayload) =>
     adminClient.put<SubjectRecord>(`/admin/subjects/${id}`, payload),
-  delete: (id: string) => adminClient.delete(`/admin/subjects/${id}`)
+  delete: (id: string) => adminClient.delete(`/admin/subjects/${id}`),
+  importTree: (payload: unknown) =>
+    adminClient.post<void>('/admin/subjects/import', payload)
 }
