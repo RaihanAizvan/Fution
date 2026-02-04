@@ -3,18 +3,28 @@ import { adminClient } from './adminClient'
 export interface TopicVersionRecord {
   id: string
   topicId: string
-  status: 'draft' | 'published'
+  version: number
+  isPublished: boolean
   createdAt: string
 }
 
 export const versionsApi = {
-  listByTopic: (topicId: string) =>
-    adminClient.get<TopicVersionRecord[]>(`/admin/topics/${topicId}/versions`),
-  createDraft: (topicId: string) =>
-    adminClient.post<TopicVersionRecord>(`/admin/topics/${topicId}/versions`, {}),
-  publish: (topicId: string, versionId: string) =>
+  listByTopic: (subjectId: string, topicId: string) =>
+    adminClient.get<TopicVersionRecord[]>(
+      `/admin/subjects/${subjectId}/topics/${topicId}/versions`
+    ),
+  createDraft: (subjectId: string, topicId: string, version: number) =>
     adminClient.post<TopicVersionRecord>(
-      `/admin/topics/${topicId}/versions/${versionId}/publish`,
-      {}
+      `/admin/subjects/${subjectId}/topics/${topicId}/versions`,
+      { version, isPublished: false }
+    ),
+  update: (subjectId: string, topicId: string, versionId: string, isPublished: boolean) =>
+    adminClient.patch<TopicVersionRecord>(
+      `/admin/subjects/${subjectId}/topics/${topicId}/versions/${versionId}`,
+      { isPublished }
+    ),
+  remove: (subjectId: string, topicId: string, versionId: string) =>
+    adminClient.delete(
+      `/admin/subjects/${subjectId}/topics/${topicId}/versions/${versionId}`
     )
 }

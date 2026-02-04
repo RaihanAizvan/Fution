@@ -231,7 +231,7 @@ const saveEdit = async (topic: TopicRecord) => {
   editError.value = ''
 
   try {
-    await topicsApi.update(topic.id, {
+    await topicsApi.update(subjectId, topic.id, {
       title: topic.title,
       slug: topic.slug,
       level: topic.level
@@ -296,8 +296,11 @@ const saveReorder = async () => {
   errorMessage.value = ''
 
   try {
-    const orderedIds = topics.value.map(t => t.id)
-    await topicsApi.reorder(subjectId, orderedIds)
+    const ordered = topics.value.map((topic, index) => ({
+      topicId: topic.id,
+      orderIndex: index + 1
+    }))
+    await topicsApi.reorder(subjectId, ordered)
     isReordering.value = false
     originalOrder.value = []
   } catch (error) {
