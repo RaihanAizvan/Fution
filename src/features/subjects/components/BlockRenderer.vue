@@ -25,6 +25,28 @@
         "
       />
     </template>
+    <template v-else-if="block.type === 'checklist'">
+      <ul class="block-renderer__list">
+        <li v-for="(item, index) in block.data.items" :key="index">
+          {{ item.text }}
+        </li>
+      </ul>
+    </template>
+    <template v-else-if="block.type === 'pitfalls'">
+      <div class="block-renderer__pitfalls">
+        <div v-for="(item, index) in block.data.items" :key="index">
+          <strong>{{ item.title }}</strong>
+          <p>{{ item.description }}</p>
+        </div>
+      </div>
+    </template>
+    <template v-else-if="block.type === 'resources'">
+      <ul class="block-renderer__list">
+        <li v-for="(item, index) in block.data.items" :key="index">
+          <a :href="item.url" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+        </li>
+      </ul>
+    </template>
   </article>
 </template>
 
@@ -58,7 +80,36 @@ interface AccordionBlockType {
   }
 }
 
-type Block = IntroBlock | CodeBlock | AccordionBlockType
+interface ChecklistBlock {
+  type: 'checklist'
+  data: {
+    items: Array<{
+      text: string
+    }>
+  }
+}
+
+interface PitfallsBlock {
+  type: 'pitfalls'
+  data: {
+    items: Array<{
+      title: string
+      description: string
+    }>
+  }
+}
+
+interface ResourcesBlock {
+  type: 'resources'
+  data: {
+    items: Array<{
+      title: string
+      url: string
+    }>
+  }
+}
+
+type Block = IntroBlock | CodeBlock | AccordionBlockType | ChecklistBlock | PitfallsBlock | ResourcesBlock
 
 interface Props {
   block: Block
@@ -82,5 +133,21 @@ const isLoading = computed(() => props.isLoading ?? false)
 
 .block-renderer__code {
   margin: 0;
+}
+
+.block-renderer__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.block-renderer__pitfalls {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.block-renderer__pitfalls p {
+  margin: 0.25rem 0 0;
 }
 </style>

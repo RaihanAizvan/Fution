@@ -24,4 +24,31 @@ export type AccordionBlock = {
   }
 }
 
-export type TopicBlock = IntroBlock | CodeBlock | AccordionBlock
+export type ChecklistBlock = {
+  type: 'checklist'
+  data: {
+    items: Array<{ text: string }>
+  }
+}
+
+export type PitfallsBlock = {
+  type: 'pitfalls'
+  data: {
+    items: Array<{ title: string; description: string }>
+  }
+}
+
+export type ResourcesBlock = {
+  type: 'resources'
+  data: {
+    items: Array<{ title: string; url: string }>
+  }
+}
+
+export type TopicBlock =
+  | IntroBlock
+  | CodeBlock
+  | AccordionBlock
+  | ChecklistBlock
+  | PitfallsBlock
+  | ResourcesBlock
