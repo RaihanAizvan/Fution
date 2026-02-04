@@ -1,9 +1,9 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { createMockTopicsSource } from '../services/topics/topicsMockSource'
+import { createApiTopicsSource } from '../services/topics/topicsApiSource'
 import type { TopicSummary, TopicsSource } from '../services/topics/topicsMockSource'
 
-const defaultSource = createMockTopicsSource()
+const defaultSource = createApiTopicsSource()
 
 export const useSubjectTopics = (source: TopicsSource = defaultSource) => {
   const route = useRoute()
