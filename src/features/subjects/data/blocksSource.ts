@@ -10,7 +10,7 @@ type BlocksApiResponse = {
     title: string
   }
   blocks: Array<{
-    type: 'intro' | 'code' | 'accordion'
+    type: 'intro' | 'code' | 'accordion' | 'checklist' | 'pitfalls' | 'resources'
     data: Record<string, unknown>
   }>
 }
@@ -35,23 +35,65 @@ const mapBlocks = (response: BlocksApiResponse): TopicBlock[] =>
       return [{ type: 'code', data: { language: data.language, code: data.code } }]
     }
 
-    const data = block.data as { items?: Array<{ title?: string; content?: string }> }
-    const items = data.items?.filter((item) => item.title && item.content) ?? []
-    if (items.length === 0) {
-      return []
+    if (block.type === 'accordion') {
+      const data = block.data as { items?: Array<{ title?: string; content?: string }> }
+      const items = data.items?.filter((item) => item.title && item.content) ?? []
+      if (items.length === 0) {
+        return []
+      }
+
+      return [
+        {
+          type: 'accordion',
+          data: {
+            items: items.map((item) => ({
+              title: item.title as string,
+              content: item.content as string
+            }))
+          }
+        }
+      ]
     }
 
-    return [
-      {
-        type: 'accordion',
-        data: {
-          items: items.map((item) => ({
-            title: item.title as string,
-            content: item.content as string
-          }))
-        }
+    if (block.type === 'checklist') {
+      const data = block.data as { items?: Array<{ text?: string }> }
+      const items = data.items?.filter((item) => item.text) ?? []
+      if (items.length === 0) {
+        return []
       }
-    ]
+      return [{ type: 'checklist', data: { items: items as { text: string }[] } }]
+    }
+
+    if (block.type === 'pitfalls') {
+      const data = block.data as { items?: Array<{ title?: string; description?: string }> }
+      const items =
+        data.items?.filter((item) => item.title && item.description) ?? []
+      if (items.length === 0) {
+        return []
+      }
+      return [
+        {
+          type: 'pitfalls',
+          data: { items: items as { title: string; description: string }[] }
+        }
+      ]
+    }
+
+    if (block.type === 'resources') {
+      const data = block.data as { items?: Array<{ title?: string; url?: string }> }
+      const items = data.items?.filter((item) => item.title && item.url) ?? []
+      if (items.length === 0) {
+        return []
+      }
+      return [
+        {
+          type: 'resources',
+          data: { items: items as { title: string; url: string }[] }
+        }
+      ]
+    }
+
+    return []
   })
 
 export const createBlocksSource = (): BlocksSource => ({
