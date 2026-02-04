@@ -20,7 +20,7 @@
       <AccordionBlock
         :items="
           isLoading
-            ? [{ title: 'Loading', content: 'Loading content…' }]
+            ? [{ title: 'Loading', description: 'Loading content…' }]
             : block.data.items
         "
       />
@@ -28,7 +28,7 @@
     <template v-else-if="block.type === 'checklist'">
       <ul class="block-renderer__list">
         <li v-for="(item, index) in block.data.items" :key="index">
-          {{ item.text }}
+          {{ item.title }}
         </li>
       </ul>
     </template>
@@ -36,7 +36,7 @@
       <div class="block-renderer__pitfalls">
         <div v-for="(item, index) in block.data.items" :key="index">
           <strong>{{ item.title }}</strong>
-          <p>{{ item.description }}</p>
+          <p v-if="item.description">{{ item.description }}</p>
         </div>
       </div>
     </template>
@@ -70,32 +70,29 @@ interface CodeBlock {
   }
 }
 
+interface ListItemBlock {
+  title: string
+  description?: string
+}
+
 interface AccordionBlockType {
   type: 'accordion'
   data: {
-    items: Array<{
-      title: string
-      content: string
-    }>
+    items: ListItemBlock[]
   }
 }
 
 interface ChecklistBlock {
   type: 'checklist'
   data: {
-    items: Array<{
-      text: string
-    }>
+    items: ListItemBlock[]
   }
 }
 
 interface PitfallsBlock {
   type: 'pitfalls'
   data: {
-    items: Array<{
-      title: string
-      description: string
-    }>
+    items: ListItemBlock[]
   }
 }
 

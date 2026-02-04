@@ -14,27 +14,29 @@ export type CodeBlock = {
   }
 }
 
+export type ListItemBlock = {
+  title: string
+  description?: string
+}
+
 export type AccordionBlock = {
   type: 'accordion'
   data: {
-    items: Array<{
-      title: string
-      content: string
-    }>
+    items: ListItemBlock[]
   }
 }
 
 export type ChecklistBlock = {
   type: 'checklist'
   data: {
-    items: Array<{ text: string }>
+    items: ListItemBlock[]
   }
 }
 
 export type PitfallsBlock = {
   type: 'pitfalls'
   data: {
-    items: Array<{ title: string; description: string }>
+    items: ListItemBlock[]
   }
 }
 

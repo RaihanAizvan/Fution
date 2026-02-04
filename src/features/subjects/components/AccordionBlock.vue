@@ -6,7 +6,7 @@
     <div v-if="isOpen" class="accordion-block__content">
       <div v-for="(item, index) in items" :key="index" class="accordion-block__item">
         <strong>{{ item.title }}</strong>
-        <p>{{ item.content }}</p>
+        <p v-if="item.description">{{ item.description }}</p>
       </div>
     </div>
   </div>
@@ -17,7 +17,7 @@ import { computed, ref } from 'vue'
 
 interface AccordionItem {
   title: string
-  content: string
+  description?: string
 }
 
 interface Props {

@@ -35,46 +35,22 @@ const mapBlocks = (response: BlocksApiResponse): TopicBlock[] =>
       return [{ type: 'code', data: { language: data.language, code: data.code } }]
     }
 
-    if (block.type === 'accordion') {
-      const data = block.data as { items?: Array<{ title?: string; content?: string }> }
-      const items = data.items?.filter((item) => item.title && item.content) ?? []
+    if (block.type === 'accordion' || block.type === 'checklist' || block.type === 'pitfalls') {
+      const data = block.data as { items?: Array<{ title?: string; description?: string }> }
+      const items = data.items?.filter((item) => item.title) ?? []
       if (items.length === 0) {
         return []
       }
 
       return [
         {
-          type: 'accordion',
+          type: block.type,
           data: {
             items: items.map((item) => ({
               title: item.title as string,
-              content: item.content as string
+              description: item.description as string | undefined
             }))
           }
-        }
-      ]
-    }
-
-    if (block.type === 'checklist') {
-      const data = block.data as { items?: Array<{ text?: string }> }
-      const items = data.items?.filter((item) => item.text) ?? []
-      if (items.length === 0) {
-        return []
-      }
-      return [{ type: 'checklist', data: { items: items as { text: string }[] } }]
-    }
-
-    if (block.type === 'pitfalls') {
-      const data = block.data as { items?: Array<{ title?: string; description?: string }> }
-      const items =
-        data.items?.filter((item) => item.title && item.description) ?? []
-      if (items.length === 0) {
-        return []
-      }
-      return [
-        {
-          type: 'pitfalls',
-          data: { items: items as { title: string; description: string }[] }
         }
       ]
     }
