@@ -1,16 +1,18 @@
 <template>
   <div class="accordion-block">
-    <button class="accordion-block__toggle" type="button" @click="toggle">
-      {{ activeItem?.title ?? 'Details' }}
-    </button>
-    <div v-if="isOpen" class="accordion-block__content">
-      {{ activeItem?.content ?? '' }}
+    <div v-for="(item, index) in items" :key="index" class="accordion-block__item">
+      <button class="accordion-block__toggle" type="button" @click="toggle(index)">
+        {{ item.title }}
+      </button>
+      <div v-if="openIndex === index" class="accordion-block__content">
+        {{ item.content }}
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 
 interface AccordionItem {
   title: string
@@ -21,17 +23,21 @@ interface Props {
   items: AccordionItem[]
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 
-const isOpen = ref(false)
-const activeItem = computed(() => props.items[0])
+const openIndex = ref<number | null>(null)
 
-const toggle = () => {
-  isOpen.value = !isOpen.value
+const toggle = (index: number) => {
+  openIndex.value = openIndex.value === index ? null : index
 }
 </script>
 
 <style scoped>
+.accordion-block__item {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.75rem 0;
+}
+
 .accordion-block__toggle {
   background: none;
   border: 0;
@@ -39,5 +45,9 @@ const toggle = () => {
   text-align: left;
   font: inherit;
   cursor: pointer;
+}
+
+.accordion-block__content {
+  margin-top: 0.5rem;
 }
 </style>
