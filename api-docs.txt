@@ -228,10 +228,13 @@ Body
 
 Topic Versions
 
-GET /admin/subjects/:subjectId/topics/:topicId/versions
+GET /admin/topics/:topicId/versions
 List all versions for a topic.
 
-POST /admin/subjects/:subjectId/topics/:topicId/versions
+GET /admin/topics/:topicId/versions/:versionId
+Get a specific version.
+
+POST /admin/topics/:topicId/versions
 Create a topic version.
 
 Body
@@ -240,11 +243,8 @@ Body
   "isPublished": false
 }
 
-PATCH /admin/subjects/:subjectId/topics/:topicId/versions/:versionId
-Update version (e.g. publish/unpublish).
-
-DELETE /admin/subjects/:subjectId/topics/:topicId/versions/:versionId
-Delete a version.
+POST /admin/topics/:topicId/versions/:versionId/publish
+Publish a version.
 
 Blocks
 
