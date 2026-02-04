@@ -57,14 +57,32 @@
             Add item
           </button>
         </div>
-        <div v-else-if="newBlock.type === 'checklist' || newBlock.type === 'pitfalls'">
-          <div v-for="(item, index) in newBlock.data.items" :key="index">
-            <input v-model="newBlock.data.items[index]" type="text" />
-            <button type="button" @click="removeStringItem(newBlock.data.items, index)">
+        <div v-else-if="newBlock.type === 'checklist'">
+          <div v-for="(item, index) in newBlock.data.checklistItems" :key="index">
+            <input v-model="item.text" type="text" />
+            <button type="button" @click="removeChecklistItem(newBlock.data.checklistItems, index)">
               Remove
             </button>
           </div>
-          <button type="button" @click="addStringItem(newBlock.data.items)">
+          <button type="button" @click="addChecklistItem(newBlock.data.checklistItems)">
+            Add item
+          </button>
+        </div>
+        <div v-else-if="newBlock.type === 'pitfalls'">
+          <div v-for="(item, index) in newBlock.data.items" :key="index">
+            <label>
+              Title
+              <input v-model="item.title" type="text" />
+            </label>
+            <label>
+              Description
+              <textarea v-model="item.description" />
+            </label>
+            <button type="button" @click="removePitfallItem(newBlock.data.items, index)">
+              Remove
+            </button>
+          </div>
+          <button type="button" @click="addPitfallItem(newBlock.data.items)">
             Add item
           </button>
         </div>
@@ -120,14 +138,26 @@
                 Add item
               </button>
             </div>
-            <div v-else-if="block.type === 'checklist' || block.type === 'pitfalls'">
+            <div v-else-if="block.type === 'checklist'">
               <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
-                <input v-model="block.data.items[itemIndex]" type="text" />
-                <button type="button" @click="removeStringItem(block.data.items, itemIndex)">
+                <input v-model="item.text" type="text" />
+                <button type="button" @click="removeChecklistItem(block.data.items, itemIndex)">
                   Remove
                 </button>
               </div>
-              <button type="button" @click="addStringItem(block.data.items)">
+              <button type="button" @click="addChecklistItem(block.data.items)">
+                Add item
+              </button>
+            </div>
+            <div v-else-if="block.type === 'pitfalls'">
+              <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
+                <input v-model="item.title" type="text" />
+                <textarea v-model="item.description" />
+                <button type="button" @click="removePitfallItem(block.data.items, itemIndex)">
+                  Remove
+                </button>
+              </div>
+              <button type="button" @click="addPitfallItem(block.data.items)">
                 Add item
               </button>
             </div>
@@ -181,6 +211,8 @@ const newBlock = reactive({
     language: '',
     code: '',
     items: [{ title: '', content: '' }],
+    checklistItems: [{ text: '' }],
+    items: [{ title: '', description: '' }],
     items: [{ title: '', url: '' }]
   }
 })
@@ -224,6 +256,16 @@ const normalizeBlockData = (block: BlockRecord) => {
   if (block.type === 'resources') {
     return {
       items: (block.data as any).items ?? [{ title: '', url: '' }]
+    }
+  }
+  if (block.type === 'checklist') {
+    return {
+      items: (block.data as any).items ?? [{ text: '' }]
+    }
+  }
+  if (block.type === 'pitfalls') {
+    return {
+      items: (block.data as any).items ?? [{ title: '', description: '' }]
     }
   }
   return {
@@ -316,6 +358,24 @@ const buildPayload = (type: BlockType, data: any) => {
   if (type === 'resources') {
     return { type, data: { items: data.items } }
   }
+  if (type === 'checklist') {
+    const items = data.checklistItems ?? data.items
+    return {
+      type,
+      data: { items: items.map((item: { text: string }) => ({ text: item.text })) }
+    }
+  }
+  if (type === 'pitfalls') {
+    return {
+      type,
+      data: {
+        items: data.items.map((item: { title: string; description: string }) => ({
+          title: item.title,
+          description: item.description
+        }))
+      }
+    }
+  }
   return { type, data: { items: data.items } }
 }
 
@@ -327,11 +387,19 @@ const removeAccordionItem = (items: Array<{ title: string; content: string }>, i
   items.splice(index, 1)
 }
 
-const addStringItem = (items: string[]) => {
-  items.push('')
+const addChecklistItem = (items: Array<{ text: string }>) => {
+  items.push({ text: '' })
 }
 
-const removeStringItem = (items: string[], index: number) => {
+const removeChecklistItem = (items: Array<{ text: string }>, index: number) => {
+  items.splice(index, 1)
+}
+
+const addPitfallItem = (items: Array<{ title: string; description: string }>) => {
+  items.push({ title: '', description: '' })
+}
+
+const removePitfallItem = (items: Array<{ title: string; description: string }>, index: number) => {
   items.splice(index, 1)
 }
 
