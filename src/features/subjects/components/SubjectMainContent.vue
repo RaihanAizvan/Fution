@@ -8,8 +8,8 @@
       <p v-else-if="!isLoading && blocks.length === 0">Content will load here.</p>
       <template v-else>
         <BlockRenderer
-          v-for="block in renderedBlocks"
-          :key="blockKey(block)"
+          v-for="(block, index) in renderedBlocks"
+          :key="blockKey(block, index)"
           :block="block"
           :isLoading="isLoading"
         />
@@ -52,16 +52,16 @@ const loadingBlocks: TopicBlock[] = [
 
 const renderedBlocks = computed(() => (props.isLoading ? loadingBlocks : blocks.value))
 
-const blockKey = (block: TopicBlock) => {
+const blockKey = (block: TopicBlock, index: number) => {
   if (block.type === 'intro') {
-    return `${block.type}-${block.data.title}`
+    return `${block.type}-${block.data.title}-${index}`
   }
 
   if (block.type === 'code') {
-    return `${block.type}-${block.data.language}-${block.data.code}`
+    return `${block.type}-${block.data.language}-${block.data.code}-${index}`
   }
 
   const firstItem = block.data.items[0]
-  return `${block.type}-${firstItem?.title ?? 'item'}`
+  return `${block.type}-${firstItem?.title ?? 'item'}-${index}`
 }
 </script>
