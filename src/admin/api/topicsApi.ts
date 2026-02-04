@@ -21,7 +21,8 @@ export const topicsApi = {
     adminClient.post<TopicRecord>(`/admin/subjects/${subjectId}/topics`, payload),
   update: (topicId: string, payload: TopicPayload) =>
     adminClient.put<TopicRecord>(`/admin/topics/${topicId}`, payload),
-  delete: (topicId: string) => adminClient.delete(`/admin/topics/${topicId}`),
+  delete: (subjectId: string, topicId: string) =>
+    adminClient.delete(`/admin/subjects/${subjectId}/topics/${topicId}`),
   reorder: (subjectId: string, orderedIds: string[]) =>
     adminClient.post<void>(`/admin/subjects/${subjectId}/topics/reorder`, { orderedIds })
 }

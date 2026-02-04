@@ -259,7 +259,7 @@ const executeDelete = async () => {
   deleteError.value = ''
 
   try {
-    await topicsApi.delete(confirmingDelete.value.id)
+    await topicsApi.delete(subjectId, confirmingDelete.value.id)
     topics.value = topics.value.filter(t => t.id !== confirmingDelete.value!.id)
     confirmingDelete.value = null
   } catch (error) {
