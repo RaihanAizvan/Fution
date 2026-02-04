@@ -191,7 +191,8 @@ const loadBlocks = async () => {
 
   try {
     const response = await blocksApi.list(topicId, versionId)
-    blocks.value = response.blocks.map((block) => ({
+    const blocksResponse = Array.isArray(response) ? response : response.blocks
+    blocks.value = (blocksResponse ?? []).map((block) => ({
       ...block,
       data: normalizeBlockData(block)
     }))

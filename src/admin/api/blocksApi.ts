@@ -15,14 +15,14 @@ export interface BlockRecord {
   data: Record<string, unknown>
 }
 
-export interface BlocksResponse {
-  blocks: BlockRecord[]
-}
+export type BlocksResponse =
+  | { blocks: BlockRecord[] }
+  | BlockRecord[]
 
 export const blocksApi = {
   list: (topicId: string, versionId: string) =>
     adminClient.get<BlocksResponse>(
-      `/admin/versions/${versionId}`
+      `/admin/versions/${versionId}/blocks`
     ),
   create: (topicId: string, versionId: string, payload: { type: BlockType; data: unknown; orderIndex: number }) =>
     adminClient.post<BlockRecord>(
@@ -42,7 +42,7 @@ export const blocksApi = {
   remove: (topicId: string, versionId: string, blockId: string) =>
     adminClient.delete(`/admin/versions/${versionId}/blocks/${blockId}`),
   reorder: (topicId: string, versionId: string, orderedIds: string[]) =>
-    adminClient.post<void>(
+    adminClient.put<void>(
       `/admin/versions/${versionId}/blocks/reorder`,
       { orderedIds }
     )
