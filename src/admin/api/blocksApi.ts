@@ -35,7 +35,7 @@ export const blocksApi = {
     blockId: string,
     payload: { type: BlockType; data: unknown }
   ) =>
-    adminClient.put<BlockRecord>(
+    adminClient.patch<BlockRecord>(
       `/admin/versions/${versionId}/blocks/${blockId}`,
       payload
     ),
