@@ -36,7 +36,8 @@
         <div v-if="showImport" class="import-panel">
           <h4>Upload Subject JSON</h4>
           <p class="helper-text">
-            Paste a full subject tree JSON payload to import subjects, topics, versions, and blocks.
+            Paste a full subject tree JSON payload. List-style blocks (accordion/checklist/pitfalls)
+            must use data.items with { title, description? }. Resources remain { title, url }.
           </p>
           <form class="admin-form" @submit.prevent="submitImport">
             <div class="form-field">
