@@ -69,21 +69,21 @@
           </button>
         </div>
         <div v-else-if="newBlock.type === 'resources'">
-          <div v-for="(link, index) in newBlock.data.links" :key="index">
+          <div v-for="(item, index) in newBlock.data.items" :key="index">
             <label>
-              Label
-              <input v-model="link.label" type="text" />
+              Title
+              <input v-model="item.title" type="text" />
             </label>
             <label>
               URL
-            	<input v-model="link.url" type="text" />
+              <input v-model="item.url" type="text" />
             </label>
-            <button type="button" @click="removeResource(newBlock.data.links, index)">
-              Remove link
+            <button type="button" @click="removeResource(newBlock.data.items, index)">
+              Remove resource
             </button>
           </div>
-          <button type="button" @click="addResource(newBlock.data.links)">
-            Add link
+          <button type="button" @click="addResource(newBlock.data.items)">
+            Add resource
           </button>
         </div>
         <p v-for="message in createErrors" :key="message" class="error">{{ message }}</p>
@@ -132,15 +132,15 @@
               </button>
             </div>
             <div v-else-if="block.type === 'resources'">
-              <div v-for="(link, linkIndex) in block.data.links" :key="linkIndex">
-                <input v-model="link.label" type="text" />
-                <input v-model="link.url" type="text" />
-                <button type="button" @click="removeResource(block.data.links, linkIndex)">
-                  Remove link
+              <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
+                <input v-model="item.title" type="text" />
+                <input v-model="item.url" type="text" />
+                <button type="button" @click="removeResource(block.data.items, itemIndex)">
+                  Remove resource
                 </button>
               </div>
-              <button type="button" @click="addResource(block.data.links)">
-                Add link
+              <button type="button" @click="addResource(block.data.items)">
+                Add resource
               </button>
             </div>
             <p v-for="message in updateErrors[block.id] ?? []" :key="message" class="error">
@@ -181,7 +181,7 @@ const newBlock = reactive({
     language: '',
     code: '',
     items: [{ title: '', content: '' }],
-    links: [{ label: '', url: '' }]
+    items: [{ title: '', url: '' }]
   }
 })
 
@@ -223,7 +223,7 @@ const normalizeBlockData = (block: BlockRecord) => {
   }
   if (block.type === 'resources') {
     return {
-      links: (block.data as any).links ?? [{ label: '', url: '' }]
+      items: (block.data as any).items ?? [{ title: '', url: '' }]
     }
   }
   return {
@@ -314,7 +314,7 @@ const buildPayload = (type: BlockType, data: any) => {
     return { type, data: { items: data.items } }
   }
   if (type === 'resources') {
-    return { type, data: { links: data.links } }
+    return { type, data: { items: data.items } }
   }
   return { type, data: { items: data.items } }
 }
@@ -335,12 +335,12 @@ const removeStringItem = (items: string[], index: number) => {
   items.splice(index, 1)
 }
 
-const addResource = (links: Array<{ label: string; url: string }>) => {
-  links.push({ label: '', url: '' })
+const addResource = (items: Array<{ title: string; url: string }>) => {
+  items.push({ title: '', url: '' })
 }
 
-const removeResource = (links: Array<{ label: string; url: string }>, index: number) => {
-  links.splice(index, 1)
+const removeResource = (items: Array<{ title: string; url: string }>, index: number) => {
+  items.splice(index, 1)
 }
 
 onMounted(() => {
