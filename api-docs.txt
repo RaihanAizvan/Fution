@@ -1,0 +1,354 @@
+Admin CMS API Reference
+
+Base Path: /admin
+Auth: Admin-only (guarded)
+Content-Type: application/json
+
+Subjects
+
+GET /admin/subjects
+List all subjects.
+
+Response 200
+[
+  {
+    "id": "uuid",
+    "slug": "javascript",
+    "title": "JavaScript",
+    "description": "Optional",
+    "orderIndex": 1,
+    "isActive": true
+  }
+]
+
+POST /admin/subjects
+Create a subject.
+
+Body
+{
+  "slug": "javascript",
+  "title": "JavaScript",
+  "description": "Optional",
+  "orderIndex": 1,
+  "isActive": true
+}
+
+Notes
+- orderIndex auto-calculates if omitted.
+- Slug must be unique.
+
+PATCH /admin/subjects/:subjectId
+Update a subject.
+
+Body
+{
+  "slug": "javascript",
+  "title": "JavaScript",
+  "description": "Optional",
+  "orderIndex": 1,
+  "isActive": true
+}
+
+DELETE /admin/subjects/:subjectId
+Delete a subject.
+
+Rules
+- Fails if any topic under the subject has a published version.
+
+Error
+{
+  "statusCode": 400,
+  "message": "Cannot delete subject with published topic content. Deactivate it instead or unpublish the content first."
+}
+
+PUT /admin/subjects/reorder
+Bulk reorder subjects.
+
+Body
+{
+  "subjects": [
+    { "subjectId": "uuid-1", "orderIndex": 1 },
+    { "subjectId": "uuid-2", "orderIndex": 2 }
+  ]
+}
+
+POST /admin/subjects/import
+Bulk import subject tree (atomic).
+
+Body
+{
+  "subject": {
+    "slug": "javascript",
+    "title": "JavaScript",
+    "orderIndex": 1,
+    "isActive": true
+  },
+  "topics": [
+    {
+      "slug": "functions",
+      "title": "Functions",
+      "level": "beginner",
+      "orderIndex": 1,
+      "isActive": true,
+      "versions": [
+        {
+          "status": "published",
+          "blocks": [
+            { "type": "intro", "data": { "title": "Functions", "description": "Reusable blocks of logic." } }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Rules
+- Subject is upserted by slug.
+- Topics are upserted by slug + subjectId.
+- Versions are always new (append-only).
+- status: "published" unpublishes previous version, publishes the new one.
+- Blocks are created fresh in payload order.
+- Entire import is transactional.
+
+Validation Error
+{
+  "error": "VALIDATION_ERROR",
+  "errors": [
+    "topics[0].versions must not be empty",
+    "topics[1].versions[0].blocks[2] Invalid block data"
+  ]
+}
+
+Example Bulk Import JSON (full subject tree)
+{
+  "subject": {
+    "slug": "javascript",
+    "title": "JavaScript",
+    "orderIndex": 1,
+    "isActive": true
+  },
+  "topics": [
+    {
+      "slug": "functions",
+      "title": "Functions",
+      "level": "beginner",
+      "orderIndex": 1,
+      "isActive": true,
+      "versions": [
+        {
+          "status": "published",
+          "blocks": [
+            {
+              "type": "intro",
+              "data": {
+                "title": "Functions",
+                "description": "Reusable blocks of logic."
+              }
+            },
+            {
+              "type": "code",
+              "data": {
+                "language": "javascript",
+                "code": "function add(a, b) { return a + b; }"
+              }
+            },
+            {
+              "type": "accordion",
+              "data": {
+                "items": [
+                  {
+                    "title": "Arrow Functions",
+                    "content": "Shorter syntax with lexical this."
+                  },
+                  {
+                    "title": "Closures",
+                    "content": "Functions that capture variables from their scope."
+                  }
+                ]
+              }
+            },
+            {
+              "type": "resources",
+              "data": {
+                "items": [
+                  {
+                    "title": "MDN Functions",
+                    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Topics
+
+GET /admin/subjects/:subjectId/topics
+List topics for a subject.
+
+POST /admin/subjects/:subjectId/topics
+Create a topic.
+
+Body
+{
+  "slug": "functions",
+  "title": "Functions",
+  "level": "beginner",
+  "orderIndex": 1,
+  "isActive": true
+}
+
+Notes
+- level is required.
+- orderIndex auto-calculates if omitted.
+
+PATCH /admin/subjects/:subjectId/topics/:topicId
+Update a topic.
+
+DELETE /admin/subjects/:subjectId/topics/:topicId
+Delete a topic.
+
+Rules
+- Fails if the topic has any published version.
+
+PUT /admin/subjects/:subjectId/topics/reorder
+Bulk reorder topics inside a subject.
+
+Body
+{
+  "topics": [
+    { "topicId": "uuid-1", "orderIndex": 1 },
+    { "topicId": "uuid-2", "orderIndex": 2 }
+  ]
+}
+
+Topic Versions
+
+GET /admin/subjects/:subjectId/topics/:topicId/versions
+List all versions for a topic.
+
+POST /admin/subjects/:subjectId/topics/:topicId/versions
+Create a topic version.
+
+Body
+{
+  "version": 2,
+  "isPublished": false
+}
+
+PATCH /admin/subjects/:subjectId/topics/:topicId/versions/:versionId
+Update version (e.g. publish/unpublish).
+
+DELETE /admin/subjects/:subjectId/topics/:topicId/versions/:versionId
+Delete a version.
+
+Blocks
+
+GET /admin/versions/:versionId/blocks
+List blocks for a version.
+
+POST /admin/versions/:versionId/blocks
+Create a block.
+
+Body
+{
+  "type": "intro",
+  "orderIndex": 1,
+  "data": { "title": "Intro", "description": "..." }
+}
+
+Block type examples
+
+Intro
+{
+  "type": "intro",
+  "data": {
+    "title": "Functions",
+    "description": "Reusable blocks of logic."
+  }
+}
+
+Code
+{
+  "type": "code",
+  "data": {
+    "language": "javascript",
+    "code": "function add(a, b) { return a + b; }"
+  }
+}
+
+Accordion
+{
+  "type": "accordion",
+  "data": {
+    "items": [
+      { "title": "Arrow Functions", "content": "Shorter syntax with lexical this." },
+      { "title": "Closures", "content": "Functions that capture variables from their scope." }
+    ]
+  }
+}
+
+Checklist
+{
+  "type": "checklist",
+  "data": {
+    "items": [
+      { "text": "Use descriptive variable names" },
+      { "text": "Prefer const/let over var" }
+    ]
+  }
+}
+
+Pitfalls
+{
+  "type": "pitfalls",
+  "data": {
+    "items": [
+      { "title": "Hoisting", "description": "Function declarations are hoisted." }
+    ]
+  }
+}
+
+Resources
+{
+  "type": "resources",
+  "data": {
+    "items": [
+      { "title": "MDN Functions", "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions" }
+    ]
+  }
+}
+
+PATCH /admin/versions/:versionId/blocks/:blockId
+Update a block.
+
+DELETE /admin/versions/:versionId/blocks/:blockId
+Delete a block.
+
+PUT /admin/versions/:versionId/blocks/reorder
+Reorder blocks.
+
+Body
+{
+  "blocks": [
+    { "blockId": "uuid-1", "orderIndex": 1 },
+    { "blockId": "uuid-2", "orderIndex": 2 }
+  ]
+}
+
+Validation & Errors
+
+Validation Pipe Enabled
+- Requests are validated against DTOs.
+- Unknown fields are rejected.
+
+Common Error
+{
+  "statusCode": 400,
+  "message": ["field must be a string"],
+  "error": "Bad Request"
+}
