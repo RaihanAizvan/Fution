@@ -53,7 +53,7 @@ const loadVersions = async () => {
   errorMessage.value = ''
 
   try {
-    versions.value = await versionsApi.listByTopic(subjectId, topicId)
+    versions.value = await versionsApi.listByTopic(topicId)
   } catch (error) {
     errorMessage.value = getErrorMessage(error)
   } finally {
@@ -67,7 +67,7 @@ const createDraft = async () => {
     const nextVersion = versions.value.length
       ? Math.max(...versions.value.map((entry) => Number(entry.version ?? 0))) + 1
       : 1
-    const created = await versionsApi.createDraft(subjectId, topicId, nextVersion)
+    const created = await versionsApi.createDraft(topicId, nextVersion)
     versions.value.unshift(created)
   } catch (error) {
     errorMessage.value = getErrorMessage(error)
@@ -77,7 +77,7 @@ const createDraft = async () => {
 const publishVersion = async (version: { id: string }) => {
   errorMessage.value = ''
   try {
-    const updated = await versionsApi.update(subjectId, topicId, version.id, true)
+    const updated = await versionsApi.publish(topicId, version.id)
     versions.value = versions.value.map((entry) =>
       entry.id === updated.id ? updated : entry
     )
