@@ -1,9 +1,9 @@
 import { computed, ref } from 'vue'
-import { createMockSubjectsSource } from '../services/subjects/subjectsMockSource'
+import { createApiSubjectsSource } from '../services/subjects/subjectsApiSource'
 import type { SubjectDetail, SubjectSummary } from '../services/subjects/subjectsRepository'
 import type { SubjectsSource } from '../services/subjects/subjectsSource'
 
-const defaultSource = createMockSubjectsSource()
+const defaultSource = createApiSubjectsSource()
 
 export const useSubjects = (source: SubjectsSource = defaultSource) => {
   const subjects = ref<SubjectSummary[]>([])
