@@ -5,11 +5,13 @@ export interface TopicRecord {
   subjectId: string
   slug: string
   title: string
+  level: string
 }
 
 export interface TopicPayload {
   slug: string
   title: string
+  level: string
 }
 
 export const topicsApi = {

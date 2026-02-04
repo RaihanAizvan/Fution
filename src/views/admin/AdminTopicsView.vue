@@ -23,6 +23,18 @@
             </label>
             <p v-for="error in fieldErrors.slug" :key="error" class="error">{{ error }}</p>
           </div>
+          <div class="form-field">
+            <label>
+              Level
+              <select v-model="newTopic.level" required>
+                <option value="">Select a level...</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+            </label>
+            <p v-for="error in fieldErrors.level" :key="error" class="error">{{ error }}</p>
+          </div>
           <button type="submit" class="btn-primary">Create Topic</button>
         </form>
       </div>
@@ -51,6 +63,7 @@
               <div class="topic-info">
                 <strong>{{ topic.title }}</strong>
                 <span class="slug">{{ topic.slug }}</span>
+                <span class="level-badge" :class="`level-${topic.level}`">{{ topic.level }}</span>
               </div>
               <div class="topic-actions">
                 <div v-if="isReordering" class="reorder-controls">
@@ -95,6 +108,17 @@
                   <input v-model="topic.slug" type="text" required />
                 </label>
               </div>
+              <div class="form-field">
+                <label>
+                  Level
+                  <select v-model="topic.level" required>
+                    <option value="">Select a level...</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </label>
+              </div>
               <div class="form-actions">
                 <button type="submit" class="btn-primary">Save</button>
                 <button type="button" @click="cancelEdit" class="btn-secondary">Cancel</button>
@@ -134,8 +158,8 @@ const subjectId = route.params.subjectId as string
 const topics = ref([] as Awaited<ReturnType<typeof topicsApi.listBySubject>>)
 const isLoading = ref(false)
 const errorMessage = ref('')
-const fieldErrors = reactive<{ title?: string[]; slug?: string[] }>({})
-const newTopic = reactive({ title: '', slug: '' })
+const fieldErrors = reactive<{ title?: string[]; slug?: string[]; level?: string[] }>({})
+const newTopic = reactive({ title: '', slug: '', level: '' })
 
 const editingId = ref<string | null>(null)
 const editingOriginal = ref<TopicRecord | null>(null)
@@ -163,6 +187,7 @@ const loadTopics = async () => {
 const resetFormErrors = () => {
   fieldErrors.title = []
   fieldErrors.slug = []
+  fieldErrors.level = []
 }
 
 const createTopic = async () => {
@@ -174,11 +199,13 @@ const createTopic = async () => {
     topics.value.push(created)
     newTopic.title = ''
     newTopic.slug = ''
+    newTopic.level = ''
   } catch (error) {
     errorMessage.value = getErrorMessage(error)
     const validation = mapValidationErrors(error)
     fieldErrors.title = validation['title'] ?? []
     fieldErrors.slug = validation['slug'] ?? []
+    fieldErrors.level = validation['level'] ?? []
   }
 }
 
@@ -206,7 +233,8 @@ const saveEdit = async (topic: TopicRecord) => {
   try {
     await topicsApi.update(topic.id, {
       title: topic.title,
-      slug: topic.slug
+      slug: topic.slug,
+      level: topic.level
     })
     editingId.value = null
     editingOriginal.value = null
@@ -332,11 +360,17 @@ onMounted(() => {
   font-weight: 500;
 }
 
-.form-field input {
+.form-field input,
+.form-field select {
   padding: 0.5rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
+}
+
+.form-field select {
+  background-color: white;
+  cursor: pointer;
 }
 
 .form-actions {
@@ -446,6 +480,30 @@ button:disabled {
   font-size: 0.875rem;
   color: #666;
   font-family: monospace;
+}
+
+.level-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.level-beginner {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.level-intermediate {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.level-advanced {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 
 .topic-actions {
