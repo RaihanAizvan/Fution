@@ -40,7 +40,7 @@
           </label>
         </div>
         <div v-else-if="newBlock.type === 'accordion'">
-          <div v-for="(item, index) in newBlock.data.items" :key="index">
+          <div v-for="(item, index) in newBlock.data.accordionItems" :key="index">
             <label>
               Item Title
               <input v-model="item.title" type="text" />
@@ -49,11 +49,11 @@
               Item Content
               <textarea v-model="item.content" />
             </label>
-            <button type="button" @click="removeAccordionItem(newBlock.data.items, index)">
+            <button type="button" @click="removeAccordionItem(newBlock.data.accordionItems, index)">
               Remove item
             </button>
           </div>
-          <button type="button" @click="addAccordionItem(newBlock.data.items)">
+          <button type="button" @click="addAccordionItem(newBlock.data.accordionItems)">
             Add item
           </button>
         </div>
@@ -69,7 +69,7 @@
           </button>
         </div>
         <div v-else-if="newBlock.type === 'pitfalls'">
-          <div v-for="(item, index) in newBlock.data.items" :key="index">
+          <div v-for="(item, index) in newBlock.data.pitfallItems" :key="index">
             <label>
               Title
               <input v-model="item.title" type="text" />
@@ -78,16 +78,16 @@
               Description
               <textarea v-model="item.description" />
             </label>
-            <button type="button" @click="removePitfallItem(newBlock.data.items, index)">
+            <button type="button" @click="removePitfallItem(newBlock.data.pitfallItems, index)">
               Remove
             </button>
           </div>
-          <button type="button" @click="addPitfallItem(newBlock.data.items)">
+          <button type="button" @click="addPitfallItem(newBlock.data.pitfallItems)">
             Add item
           </button>
         </div>
         <div v-else-if="newBlock.type === 'resources'">
-          <div v-for="(item, index) in newBlock.data.items" :key="index">
+          <div v-for="(item, index) in newBlock.data.resourceItems" :key="index">
             <label>
               Title
               <input v-model="item.title" type="text" />
@@ -96,11 +96,11 @@
               URL
               <input v-model="item.url" type="text" />
             </label>
-            <button type="button" @click="removeResource(newBlock.data.items, index)">
+            <button type="button" @click="removeResource(newBlock.data.resourceItems, index)">
               Remove resource
             </button>
           </div>
-          <button type="button" @click="addResource(newBlock.data.items)">
+          <button type="button" @click="addResource(newBlock.data.resourceItems)">
             Add resource
           </button>
         </div>
@@ -210,10 +210,10 @@ const newBlock = reactive({
     description: '',
     language: '',
     code: '',
-    items: [{ title: '', content: '' }],
+    accordionItems: [{ title: '', content: '' }],
     checklistItems: [{ text: '' }],
-    items: [{ title: '', description: '' }],
-    items: [{ title: '', url: '' }]
+    pitfallItems: [{ title: '', description: '' }],
+    resourceItems: [{ title: '', url: '' }]
   }
 })
 
@@ -353,10 +353,12 @@ const buildPayload = (type: BlockType, data: any) => {
     return { type, data: { language: data.language, code: data.code } }
   }
   if (type === 'accordion') {
-    return { type, data: { items: data.items } }
+    const items = data.accordionItems ?? data.items
+    return { type, data: { items } }
   }
   if (type === 'resources') {
-    return { type, data: { items: data.items } }
+    const items = data.resourceItems ?? data.items
+    return { type, data: { items } }
   }
   if (type === 'checklist') {
     const items = data.checklistItems ?? data.items
@@ -366,10 +368,11 @@ const buildPayload = (type: BlockType, data: any) => {
     }
   }
   if (type === 'pitfalls') {
+    const items = data.pitfallItems ?? data.items
     return {
       type,
       data: {
-        items: data.items.map((item: { title: string; description: string }) => ({
+        items: items.map((item: { title: string; description: string }) => ({
           title: item.title,
           description: item.description
         }))
