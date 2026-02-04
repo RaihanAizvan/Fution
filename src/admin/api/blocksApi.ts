@@ -24,7 +24,7 @@ export const blocksApi = {
     adminClient.get<BlocksResponse>(
       `/admin/versions/${versionId}`
     ),
-  create: (topicId: string, versionId: string, payload: { type: BlockType; data: unknown }) =>
+  create: (topicId: string, versionId: string, payload: { type: BlockType; data: unknown; orderIndex: number }) =>
     adminClient.post<BlockRecord>(
       `/admin/versions/${versionId}/blocks`,
       payload

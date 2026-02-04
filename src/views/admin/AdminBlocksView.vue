@@ -235,7 +235,10 @@ const createBlock = async () => {
   errorMessage.value = ''
 
   try {
-    const payload = buildPayload(newBlock.type, newBlock.data)
+    const payload = {
+      ...buildPayload(newBlock.type, newBlock.data),
+      orderIndex: blocks.value.length
+    }
     const created = await blocksApi.create(topicId, versionId, payload)
     blocks.value.push({
       ...created,
