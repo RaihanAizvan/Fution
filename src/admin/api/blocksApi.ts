@@ -41,9 +41,13 @@ export const blocksApi = {
     ),
   remove: (topicId: string, versionId: string, blockId: string) =>
     adminClient.delete(`/admin/versions/${versionId}/blocks/${blockId}`),
-  reorder: (topicId: string, versionId: string, orderedIds: string[]) =>
+  reorder: (
+    topicId: string,
+    versionId: string,
+    blocks: Array<{ blockId: string; orderIndex: number }>
+  ) =>
     adminClient.put<void>(
       `/admin/versions/${versionId}/blocks/reorder`,
-      { orderedIds }
+      { blocks }
     )
 }

@@ -289,7 +289,10 @@ const moveBlock = async (index: number, delta: number) => {
   await blocksApi.reorder(
     topicId,
     versionId,
-    blocks.value.map((block) => block.id)
+    blocks.value.map((block, index) => ({
+      blockId: block.id,
+      orderIndex: index + 1
+    }))
   )
 }
 
