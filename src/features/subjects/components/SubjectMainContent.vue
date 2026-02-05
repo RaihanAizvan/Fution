@@ -64,7 +64,6 @@ const blockKey = (block: TopicBlock, index: number) => {
     return `${block.type}-${block.data.language}-${block.data.code}-${index}`
   }
 
-  const firstItem = block.data.items[0]
-  return `${block.type}-${firstItem?.title ?? 'item'}-${index}`
+  return `${block.type}-${index}`
 }
 </script>
