@@ -2,6 +2,7 @@
   <div class="subject-sidebar">
     <header class="subject-sidebar__header">
       <h2>Topics</h2>
+      <RouterLink class="subject-sidebar__back" to="/subjects">Back</RouterLink>
     </header>
     <div class="subject-sidebar__content">
       <p v-if="isLoading">Loading topics…</p>
@@ -41,12 +42,32 @@ const getTopicLink = (topicId: string) => `/subjects/${subjectSlug.value}/${topi
   gap: 1.5rem;
 }
 
+.subject-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .subject-sidebar__header h2 {
   margin: 0;
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: rgba(230, 232, 236, 0.6);
+}
+
+.subject-sidebar__back {
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: rgba(230, 232, 236, 0.55);
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.subject-sidebar__back:hover {
+  color: rgba(230, 232, 236, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .subject-sidebar__content {

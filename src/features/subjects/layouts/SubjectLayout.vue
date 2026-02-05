@@ -35,4 +35,26 @@
 .subject-layout__main {
   padding: 3rem 4vw;
 }
+
+@media (max-width: 900px) {
+  .subject-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .subject-layout__sidebar {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .subject-layout__sidebar-content {
+    position: static;
+    max-height: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .subject-layout__main {
+    padding: 2rem 1.5rem 3rem;
+  }
+}
 </style>
