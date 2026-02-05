@@ -8,14 +8,15 @@
       <p v-else-if="!isLoading && blocks.length === 0" class="text-[var(--app-muted)]">
         Content will load here.
       </p>
-      <template v-else>
+      <div v-else class="grid gap-6 lg:grid-cols-3">
         <BlockRenderer
           v-for="(block, index) in renderedBlocks"
           :key="blockKey(block, index)"
           :block="block"
           :isLoading="isLoading"
+          :class="{ 'lg:col-span-3': block.type === 'intro' }"
         />
-      </template>
+      </div>
     </div>
   </div>
 </template>
