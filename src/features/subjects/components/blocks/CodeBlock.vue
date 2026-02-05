@@ -47,6 +47,10 @@ const parserForLanguage = (lang: string) => {
 }
 
 const formatCode = async (code: string, lang: string) => {
+  if (!code || code.includes('Loading content')) {
+    return code
+  }
+
   try {
     return format(code, {
       parser: parserForLanguage(lang),
