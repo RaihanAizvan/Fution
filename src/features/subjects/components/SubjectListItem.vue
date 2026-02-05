@@ -1,6 +1,9 @@
 <template>
-  <RouterLink class="subject-list-item" :to="destination">
-    <span class="subject-list-item__label">{{ label }}</span>
+  <RouterLink
+    class="block rounded-xl border border-[var(--panel-border)] bg-[var(--panel-bg)] px-4 py-3 text-[var(--app-text)] transition hover:border-[var(--accent)]"
+    :to="destination"
+  >
+    <span class="text-sm font-medium">{{ label }}</span>
   </RouterLink>
 </template>
 
@@ -17,14 +20,3 @@ const props = defineProps<Props>()
 
 const destination = computed(() => `/subjects/${props.slug}`)
 </script>
-
-<style scoped>
-.subject-list-item {
-  display: block;
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 0.5rem;
-  text-decoration: none;
-  color: inherit;
-}
-</style>

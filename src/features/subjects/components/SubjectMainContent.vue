@@ -1,11 +1,13 @@
 <template>
-  <div class="subject-main">
-    <header class="subject-main__header">
-      <h1>{{ title }}</h1>
+  <div class="grid gap-8">
+    <header>
+      <h1 class="text-4xl font-semibold tracking-tight text-[var(--app-text)]">{{ title }}</h1>
     </header>
-    <div class="subject-main__content">
-      <p v-if="hasError">Unable to load blocks.</p>
-      <p v-else-if="!isLoading && blocks.length === 0">Content will load here.</p>
+    <div class="grid gap-7">
+      <p v-if="hasError" class="text-[var(--app-muted)]">Unable to load blocks.</p>
+      <p v-else-if="!isLoading && blocks.length === 0" class="text-[var(--app-muted)]">
+        Content will load here.
+      </p>
       <template v-else>
         <BlockRenderer
           v-for="(block, index) in renderedBlocks"
@@ -65,27 +67,3 @@ const blockKey = (block: TopicBlock, index: number) => {
   return `${block.type}-${firstItem?.title ?? 'item'}-${index}`
 }
 </script>
-
-<style scoped>
-.subject-main {
-  display: grid;
-  gap: 2rem;
-}
-
-.subject-main__header h1 {
-  margin: 0;
-  font-size: 2.4rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: #f5f7fb;
-}
-
-.subject-main__content {
-  display: grid;
-  gap: 1.75rem;
-}
-
-.subject-main__content p {
-  color: rgba(230, 232, 236, 0.7);
-}
-</style>

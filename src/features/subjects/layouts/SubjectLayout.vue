@@ -1,60 +1,16 @@
 <template>
-  <section class="subject-layout">
-    <aside class="subject-layout__sidebar">
-      <div class="subject-layout__sidebar-content">
+  <section
+    class="grid min-h-screen grid-cols-[minmax(240px,300px)_1fr] bg-[var(--app-bg)] md:grid-cols-[minmax(220px,280px)_1fr] max-[900px]:grid-cols-1"
+  >
+    <aside
+      class="border-r border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] max-[900px]:border-b max-[900px]:border-r-0"
+    >
+      <div class="sticky top-0 max-h-screen overflow-y-auto px-6 py-8 max-[900px]:static max-[900px]:max-h-none">
         <slot name="sidebar" />
       </div>
     </aside>
-    <main class="subject-layout__main">
+    <main class="px-[4vw] py-12 max-[900px]:py-10 max-[640px]:px-6 max-[640px]:pb-12">
       <slot />
     </main>
   </section>
 </template>
-
-<style scoped>
-.subject-layout {
-  display: grid;
-  grid-template-columns: minmax(240px, 300px) 1fr;
-  min-height: 100vh;
-  background: #0e1117;
-}
-
-.subject-layout__sidebar {
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  background: rgba(15, 18, 24, 0.9);
-}
-
-.subject-layout__sidebar-content {
-  position: sticky;
-  top: 0;
-  max-height: 100vh;
-  overflow-y: auto;
-  padding: 2rem 1.5rem;
-}
-
-.subject-layout__main {
-  padding: 3rem 4vw;
-}
-
-@media (max-width: 900px) {
-  .subject-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .subject-layout__sidebar {
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .subject-layout__sidebar-content {
-    position: static;
-    max-height: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .subject-layout__main {
-    padding: 2rem 1.5rem 3rem;
-  }
-}
-</style>

@@ -1,24 +1,10 @@
 <template>
-  <section class="subjects-list">
-    <header class="subjects-list__header">
-      <h1>Subjects</h1>
+  <section class="flex min-h-screen flex-col gap-6 px-6 py-10">
+    <header>
+      <h1 class="text-3xl font-semibold text-[var(--app-text)]">Subjects</h1>
     </header>
-    <div class="subjects-list__content">
+    <div class="grid gap-3">
       <slot />
     </div>
   </section>
 </template>
-
-<style scoped>
-.subjects-list {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  padding: 2rem;
-}
-
-.subjects-list__content {
-  display: grid;
-  gap: 1rem;
-}
-</style>
