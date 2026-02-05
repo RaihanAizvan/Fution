@@ -28,7 +28,7 @@
         <div
           v-for="(item, index) in items"
           :key="index"
-          class="rounded-lg bg-[var(--sidebar-active)] p-3"
+          class="rounded-md bg-[var(--sidebar-active)] p-3"
         >
           <button
             class="flex w-full items-center justify-between text-left text-sm font-medium text-[var(--app-text)]"

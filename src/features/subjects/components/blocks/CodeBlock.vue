@@ -1,12 +1,12 @@
 <template>
-  <section class="rounded-2xl bg-[var(--panel-bg)] px-6 py-5">
+  <section class="rounded-lg bg-[var(--panel-bg)] px-6 py-5">
     <header class="mb-3">
       <h3 class="text-sm font-medium text-[var(--app-muted)]">
         {{ languageLabel }}
       </h3>
     </header>
 
-    <div class="overflow-x-auto rounded-xl bg-[var(--code-bg)] px-5 py-4 text-sm leading-relaxed">
+    <div class="overflow-x-auto rounded-md bg-[var(--code-bg)] px-5 py-4 text-sm leading-relaxed">
       <div v-if="isLoading" class="text-[var(--app-muted)]">Loading syntax highlighting…</div>
       <div v-else v-html="highlighted" class="shiki-output" />
     </div>

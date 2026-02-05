@@ -1,5 +1,5 @@
 <template>
-  <article class="grid gap-3 rounded-2xl bg-[var(--panel-bg)] p-6">
+  <article class="grid gap-3 rounded-lg bg-[var(--panel-bg)] p-6">
     <ul class="grid gap-2 pl-5 text-sm text-[var(--app-text)]/80">
       <li v-for="(item, index) in items" :key="index">
         <a :href="item.url" target="_blank" rel="noopener noreferrer" class="underline">

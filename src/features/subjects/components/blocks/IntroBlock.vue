@@ -1,5 +1,5 @@
 <template>
-  <article class="grid gap-3 rounded-2xl bg-[var(--panel-bg)] p-6">
+  <article class="grid gap-3 rounded-lg bg-[var(--panel-bg)] p-6">
     <header>
       <h2 class="text-lg font-semibold text-[var(--app-text)]">{{ title }}</h2>
       <p class="mt-1 text-sm text-[var(--app-muted)]">

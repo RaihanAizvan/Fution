@@ -1,6 +1,6 @@
 <template>
   <RouterLink
-    class="block rounded-xl border border-[var(--panel-border)] bg-[var(--panel-bg)] px-4 py-3 text-[var(--app-text)] transition hover:border-[var(--accent)]"
+    class="block rounded-md border border-[var(--panel-border)] bg-[var(--panel-bg)] px-4 py-3 text-[var(--app-text)] transition hover:border-[var(--accent)]"
     :to="destination"
   >
     <span class="text-sm font-medium">{{ label }}</span>

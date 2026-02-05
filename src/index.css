@@ -6,6 +6,31 @@
   :root {
     color-scheme: dark;
   }
+}
+
+@layer utilities {
+  .rounded-2xl {
+    border-radius: 0.75rem !important;
+  }
+
+  .rounded-xl {
+    border-radius: 0.5rem !important;
+  }
+
+  .rounded-lg {
+    border-radius: 0.5rem !important;
+  }
+
+  .rounded-md {
+    border-radius: 0.375rem !important;
+  }
+
+  .rounded-full {
+    border-radius: 0.5rem !important;
+  }
+}
+
+@layer base {
 
   [data-theme='dark'] {
     --app-bg: #111111;
