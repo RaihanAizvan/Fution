@@ -1,27 +1,66 @@
 <template>
   <div class="grid gap-3">
     <button
-      class="text-left text-base font-medium text-[var(--app-text)] transition hover:text-[var(--app-text)]"
+      class="flex items-center justify-between text-left text-base font-medium text-[var(--app-text)] transition hover:text-[var(--app-text)]"
       type="button"
       @click="toggle"
     >
-      {{ headerTitle }}
+      <span>{{ headerTitle }}</span>
+      <span
+        class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[var(--panel-border)] text-[var(--app-muted)] transition-transform duration-300"
+        :class="{ 'rotate-180': isOpen }"
+        aria-hidden="true"
+      >
+        <svg viewBox="0 0 20 20" fill="none" class="h-3 w-3" stroke="currentColor" stroke-width="2">
+          <path d="M5 7.5l5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
     </button>
-    <div v-if="isOpen" class="grid gap-3 text-sm text-[var(--app-text)]/80">
-      <div v-for="(item, index) in items" :key="index" class="rounded-lg border border-[var(--panel-border)] p-3">
-        <button
-          class="flex w-full items-center justify-between text-left text-sm font-medium text-[var(--app-text)]"
-          type="button"
-          @click="toggleItem(index)"
+    <transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 -translate-y-1"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 -translate-y-1"
+    >
+      <div v-if="isOpen" class="grid gap-3 text-sm text-[var(--app-text)]/80">
+        <div
+          v-for="(item, index) in items"
+          :key="index"
+          class="rounded-lg border border-[var(--panel-border)] p-3"
         >
-          {{ item.title }}
-          <span class="text-xs text-[var(--app-muted)]">{{ openIndex === index ? 'Hide' : 'Show' }}</span>
-        </button>
-        <p v-if="openIndex === index && item.description" class="mt-2 text-[var(--app-muted)]">
-          {{ item.description }}
-        </p>
+          <button
+            class="flex w-full items-center justify-between text-left text-sm font-medium text-[var(--app-text)]"
+            type="button"
+            @click="toggleItem(index)"
+          >
+            {{ item.title }}
+            <span
+              class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--panel-border)] text-[var(--app-muted)] transition-transform duration-300"
+              :class="{ 'rotate-180': openIndex === index }"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 20 20" fill="none" class="h-3 w-3" stroke="currentColor" stroke-width="2">
+                <path d="M5 7.5l5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </button>
+          <transition
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="opacity-0 -translate-y-1"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition duration-200 ease-in"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 -translate-y-1"
+          >
+            <p v-if="openIndex === index && item.description" class="mt-2 text-[var(--app-muted)]">
+              {{ item.description }}
+            </p>
+          </transition>
+        </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
