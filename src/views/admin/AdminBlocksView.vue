@@ -110,14 +110,14 @@
               </button>
             </div>
             <div v-else-if="block.type === 'resources'">
-              <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
+              <div v-for="(item, itemIndex) in block.data.resourceItems" :key="itemIndex">
                 <input v-model="item.title" type="text" />
                 <input v-model="item.url" type="text" />
-                <button type="button" @click="removeResource(block.data.items, itemIndex)">
+                <button type="button" @click="removeResource(block.data.resourceItems, itemIndex)">
                   Remove resource
                 </button>
               </div>
-              <button type="button" @click="addResource(block.data.items)">
+              <button type="button" @click="addResource(block.data.resourceItems)">
                 Add resource
               </button>
             </div>
@@ -145,14 +145,29 @@ const topicId = route.params.topicId as string
 const versionId = route.params.versionId as string
 const subjectId = route.query.subjectId as string
 
-const blocks = ref<BlockRecord[]>([])
+type ListItem = { title: string; description: string }
+
+type ResourceItem = { title: string; url: string }
+
+type BlockFormData = {
+  title: string
+  description: string
+  language: string
+  code: string
+  items: ListItem[]
+  resourceItems: ResourceItem[]
+}
+
+type EditableBlock = BlockRecord & { data: BlockFormData }
+
+const blocks = ref<EditableBlock[]>([])
 const isLoading = ref(false)
 const errorMessage = ref('')
 const createErrors = ref<string[]>([])
 const updateErrors = reactive<Record<string, string[]>>({})
 
-const newBlock = reactive({
-  type: 'intro' as BlockType,
+const newBlock = reactive<{ type: BlockType; data: BlockFormData }>({
+  type: 'intro',
   data: {
     title: '',
     description: '',
@@ -181,32 +196,43 @@ const loadBlocks = async () => {
   }
 }
 
-const normalizeBlockData = (block: BlockRecord) => {
+const normalizeBlockData = (block: BlockRecord): BlockFormData => {
+  const base: BlockFormData = {
+    title: '',
+    description: '',
+    language: '',
+    code: '',
+    items: [{ title: '', description: '' }],
+    resourceItems: [{ title: '', url: '' }]
+  }
+
   if (block.type === 'intro') {
     return {
+      ...base,
       title: (block.data as any).title ?? '',
       description: (block.data as any).description ?? ''
     }
   }
   if (block.type === 'code') {
     return {
+      ...base,
       language: (block.data as any).language ?? '',
       code: (block.data as any).code ?? ''
     }
   }
   if (block.type === 'accordion' || block.type === 'checklist' || block.type === 'pitfalls') {
     return {
+      ...base,
       items: (block.data as any).items ?? [{ title: '', description: '' }]
     }
   }
   if (block.type === 'resources') {
     return {
-      items: (block.data as any).items ?? [{ title: '', url: '' }]
+      ...base,
+      resourceItems: (block.data as any).items ?? [{ title: '', url: '' }]
     }
   }
-  return {
-    items: (block.data as any).items ?? ['']
-  }
+  return base
 }
 
 const createBlock = async () => {
@@ -229,7 +255,7 @@ const createBlock = async () => {
   }
 }
 
-const updateBlock = async (block: BlockRecord) => {
+const updateBlock = async (block: EditableBlock) => {
   updateErrors[block.id] = []
   errorMessage.value = ''
 
@@ -281,7 +307,7 @@ const flattenValidationErrors = (error: unknown) => {
   )
 }
 
-const buildPayload = (type: BlockType, data: any) => {
+const buildPayload = (type: BlockType, data: BlockFormData) => {
   if (type === 'intro') {
     return { type, data: { title: data.title, description: data.description } }
   }

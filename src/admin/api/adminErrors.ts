@@ -1,4 +1,4 @@
-import type { ApiError, ValidationError } from './adminClient'
+import type { ApiError } from './adminClient'
 
 export type FieldErrorMap = Record<string, string[]>
 

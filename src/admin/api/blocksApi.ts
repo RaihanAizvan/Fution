@@ -20,17 +20,17 @@ export type BlocksResponse =
   | BlockRecord[]
 
 export const blocksApi = {
-  list: (topicId: string, versionId: string) =>
+  list: (_topicId: string, versionId: string) =>
     adminClient.get<BlocksResponse>(
       `/admin/versions/${versionId}/blocks`
     ),
-  create: (topicId: string, versionId: string, payload: { type: BlockType; data: unknown; orderIndex: number }) =>
+  create: (_topicId: string, versionId: string, payload: { type: BlockType; data: unknown; orderIndex: number }) =>
     adminClient.post<BlockRecord>(
       `/admin/versions/${versionId}/blocks`,
       payload
     ),
   update: (
-    topicId: string,
+    _topicId: string,
     versionId: string,
     blockId: string,
     payload: { type: BlockType; data: unknown }
@@ -39,10 +39,10 @@ export const blocksApi = {
       `/admin/versions/${versionId}/blocks/${blockId}`,
       payload
     ),
-  remove: (topicId: string, versionId: string, blockId: string) =>
+  remove: (_topicId: string, versionId: string, blockId: string) =>
     adminClient.delete(`/admin/versions/${versionId}/blocks/${blockId}`),
   reorder: (
-    topicId: string,
+    _topicId: string,
     versionId: string,
     blocks: Array<{ blockId: string; orderIndex: number }>
   ) =>
