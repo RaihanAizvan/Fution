@@ -1,10 +1,10 @@
-import { createHighlighter, type Highlighter } from 'shiki'
+import { getHighlighter as loadHighlighter, type Highlighter } from 'shiki'
 
 let highlighterPromise: Promise<Highlighter> | null = null
 
 export const getHighlighter = () => {
   if (!highlighterPromise) {
-    highlighterPromise = createHighlighter({
+    highlighterPromise = loadHighlighter({
       themes: ['vitesse-dark'],
       langs: ['javascript', 'typescript', 'json', 'bash', 'css', 'html', 'vue']
     })

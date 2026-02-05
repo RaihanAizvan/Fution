@@ -15,6 +15,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import { format } from 'prettier/standalone'
+import parserBabel from 'prettier/plugins/babel'
+import parserTypeScript from 'prettier/plugins/typescript'
+import parserHtml from 'prettier/plugins/html'
+import parserPostcss from 'prettier/plugins/postcss'
 import { getHighlighter } from './shiki'
 
 interface Props {
@@ -29,11 +34,37 @@ const isLoading = ref(true)
 
 const languageLabel = computed(() => props.language || 'Code')
 
+const parserForLanguage = (lang: string) => {
+  const normalized = lang.toLowerCase()
+  if (['js', 'javascript', 'jsx'].includes(normalized)) return 'babel'
+  if (['ts', 'typescript', 'tsx'].includes(normalized)) return 'typescript'
+  if (['json'].includes(normalized)) return 'json'
+  if (['html', 'xml', 'vue'].includes(normalized)) return 'html'
+  if (['css', 'scss', 'less'].includes(normalized)) return 'css'
+  if (['markdown', 'md'].includes(normalized)) return 'markdown'
+  return 'babel'
+}
+
+const formatCode = async (code: string, lang: string) => {
+  try {
+    return format(code, {
+      parser: parserForLanguage(lang),
+      plugins: [parserBabel, parserTypeScript, parserHtml, parserPostcss],
+      semi: true,
+      singleQuote: true,
+      trailingComma: 'none'
+    })
+  } catch (error) {
+    return code
+  }
+}
+
 const renderHighlight = async () => {
   isLoading.value = true
   const highlighter = await getHighlighter()
   const lang = props.language?.toLowerCase() || 'javascript'
-  highlighted.value = highlighter.codeToHtml(props.code || '', {
+  const formatted = await formatCode(props.code || '', lang)
+  highlighted.value = highlighter.codeToHtml(formatted, {
     lang,
     theme: 'vitesse-dark'
   })
