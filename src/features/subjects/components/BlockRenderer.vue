@@ -1,19 +1,23 @@
 <template>
-  <article class="block-renderer">
+  <article
+    class="grid gap-3 rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-6 shadow-[0_16px_40px_rgba(0,0,0,0.25)]"
+  >
     <template v-if="block.type === 'intro'">
-      <header class="block-renderer__header">
-        <h2>{{ block.data.title }}</h2>
-        <p class="block-renderer__description">
+      <header>
+        <h2 class="text-lg font-semibold text-[var(--app-text)]">{{ block.data.title }}</h2>
+        <p class="mt-1 text-sm text-[var(--app-muted)]">
           {{ isLoading ? 'Loading content…' : block.data.description }}
         </p>
       </header>
     </template>
     <template v-else-if="block.type === 'code'">
-      <header class="block-renderer__header">
-        <h2>{{ block.data.language }}</h2>
-        <p class="block-renderer__description">Code sample</p>
+      <header>
+        <h2 class="text-lg font-semibold text-[var(--app-text)]">{{ block.data.language }}</h2>
+        <p class="mt-1 text-sm text-[var(--app-muted)]">Code sample</p>
       </header>
-      <pre class="block-renderer__code">
+      <pre
+        class="rounded-xl border border-[var(--panel-border)] bg-[#0b0e14] px-5 py-4 text-sm text-[var(--app-text)]"
+      >
         <code>{{ isLoading ? 'Loading content…' : block.data.code }}</code>
       </pre>
     </template>
@@ -27,24 +31,28 @@
       />
     </template>
     <template v-else-if="block.type === 'checklist'">
-      <ul class="block-renderer__list">
+      <ul class="grid gap-2 pl-5 text-sm text-[var(--app-text)]/80">
         <li v-for="(item, index) in block.data.items" :key="index">
           {{ item.title }}
         </li>
       </ul>
     </template>
     <template v-else-if="block.type === 'pitfalls'">
-      <div class="block-renderer__pitfalls">
+      <div class="grid gap-3 text-sm text-[var(--app-text)]/80">
         <div v-for="(item, index) in block.data.items" :key="index">
-          <strong>{{ item.title }}</strong>
-          <p v-if="item.description">{{ item.description }}</p>
+          <strong class="text-[var(--app-text)]">{{ item.title }}</strong>
+          <p v-if="item.description" class="mt-1 text-[var(--app-muted)]">
+            {{ item.description }}
+          </p>
         </div>
       </div>
     </template>
     <template v-else-if="block.type === 'resources'">
-      <ul class="block-renderer__list">
+      <ul class="grid gap-2 pl-5 text-sm text-[var(--app-text)]/80">
         <li v-for="(item, index) in block.data.items" :key="index">
-          <a :href="item.url" target="_blank" rel="noopener noreferrer">{{ item.title }}</a>
+          <a :href="item.url" target="_blank" rel="noopener noreferrer" class="underline">
+            {{ item.title }}
+          </a>
         </li>
       </ul>
     </template>
@@ -118,56 +126,3 @@ const props = defineProps<Props>()
 
 const isLoading = computed(() => props.isLoading ?? false)
 </script>
-
-<style scoped>
-.block-renderer {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1.5rem 1.75rem;
-  border-radius: 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-}
-
-.block-renderer__header h2 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #f5f7fb;
-}
-
-.block-renderer__description {
-  margin: 0.35rem 0 0;
-  color: rgba(230, 232, 236, 0.7);
-}
-
-.block-renderer__code {
-  margin: 0;
-  padding: 1rem 1.25rem;
-  border-radius: 0.85rem;
-  background: #0b0e14;
-  color: #e6e8ec;
-  font-family: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.block-renderer__list {
-  margin: 0;
-  padding-left: 1.25rem;
-  display: grid;
-  gap: 0.5rem;
-  color: rgba(230, 232, 236, 0.78);
-}
-
-.block-renderer__pitfalls {
-  display: grid;
-  gap: 0.75rem;
-  color: rgba(230, 232, 236, 0.78);
-}
-
-.block-renderer__pitfalls p {
-  margin: 0.25rem 0 0;
-}
-</style>
