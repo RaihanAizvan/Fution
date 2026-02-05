@@ -20,6 +20,7 @@ import parserBabel from 'prettier/plugins/babel'
 import parserTypeScript from 'prettier/plugins/typescript'
 import parserHtml from 'prettier/plugins/html'
 import parserPostcss from 'prettier/plugins/postcss'
+import parserEstree from 'prettier/plugins/estree'
 import { getHighlighter } from './shiki'
 
 interface Props {
@@ -49,7 +50,7 @@ const formatCode = async (code: string, lang: string) => {
   try {
     return format(code, {
       parser: parserForLanguage(lang),
-      plugins: [parserBabel, parserTypeScript, parserHtml, parserPostcss],
+      plugins: [parserBabel, parserTypeScript, parserHtml, parserPostcss, parserEstree],
       semi: true,
       singleQuote: true,
       trailingComma: 'none'
@@ -61,14 +62,17 @@ const formatCode = async (code: string, lang: string) => {
 
 const renderHighlight = async () => {
   isLoading.value = true
-  const highlighter = await getHighlighter()
-  const lang = props.language?.toLowerCase() || 'javascript'
-  const formatted = await formatCode(props.code || '', lang)
-  highlighted.value = highlighter.codeToHtml(formatted, {
-    lang,
-    theme: 'vitesse-dark'
-  })
-  isLoading.value = false
+  try {
+    const highlighter = await getHighlighter()
+    const lang = props.language?.toLowerCase() || 'javascript'
+    const formatted = await formatCode(props.code || '', lang)
+    highlighted.value = highlighter.codeToHtml(formatted, {
+      lang,
+      theme: 'vitesse-dark'
+    })
+  } finally {
+    isLoading.value = false
+  }
 }
 
 onMounted(() => {
