@@ -68,7 +68,8 @@ const renderHighlight = async () => {
   isLoading.value = true
   try {
     const highlighter = await getHighlighter()
-    const lang = props.language?.toLowerCase() || 'javascript'
+    const rawLang = props.language?.toLowerCase() || 'javascript'
+    const lang = ['loading', ''].includes(rawLang) ? 'javascript' : rawLang
     const formatted = await formatCode(props.code || '', lang)
     highlighted.value = highlighter.codeToHtml(formatted, {
       lang,
