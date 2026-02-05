@@ -1,16 +1,24 @@
 <template>
   <AdminLayout>
-    <section>
-      <h2>Blocks</h2>
-      <RouterLink :to="`/admin/topics/${topicId}/versions?subjectId=${subjectId}`">
-        Back to versions
-      </RouterLink>
+    <section class="grid gap-6">
+      <header class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.2em] text-[var(--app-muted)]">Admin</p>
+          <h2 class="text-2xl font-semibold">Blocks</h2>
+        </div>
+        <RouterLink
+          :to="`/admin/topics/${topicId}/versions?subjectId=${subjectId}`"
+          class="rounded-full border border-[var(--sidebar-active)] px-4 py-2 text-sm"
+        >
+          Back to versions
+        </RouterLink>
+      </header>
 
-      <form class="admin-form" @submit.prevent="createBlock">
-        <h3>Add block</h3>
-        <label>
+      <form class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6" @submit.prevent="createBlock">
+        <h3 class="text-lg font-semibold">Add block</h3>
+        <label class="grid gap-1 text-sm">
           Type
-          <select v-model="newBlock.type">
+          <select v-model="newBlock.type" class="rounded-xl bg-[var(--app-bg)] px-3 py-2">
             <option value="intro">Intro</option>
             <option value="code">Code</option>
             <option value="accordion">Accordion</option>
@@ -19,116 +27,127 @@
             <option value="resources">Resources</option>
           </select>
         </label>
-        <div v-if="newBlock.type === 'intro'">
-          <label>
+        <div v-if="newBlock.type === 'intro'" class="grid gap-3">
+          <label class="grid gap-1 text-sm">
             Title
-            <input v-model="newBlock.data.title" type="text" />
+            <input v-model="newBlock.data.title" type="text" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
           </label>
-          <label>
+          <label class="grid gap-1 text-sm">
             Description
-            <textarea v-model="newBlock.data.description" />
+            <textarea v-model="newBlock.data.description" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
           </label>
         </div>
-        <div v-else-if="newBlock.type === 'code'">
-          <label>
+        <div v-else-if="newBlock.type === 'code'" class="grid gap-3">
+          <label class="grid gap-1 text-sm">
             Language
-            <input v-model="newBlock.data.language" type="text" />
+            <input v-model="newBlock.data.language" type="text" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
           </label>
-          <label>
+          <label class="grid gap-1 text-sm">
             Code
-            <textarea v-model="newBlock.data.code" />
+            <textarea v-model="newBlock.data.code" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
           </label>
         </div>
-        <div v-else-if="['accordion', 'checklist', 'pitfalls'].includes(newBlock.type)">
-          <div v-for="(item, index) in newBlock.data.items" :key="index">
-            <label>
+        <div v-else-if="['accordion', 'checklist', 'pitfalls'].includes(newBlock.type)" class="grid gap-4">
+          <div v-for="(item, index) in newBlock.data.items" :key="index" class="grid gap-3 rounded-xl bg-[var(--app-bg)] p-4">
+            <label class="grid gap-1 text-sm">
               Title
-              <input v-model="item.title" type="text" />
+              <input v-model="item.title" type="text" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
             </label>
-            <label>
+            <label class="grid gap-1 text-sm">
               Description
-              <textarea v-model="item.description" />
+              <textarea v-model="item.description" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
             </label>
-            <button type="button" @click="removeListItem(newBlock.data.items, index)">
+            <button type="button" class="w-fit rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs" @click="removeListItem(newBlock.data.items, index)">
               Remove item
             </button>
           </div>
-          <button type="button" @click="addListItem(newBlock.data.items)">
+          <button type="button" class="w-fit rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs" @click="addListItem(newBlock.data.items)">
             Add item
           </button>
         </div>
-        <div v-else-if="newBlock.type === 'resources'">
-          <div v-for="(item, index) in newBlock.data.resourceItems" :key="index">
-            <label>
+        <div v-else-if="newBlock.type === 'resources'" class="grid gap-4">
+          <div v-for="(item, index) in newBlock.data.resourceItems" :key="index" class="grid gap-3 rounded-xl bg-[var(--app-bg)] p-4">
+            <label class="grid gap-1 text-sm">
               Title
-              <input v-model="item.title" type="text" />
+              <input v-model="item.title" type="text" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
             </label>
-            <label>
+            <label class="grid gap-1 text-sm">
               URL
-              <input v-model="item.url" type="text" />
+              <input v-model="item.url" type="text" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
             </label>
-            <button type="button" @click="removeResource(newBlock.data.resourceItems, index)">
+            <button type="button" class="w-fit rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs" @click="removeResource(newBlock.data.resourceItems, index)">
               Remove resource
             </button>
           </div>
-          <button type="button" @click="addResource(newBlock.data.resourceItems)">
+          <button type="button" class="w-fit rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs" @click="addResource(newBlock.data.resourceItems)">
             Add resource
           </button>
         </div>
-        <p v-for="message in createErrors" :key="message" class="error">{{ message }}</p>
-        <button type="submit">Create block</button>
+        <p v-for="message in createErrors" :key="message" class="text-sm text-rose-300">{{ message }}</p>
+        <button type="submit" class="w-fit rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">Create block</button>
       </form>
 
-      <p v-if="isLoading">Loading blocks…</p>
-      <p v-else-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <ul v-else>
-        <li v-for="(block, index) in blocks" :key="block.id">
-          <div>
-            <strong>{{ block.type }}</strong>
-            <button type="button" @click="moveBlock(index, -1)">Up</button>
-            <button type="button" @click="moveBlock(index, 1)">Down</button>
-          </div>
-          <form class="admin-form" @submit.prevent="updateBlock(block)">
-            <div v-if="block.type === 'intro'">
-              <input v-model="block.data.title" type="text" />
-              <textarea v-model="block.data.description" />
+      <div class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold">Blocks list</h3>
+          <span v-if="isLoading" class="text-sm text-[var(--app-muted)]">Loading…</span>
+        </div>
+        <p v-if="errorMessage" class="text-sm text-rose-300">{{ errorMessage }}</p>
+        <ul v-else class="grid gap-3">
+          <li v-for="(block, index) in blocks" :key="block.id" class="rounded-2xl bg-[var(--app-bg)] p-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <strong class="text-sm uppercase tracking-[0.2em] text-[var(--app-muted)]">{{ block.type }}</strong>
+              <div class="flex gap-2">
+                <button type="button" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs" @click="moveBlock(index, -1)">Up</button>
+                <button type="button" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs" @click="moveBlock(index, 1)">Down</button>
+              </div>
             </div>
-            <div v-else-if="block.type === 'code'">
-              <input v-model="block.data.language" type="text" />
-              <textarea v-model="block.data.code" />
-            </div>
-            <div v-else-if="['accordion', 'checklist', 'pitfalls'].includes(block.type)">
-              <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex">
-                <input v-model="item.title" type="text" />
-                <textarea v-model="item.description" />
-                <button type="button" @click="removeListItem(block.data.items, itemIndex)">
-                  Remove item
+            <form class="mt-4 grid gap-3" @submit.prevent="updateBlock(block)">
+              <div v-if="block.type === 'intro'" class="grid gap-3">
+                <input v-model="block.data.title" type="text" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                <textarea v-model="block.data.description" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+              </div>
+              <div v-else-if="block.type === 'code'" class="grid gap-3">
+                <input v-model="block.data.language" type="text" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                <textarea v-model="block.data.code" class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+              </div>
+              <div v-else-if="['accordion', 'checklist', 'pitfalls'].includes(block.type)" class="grid gap-3">
+                <div v-for="(item, itemIndex) in block.data.items" :key="itemIndex" class="grid gap-3 rounded-xl bg-[var(--panel-bg)] p-4">
+                  <input v-model="item.title" type="text" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+                  <textarea v-model="item.description" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+                  <button type="button" class="w-fit rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs" @click="removeListItem(block.data.items, itemIndex)">
+                    Remove item
+                  </button>
+                </div>
+                <button type="button" class="w-fit rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs" @click="addListItem(block.data.items)">
+                  Add item
                 </button>
               </div>
-              <button type="button" @click="addListItem(block.data.items)">
-                Add item
-              </button>
-            </div>
-            <div v-else-if="block.type === 'resources'">
-              <div v-for="(item, itemIndex) in block.data.resourceItems" :key="itemIndex">
-                <input v-model="item.title" type="text" />
-                <input v-model="item.url" type="text" />
-                <button type="button" @click="removeResource(block.data.resourceItems, itemIndex)">
-                  Remove resource
+              <div v-else-if="block.type === 'resources'" class="grid gap-3">
+                <div v-for="(item, itemIndex) in block.data.resourceItems" :key="itemIndex" class="grid gap-3 rounded-xl bg-[var(--panel-bg)] p-4">
+                  <input v-model="item.title" type="text" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+                  <input v-model="item.url" type="text" class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+                  <button type="button" class="w-fit rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs" @click="removeResource(block.data.resourceItems, itemIndex)">
+                    Remove resource
+                  </button>
+                </div>
+                <button type="button" class="w-fit rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs" @click="addResource(block.data.resourceItems)">
+                  Add resource
                 </button>
               </div>
-              <button type="button" @click="addResource(block.data.resourceItems)">
-                Add resource
-              </button>
-            </div>
-            <p v-for="message in updateErrors[block.id] ?? []" :key="message" class="error">
-              {{ message }}
-            </p>
-            <button type="submit">Save</button>
-            <button type="button" @click="deleteBlock(block.id)">Delete</button>
-          </form>
-        </li>
-      </ul>
+              <p v-for="message in updateErrors[block.id] ?? []" :key="message" class="text-xs text-rose-300">
+                {{ message }}
+              </p>
+              <div class="flex flex-wrap gap-2">
+                <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">Save</button>
+                <button type="button" class="rounded-full border border-rose-400 px-3 py-1 text-xs text-rose-200" @click="deleteBlock(block.id)">
+                  Delete
+                </button>
+              </div>
+            </form>
+          </li>
+        </ul>
+      </div>
     </section>
   </AdminLayout>
 </template>

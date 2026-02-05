@@ -1,83 +1,99 @@
 <template>
   <AdminLayout>
-    <section>
-      <div class="header-section">
-        <h2>Topics</h2>
-        <RouterLink to="/admin/subjects" class="btn-link">← Back to Subjects</RouterLink>
-      </div>
-      
-      <div class="admin-section">
-        <h3>Add New Topic</h3>
-        <form class="admin-form" @submit.prevent="createTopic">
-          <div class="form-field">
-            <label>
-              Title
-              <input v-model="newTopic.title" type="text" required />
-            </label>
-            <p v-for="error in fieldErrors.title" :key="error" class="error">{{ error }}</p>
-          </div>
-          <div class="form-field">
-            <label>
-              Slug
-              <input v-model="newTopic.slug" type="text" required />
-            </label>
-            <p v-for="error in fieldErrors.slug" :key="error" class="error">{{ error }}</p>
-          </div>
-          <div class="form-field">
-            <label>
-              Level
-              <select v-model="newTopic.level" required>
-                <option value="">Select a level...</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-            </label>
-            <p v-for="error in fieldErrors.level" :key="error" class="error">{{ error }}</p>
-          </div>
-          <button type="submit" class="btn-primary">Create Topic</button>
+    <section class="grid gap-6">
+      <header class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.2em] text-[var(--app-muted)]">Admin</p>
+          <h2 class="text-2xl font-semibold">Topics</h2>
+        </div>
+        <RouterLink
+          to="/admin/subjects"
+          class="rounded-full border border-[var(--sidebar-active)] px-4 py-2 text-sm"
+        >
+          Back to Subjects
+        </RouterLink>
+      </header>
+
+      <div class="grid gap-6 rounded-2xl bg-[var(--panel-bg)] p-6">
+        <h3 class="text-lg font-semibold">Add new topic</h3>
+        <form class="grid gap-4" @submit.prevent="createTopic">
+          <label class="grid gap-1 text-sm">
+            Title
+            <input v-model="newTopic.title" type="text" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+            <span v-for="error in fieldErrors.title" :key="error" class="text-xs text-rose-300">
+              {{ error }}
+            </span>
+          </label>
+          <label class="grid gap-1 text-sm">
+            Slug
+            <input v-model="newTopic.slug" type="text" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+            <span v-for="error in fieldErrors.slug" :key="error" class="text-xs text-rose-300">
+              {{ error }}
+            </span>
+          </label>
+          <label class="grid gap-1 text-sm">
+            Level
+            <select v-model="newTopic.level" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2">
+              <option value="">Select a level...</option>
+              <option value="beginner">Beginner</option>
+              <option value="intermediate">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+            <span v-for="error in fieldErrors.level" :key="error" class="text-xs text-rose-300">
+              {{ error }}
+            </span>
+          </label>
+          <button type="submit" class="w-fit rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">Create topic</button>
         </form>
       </div>
 
-      <div class="admin-section">
-        <div class="section-header">
-          <h3>All Topics</h3>
-          <button 
-            v-if="!isReordering && topics.length > 1" 
-            @click="startReorder" 
-            class="btn-secondary"
-          >
-            Reorder Topics
-          </button>
-          <div v-if="isReordering" class="reorder-actions">
-            <button @click="saveReorder" class="btn-primary">Save Order</button>
-            <button @click="cancelReorder" class="btn-secondary">Cancel</button>
+      <div class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h3 class="text-lg font-semibold">All topics</h3>
+          <div class="flex items-center gap-2">
+            <button
+              v-if="!isReordering && topics.length > 1"
+              @click="startReorder"
+              class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs"
+            >
+              Reorder Topics
+            </button>
+            <div v-if="isReordering" class="flex gap-2">
+              <button @click="saveReorder" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">
+                Save Order
+              </button>
+              <button @click="cancelReorder" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
-        
-        <p v-if="isLoading">Loading topics…</p>
-        <p v-else-if="errorMessage" class="error">{{ errorMessage }}</p>
-        <ul v-else class="topics-list">
-          <li v-for="(topic, index) in topics" :key="topic.id" class="topic-item">
-            <div v-if="editingId !== topic.id" class="topic-view">
-              <div class="topic-info">
-                <strong>{{ topic.title }}</strong>
-                <span class="slug">{{ topic.slug }}</span>
-                <span class="level-badge" :class="`level-${topic.level}`">{{ topic.level }}</span>
+
+        <p v-if="isLoading" class="text-sm text-[var(--app-muted)]">Loading topics…</p>
+        <p v-else-if="errorMessage" class="text-sm text-rose-300">{{ errorMessage }}</p>
+        <ul v-else class="grid gap-3">
+          <li v-for="(topic, index) in topics" :key="topic.id" class="rounded-2xl bg-[var(--app-bg)] p-4">
+            <div v-if="editingId !== topic.id" class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p class="text-sm font-semibold">{{ topic.title }}</p>
+                <p class="text-xs text-[var(--app-muted)]">{{ topic.slug }}</p>
+                <span class="mt-2 inline-flex rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">
+                  {{ topic.level }}
+                </span>
               </div>
-              <div class="topic-actions">
-                <div v-if="isReordering" class="reorder-controls">
-                  <button 
-                    @click="moveUp(index)" 
+              <div class="flex flex-wrap gap-2">
+                <div v-if="isReordering" class="flex gap-1">
+                  <button
+                    @click="moveUp(index)"
                     :disabled="index === 0"
-                    class="btn-reorder"
+                    class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs disabled:opacity-50"
                   >
                     ↑
                   </button>
-                  <button 
-                    @click="moveDown(index)" 
+                  <button
+                    @click="moveDown(index)"
                     :disabled="index === topics.length - 1"
-                    class="btn-reorder"
+                    class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs disabled:opacity-50"
                   >
                     ↓
                   </button>
@@ -85,61 +101,67 @@
                 <template v-else>
                   <RouterLink
                     :to="`/admin/topics/${topic.id}/versions?subjectId=${subjectId}`"
-                    class="btn-link btn-link-small"
+                    class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs"
                   >
                     Manage Versions
                   </RouterLink>
-                  <button @click="startEdit(topic)" class="btn-secondary">Edit</button>
-                  <button @click="confirmDelete(topic)" class="btn-danger">Delete</button>
+                  <button @click="startEdit(topic)" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+                    Edit
+                  </button>
+                  <button @click="confirmDelete(topic)" class="rounded-full border border-rose-400 px-3 py-1 text-xs text-rose-200">
+                    Delete
+                  </button>
                 </template>
               </div>
             </div>
-            
-            <form v-else class="admin-form" @submit.prevent="saveEdit(topic)">
-              <div class="form-field">
-                <label>
-                  Title
-                  <input v-model="topic.title" type="text" required />
-                </label>
+
+            <form v-else class="grid gap-3" @submit.prevent="saveEdit(topic)">
+              <label class="grid gap-1 text-sm">
+                Title
+                <input v-model="topic.title" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+              </label>
+              <label class="grid gap-1 text-sm">
+                Slug
+                <input v-model="topic.slug" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+              </label>
+              <label class="grid gap-1 text-sm">
+                Level
+                <select v-model="topic.level" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2">
+                  <option value="">Select a level...</option>
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </label>
+              <div class="flex flex-wrap gap-2">
+                <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">Save</button>
+                <button type="button" @click="cancelEdit" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+                  Cancel
+                </button>
               </div>
-              <div class="form-field">
-                <label>
-                  Slug
-                  <input v-model="topic.slug" type="text" required />
-                </label>
-              </div>
-              <div class="form-field">
-                <label>
-                  Level
-                  <select v-model="topic.level" required>
-                    <option value="">Select a level...</option>
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                  </select>
-                </label>
-              </div>
-              <div class="form-actions">
-                <button type="submit" class="btn-primary">Save</button>
-                <button type="button" @click="cancelEdit" class="btn-secondary">Cancel</button>
-              </div>
-              <p v-if="editError" class="error">{{ editError }}</p>
+              <p v-if="editError" class="text-xs text-rose-300">{{ editError }}</p>
             </form>
           </li>
         </ul>
       </div>
     </section>
 
-    <div v-if="confirmingDelete" class="modal-overlay" @click="cancelDelete">
-      <div class="modal" @click.stop>
-        <h3>Confirm Delete</h3>
-        <p>Are you sure you want to delete "{{ confirmingDelete.title }}"?</p>
-        <p class="warning">This action cannot be undone.</p>
-        <div class="modal-actions">
-          <button @click="executeDelete" class="btn-danger">Delete</button>
-          <button @click="cancelDelete" class="btn-secondary">Cancel</button>
+    <div v-if="confirmingDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" @click="cancelDelete">
+      <div class="w-full max-w-md rounded-2xl bg-[var(--panel-bg)] p-6" @click.stop>
+        <h3 class="text-lg font-semibold">Confirm Delete</h3>
+        <p class="mt-2 text-sm text-[var(--app-muted)]">
+          Are you sure you want to delete "{{ confirmingDelete.title }}"?
+        </p>
+        <p class="mt-3 text-sm text-amber-300">This action cannot be undone.</p>
+        <div class="mt-4 flex gap-2">
+          <button @click="executeDelete" class="rounded-full bg-rose-500 px-4 py-2 text-sm">
+            Delete
+          </button>
+          <button @click="cancelDelete" class="rounded-full border border-[var(--sidebar-active)] px-4 py-2 text-sm">
+            Cancel
+          </button>
         </div>
-        <p v-if="deleteError" class="error">{{ deleteError }}</p>
+        <p v-if="deleteError" class="mt-3 text-sm text-rose-300">{{ deleteError }}</p>
       </div>
     </div>
   </AdminLayout>
@@ -312,256 +334,3 @@ onMounted(() => {
   void loadTopics()
 })
 </script>
-
-<style scoped>
-.header-section {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.admin-section {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-}
-
-.admin-section h3 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.section-header h3 {
-  margin: 0;
-}
-
-.reorder-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.admin-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-width: 500px;
-}
-
-.form-field label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-weight: 500;
-}
-
-.form-field input,
-.form-field select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.form-field select {
-  background-color: white;
-  cursor: pointer;
-}
-
-.form-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-}
-
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #545b62;
-}
-
-.btn-danger {
-  background-color: #dc3545;
-  color: white;
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-}
-
-.btn-link {
-  padding: 0.5rem 1rem;
-  background-color: #28a745;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  display: inline-block;
-}
-
-.btn-link:hover {
-  background-color: #218838;
-}
-
-.btn-link-small {
-  padding: 0.375rem 0.75rem;
-  font-size: 0.8rem;
-}
-
-.btn-reorder {
-  padding: 0.25rem 0.5rem;
-  background-color: #17a2b8;
-  color: white;
-  font-weight: bold;
-  min-width: 32px;
-}
-
-.btn-reorder:hover:not(:disabled) {
-  background-color: #138496;
-}
-
-.topics-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.topic-item {
-  padding: 1rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  margin-bottom: 0.5rem;
-}
-
-.topic-view {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.topic-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  flex: 1;
-}
-
-.slug {
-  font-size: 0.875rem;
-  color: #666;
-  font-family: monospace;
-}
-
-.level-badge {
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.level-beginner {
-  background-color: #d4edda;
-  color: #155724;
-}
-
-.level-intermediate {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.level-advanced {
-  background-color: #f8d7da;
-  color: #721c24;
-}
-
-.topic-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.reorder-controls {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.error {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin: 0.25rem 0;
-}
-
-.warning {
-  color: #856404;
-  background-color: #fff3cd;
-  padding: 0.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-}
-
-.modal h3 {
-  margin-top: 0;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-}
-</style>
