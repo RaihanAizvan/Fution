@@ -19,11 +19,8 @@
         v-else
         v-for="topic in topics"
         :key="topic.id"
-        class="rounded-xl border border-transparent px-3 py-2 text-sm text-[var(--app-text)]/70 transition hover:bg-[var(--panel-bg)] hover:text-[var(--app-text)]"
-        :class="{
-          'border-[var(--panel-border)] bg-[var(--panel-bg)] text-[var(--app-text)]':
-            topic.id === selectedTopicSlug
-        }"
+        class="rounded-xl px-3 py-2 text-sm text-[var(--app-text)]/70 transition hover:bg-[var(--sidebar-active)] hover:text-[var(--app-text)]"
+        :class="{ 'bg-[var(--sidebar-active)] text-[var(--app-text)]': topic.id === selectedTopicSlug }"
         :to="getTopicLink(topic.id)"
       >
         {{ topic.title }}

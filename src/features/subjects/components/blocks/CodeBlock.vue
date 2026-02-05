@@ -6,7 +6,7 @@
       </h3>
     </header>
 
-    <div class="overflow-x-auto rounded-xl bg-[#0b0e14] px-5 py-4 text-sm leading-relaxed">
+    <div class="overflow-x-auto rounded-xl bg-[var(--code-bg)] px-5 py-4 text-sm leading-relaxed">
       <div v-if="isLoading" class="text-[var(--app-muted)]">Loading syntax highlighting…</div>
       <div v-else v-html="highlighted" class="shiki-output" />
     </div>

@@ -1,13 +1,13 @@
 <template>
   <div class="grid gap-3">
     <button
-      class="flex items-center justify-between text-left text-base font-medium text-[var(--app-text)] transition hover:text-[var(--app-text)]"
+      class="flex items-center justify-between text-left text-base font-medium text-[var(--app-text)]"
       type="button"
       @click="toggle"
     >
       <span>{{ headerTitle }}</span>
       <span
-        class="inline-flex h-6 w-6 items-center justify-center rounded-full border border-[var(--panel-border)] text-[var(--app-muted)] transition-transform duration-300"
+        class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--sidebar-active)] text-[var(--app-text)]/70 transition-transform duration-300"
         :class="{ 'rotate-180': isOpen }"
         aria-hidden="true"
       >
@@ -28,7 +28,7 @@
         <div
           v-for="(item, index) in items"
           :key="index"
-          class="rounded-lg border border-[var(--panel-border)] p-3"
+          class="rounded-lg bg-[var(--sidebar-active)] p-3"
         >
           <button
             class="flex w-full items-center justify-between text-left text-sm font-medium text-[var(--app-text)]"
@@ -37,7 +37,7 @@
           >
             {{ item.title }}
             <span
-              class="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--panel-border)] text-[var(--app-muted)] transition-transform duration-300"
+              class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--sidebar-bg)] text-[var(--app-text)]/70 transition-transform duration-300"
               :class="{ 'rotate-180': openIndex === index }"
               aria-hidden="true"
             >
