@@ -3,14 +3,15 @@
     <template v-if="block.type === 'intro'">
       <header class="block-renderer__header">
         <h2>{{ block.data.title }}</h2>
+        <p class="block-renderer__description">
+          {{ isLoading ? 'Loading content…' : block.data.description }}
+        </p>
       </header>
-      <p class="block-renderer__description">
-        {{ isLoading ? 'Loading content…' : block.data.description }}
-      </p>
     </template>
     <template v-else-if="block.type === 'code'">
       <header class="block-renderer__header">
         <h2>{{ block.data.language }}</h2>
+        <p class="block-renderer__description">Code sample</p>
       </header>
       <pre class="block-renderer__code">
         <code>{{ isLoading ? 'Loading content…' : block.data.code }}</code>
@@ -122,14 +123,34 @@ const isLoading = computed(() => props.isLoading ?? false)
 .block-renderer {
   display: grid;
   gap: 0.75rem;
+  padding: 1.5rem 1.75rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.block-renderer__header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #f5f7fb;
 }
 
 .block-renderer__description {
-  margin: 0;
+  margin: 0.35rem 0 0;
+  color: rgba(230, 232, 236, 0.7);
 }
 
 .block-renderer__code {
   margin: 0;
+  padding: 1rem 1.25rem;
+  border-radius: 0.85rem;
+  background: #0b0e14;
+  color: #e6e8ec;
+  font-family: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .block-renderer__list {
@@ -137,11 +158,13 @@ const isLoading = computed(() => props.isLoading ?? false)
   padding-left: 1.25rem;
   display: grid;
   gap: 0.5rem;
+  color: rgba(230, 232, 236, 0.78);
 }
 
 .block-renderer__pitfalls {
   display: grid;
   gap: 0.75rem;
+  color: rgba(230, 232, 236, 0.78);
 }
 
 .block-renderer__pitfalls p {
