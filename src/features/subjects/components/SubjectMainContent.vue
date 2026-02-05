@@ -46,7 +46,7 @@ const loadingBlocks: TopicBlock[] = [
   },
   {
     type: 'accordion',
-    data: { items: [{ title: 'Loading', content: 'Loading content…' }] }
+    data: { items: [{ title: 'Loading', description: 'Loading content…' }] }
   }
 ]
 
@@ -65,3 +65,27 @@ const blockKey = (block: TopicBlock, index: number) => {
   return `${block.type}-${firstItem?.title ?? 'item'}-${index}`
 }
 </script>
+
+<style scoped>
+.subject-main {
+  display: grid;
+  gap: 2rem;
+}
+
+.subject-main__header h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f5f7fb;
+}
+
+.subject-main__content {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.subject-main__content p {
+  color: rgba(230, 232, 236, 0.7);
+}
+</style>
