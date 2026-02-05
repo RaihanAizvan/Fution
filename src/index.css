@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  [data-theme='dark'] {
+    --app-bg: #0e1117;
+    --app-bg-glow: rgba(255, 255, 255, 0.04);
+    --app-text: #e6e8ec;
+    --app-muted: rgba(230, 232, 236, 0.7);
+    --panel-bg: rgba(255, 255, 255, 0.03);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --sidebar-bg: rgba(15, 18, 24, 0.9);
+    --sidebar-border: rgba(255, 255, 255, 0.06);
+    --accent: rgba(255, 255, 255, 0.1);
+  }
+
+  [data-theme='light'] {
+    color-scheme: light;
+    --app-bg: #f5f6f8;
+    --app-bg-glow: rgba(15, 23, 42, 0.05);
+    --app-text: #0f172a;
+    --app-muted: rgba(15, 23, 42, 0.65);
+    --panel-bg: rgba(255, 255, 255, 0.85);
+    --panel-border: rgba(15, 23, 42, 0.08);
+    --sidebar-bg: rgba(255, 255, 255, 0.7);
+    --sidebar-border: rgba(15, 23, 42, 0.08);
+    --accent: rgba(15, 23, 42, 0.08);
+  }
+
+  [data-theme='blue'] {
+    --app-bg: #0b1220;
+    --app-bg-glow: rgba(56, 189, 248, 0.08);
+    --app-text: #e2e8f0;
+    --app-muted: rgba(226, 232, 240, 0.7);
+    --panel-bg: rgba(30, 41, 59, 0.55);
+    --panel-border: rgba(148, 163, 184, 0.18);
+    --sidebar-bg: rgba(15, 23, 42, 0.85);
+    --sidebar-border: rgba(148, 163, 184, 0.2);
+    --accent: rgba(56, 189, 248, 0.2);
+  }
+}
