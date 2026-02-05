@@ -1,15 +1,20 @@
 <template>
-  <div class="admin-layout">
-    <header class="admin-layout__header">
-      <h1>Admin</h1>
-      <div class="admin-layout__dev-panel">
-        <p class="admin-layout__dev-note">Debug panel: quick navigation only.</p>
-        <nav>
-          <RouterLink to="/admin/subjects">Subjects</RouterLink>
-        </nav>
+  <div class="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
+    <header class="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-8">
+      <div>
+        <h1 class="text-2xl font-semibold">Admin Console</h1>
+        <p class="text-sm text-[var(--app-muted)]">Manage subjects, topics, and content.</p>
       </div>
+      <nav class="flex items-center gap-3 text-sm">
+        <RouterLink
+          to="/admin/subjects"
+          class="rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-[var(--app-text)]"
+        >
+          Subjects
+        </RouterLink>
+      </nav>
     </header>
-    <main class="admin-layout__content">
+    <main class="mx-auto w-full max-w-6xl px-6 pb-16">
       <slot />
     </main>
   </div>
@@ -18,23 +23,3 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 </script>
-
-<style scoped>
-.admin-layout {
-  padding: 2rem;
-}
-
-.admin-layout__header {
-  margin-bottom: 1.5rem;
-}
-
-.admin-layout__dev-panel {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.admin-layout__dev-note {
-  margin: 0;
-  font-size: 0.875rem;
-}
-</style>
