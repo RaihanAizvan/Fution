@@ -36,18 +36,45 @@ const getTopicLink = (topicId: string) => `/subjects/${subjectSlug.value}/${topi
 </script>
 
 <style scoped>
+.subject-sidebar {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.subject-sidebar__header h2 {
+  margin: 0;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(230, 232, 236, 0.6);
+}
+
+.subject-sidebar__content {
+  display: grid;
+  gap: 0.35rem;
+}
+
 .subject-sidebar__topic {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.65rem;
   border: 1px solid transparent;
   background: transparent;
+  color: rgba(230, 232, 236, 0.75);
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.subject-sidebar__topic:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(230, 232, 236, 0.95);
 }
 
 .subject-sidebar__topic.is-selected {
-  border-color: rgba(37, 99, 235, 0.4);
-  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #f5f7fb;
 }
 </style>

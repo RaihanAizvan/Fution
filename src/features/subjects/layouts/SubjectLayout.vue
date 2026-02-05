@@ -14,22 +14,25 @@
 <style scoped>
 .subject-layout {
   display: grid;
-  grid-template-columns: minmax(240px, 320px) 1fr;
+  grid-template-columns: minmax(240px, 300px) 1fr;
   min-height: 100vh;
+  background: #0e1117;
 }
 
 .subject-layout__sidebar {
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(15, 18, 24, 0.9);
 }
 
 .subject-layout__sidebar-content {
+  position: sticky;
+  top: 0;
   max-height: 100vh;
   overflow-y: auto;
-  padding: 1.5rem 1rem;
+  padding: 2rem 1.5rem;
 }
 
 .subject-layout__main {
-  padding: 2rem;
+  padding: 3rem 4vw;
 }
 </style>
