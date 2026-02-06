@@ -7,6 +7,7 @@ interface SubjectApiRecord {
   id: string
   slug: string
   title: string
+  isActive?: boolean
 }
 
 export const createApiSubjectsSource = (): SubjectsSource => ({
@@ -19,10 +20,12 @@ export const createApiSubjectsSource = (): SubjectsSource => ({
 
     const subjects = (await response.json()) as SubjectApiRecord[]
     
-    return subjects.map(subject => ({
-      slug: subject.slug,
-      title: subject.title
-    }))
+    return subjects
+      .filter(subject => subject.isActive !== false)
+      .map(subject => ({
+        slug: subject.slug,
+        title: subject.title
+      }))
   },
 
   async getSubject(slug: string): Promise<SubjectDetail | null> {
@@ -33,7 +36,9 @@ export const createApiSubjectsSource = (): SubjectsSource => ({
     }
 
     const subjects = (await response.json()) as SubjectApiRecord[]
-    const subject = subjects.find(s => s.slug === slug)
+    const subject = subjects.find(
+      s => s.slug === slug && s.isActive !== false
+    )
     
     if (!subject) {
       return null

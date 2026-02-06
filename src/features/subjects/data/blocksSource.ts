@@ -8,6 +8,7 @@ type BlocksApiResponse = {
   topic: {
     slug: string
     title: string
+    isActive?: boolean
   }
   blocks: Array<{
     type: 'intro' | 'code' | 'accordion' | 'checklist' | 'pitfalls' | 'resources'
