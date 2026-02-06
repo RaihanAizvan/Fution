@@ -4,7 +4,7 @@
       <div class="flex items-start justify-between">
         <div>
           <h2 class="text-3xl font-semibold">Subjects</h2>
-          <div class="mt-2 text-xs uppercase tracking-[0.3em] text-white/40">
+          <div class="mt-2 text-xs uppercase tracking-[0.3em] text-[var(--app-muted)]">
             ADMIN / CONTENT / SUBJECTS
           </div>
         </div>
@@ -43,18 +43,18 @@
           </span>
 
           <div class="min-w-[180px]">
-            <p class="text-sm font-semibold text-white">{{ subject.title }}</p>
-            <p class="text-xs text-white/40">{{ subject.slug }}</p>
+            <p class="text-sm font-semibold text-[var(--app-text)]">{{ subject.title }}</p>
+            <p class="text-xs text-[var(--app-muted)]">{{ subject.slug }}</p>
           </div>
 
-          <p class="text-xs text-white/50">
+          <p class="text-xs text-[var(--app-muted)]">
             {{ subject.description || 'No description yet' }}
           </p>
 
           <span
             class="ml-auto inline-flex w-fit rounded-full px-3 py-1 text-xs"
             :class="subject.isActive === false
-              ? 'bg-white/10 text-white/50'
+              ? 'bg-[var(--app-bg)] text-[var(--app-muted)]'
               : 'bg-emerald-500/15 text-emerald-300'"
           >
             {{ subject.isActive === false ? 'Inactive' : 'Active' }}
@@ -62,7 +62,7 @@
 
           <div class="flex gap-2">
             <button
-              class="rounded-md border border-white/10 px-3 py-1 text-xs text-white/70 hover:border-white/30"
+              class="rounded-md border border-[var(--sidebar-border)] px-3 py-1 text-xs text-[var(--app-text)]/70 hover:border-[var(--app-text)]/30"
               @click="startEdit(subject)"
             >
               Edit
@@ -77,11 +77,11 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-between text-xs text-white/40">
+      <div class="flex items-center justify-between text-xs text-[var(--app-muted)]">
         <span>Showing {{ subjects.length }} of {{ subjects.length }} results</span>
         <button
           type="button"
-          class="rounded-md border border-white/10 px-3 py-2 text-xs"
+          class="rounded-md border border-[var(--sidebar-border)] px-3 py-2 text-xs"
           @click="toggleImport"
         >
           {{ showImport ? 'Hide JSON Import' : 'Import JSON' }}
@@ -90,9 +90,9 @@
     </section>
 
     <div v-if="showCreate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6">
-      <div class="w-full max-w-lg rounded-md bg-[#1a1b21] p-6">
+      <div class="w-full max-w-lg rounded-md bg-[var(--panel-bg)] p-6">
         <h3 class="text-lg font-semibold">Create Subject</h3>
-        <p class="mt-2 text-sm text-white/50">Add a new subject to the content library.</p>
+        <p class="mt-2 text-sm text-[var(--app-muted)]">Add a new subject to the content library.</p>
         <form class="mt-6 grid gap-4" @submit.prevent="createSubject">
           <label class="grid gap-1 text-sm">
             Title
@@ -100,7 +100,7 @@
               v-model="newSubject.title"
               type="text"
               required
-              class="rounded-md bg-[#101114] px-3 py-2 text-sm text-white"
+              class="rounded-md bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
             />
             <span v-for="error in fieldErrors.title" :key="error" class="text-xs text-rose-300">
               {{ error }}
@@ -112,7 +112,7 @@
               v-model="newSubject.slug"
               type="text"
               required
-              class="rounded-md bg-[#101114] px-3 py-2 text-sm text-white"
+              class="rounded-md bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
             />
             <span v-for="error in fieldErrors.slug" :key="error" class="text-xs text-rose-300">
               {{ error }}
@@ -122,7 +122,7 @@
             Description
             <textarea
               v-model="newSubject.description"
-              class="rounded-md bg-[#101114] px-3 py-2 text-sm text-white"
+              class="rounded-md bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]"
             />
           </label>
           <label class="flex items-center gap-2 text-sm">
@@ -133,7 +133,7 @@
             <button type="button" class="rounded-md border border-white/10 px-4 py-2 text-sm" @click="closeCreate">
               Cancel
             </button>
-            <button type="submit" class="rounded-md bg-[#4f46e5] px-4 py-2 text-sm font-semibold text-white">
+            <button type="submit" class="rounded-md bg-[var(--sidebar-active)] px-4 py-2 text-sm font-semibold text-[var(--app-text)]">
               Add Subject
             </button>
           </div>
@@ -166,7 +166,7 @@
             <button type="button" class="rounded-md border border-white/10 px-4 py-2 text-sm" @click="toggleImport">
               Cancel
             </button>
-            <button type="submit" class="rounded-md bg-[#4f46e5] px-4 py-2 text-sm font-semibold text-white">
+            <button type="submit" class="rounded-md bg-[var(--sidebar-active)] px-4 py-2 text-sm font-semibold text-[var(--app-text)]">
               Import
             </button>
           </div>
@@ -177,21 +177,21 @@
     </div>
 
     <div v-if="showEdit" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6">
-      <div class="w-full max-w-lg rounded-md bg-[#1a1b21] p-6">
+      <div class="w-full max-w-lg rounded-md bg-[var(--panel-bg)] p-6">
         <h3 class="text-lg font-semibold">Edit Subject</h3>
-        <p class="mt-2 text-sm text-white/50">Update the subject details.</p>
+        <p class="mt-2 text-sm text-[var(--app-muted)]">Update the subject details.</p>
         <form class="mt-6 grid gap-4" @submit.prevent="saveEdit">
           <label class="grid gap-1 text-sm">
             Title
-            <input v-model="editSubject.title" type="text" required class="rounded-md bg-[#101114] px-3 py-2 text-sm text-white" />
+            <input v-model="editSubject.title" type="text" required class="rounded-md bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]" />
           </label>
           <label class="grid gap-1 text-sm">
             Slug
-            <input v-model="editSubject.slug" type="text" required class="rounded-md bg-[#101114] px-3 py-2 text-sm text-white" />
+            <input v-model="editSubject.slug" type="text" required class="rounded-md bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]" />
           </label>
           <label class="grid gap-1 text-sm">
             Description
-            <textarea v-model="editSubject.description" class="rounded-md bg-[#101114] px-3 py-2 text-sm text-white" />
+            <textarea v-model="editSubject.description" class="rounded-md bg-[var(--app-bg)] px-3 py-2 text-sm text-[var(--app-text)]" />
           </label>
           <label class="flex items-center gap-2 text-sm">
             <input v-model="editSubject.isActive" type="checkbox" class="rounded" />
@@ -201,7 +201,7 @@
             <button type="button" class="rounded-md border border-white/10 px-4 py-2 text-sm" @click="cancelEdit">
               Cancel
             </button>
-            <button type="submit" class="rounded-md bg-[#4f46e5] px-4 py-2 text-sm font-semibold text-white">
+            <button type="submit" class="rounded-md bg-[var(--sidebar-active)] px-4 py-2 text-sm font-semibold text-[var(--app-text)]">
               Save Changes
             </button>
           </div>
