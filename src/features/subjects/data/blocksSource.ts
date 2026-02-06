@@ -78,6 +78,10 @@ export const createBlocksSource = (): BlocksSource => ({
 
     const payload = (await response.json()) as BlocksApiResponse
 
+    if (payload.topic?.isActive === false) {
+      return []
+    }
+
     return mapBlocks(payload)
   }
 })
