@@ -10,7 +10,7 @@
         </div>
         <button
           type="button"
-          class="rounded-md bg-[#4f46e5] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20"
+          class="rounded-md bg-[var(--sidebar-active)] px-4 py-2 text-sm font-semibold text-[var(--app-text)] shadow-lg shadow-[var(--sidebar-active)]/20"
           @click="showCreate = true"
         >
           + New Subject
@@ -26,7 +26,7 @@
         <div
           v-for="(subject, index) in subjects"
           :key="subject.id"
-          class="flex flex-wrap items-center gap-4 rounded-md bg-[#1b1c22] px-4 py-3 transition hover:bg-[#21232b]"
+          class="flex flex-wrap items-center gap-4 rounded-md bg-[var(--panel-bg)] px-4 py-3 transition hover:bg-[var(--sidebar-active)]"
           :draggable="true"
           @dragstart="startDrag(index)"
           @dragover.prevent
@@ -38,7 +38,7 @@
             </span>
           </button>
 
-          <span class="grid h-9 w-9 place-items-center rounded-md bg-[#232531] text-xs text-white/70">
+          <span class="grid h-9 w-9 place-items-center rounded-md bg-[var(--app-bg)] text-xs text-[var(--app-text)]/70">
             {{ subject.title?.slice(0, 2).toUpperCase() }}
           </span>
 
@@ -142,7 +142,7 @@
     </div>
 
     <div v-if="showImport" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6">
-      <div class="w-full max-w-2xl rounded-md bg-[#1a1b21] p-6">
+      <div class="w-full max-w-2xl rounded-md bg-[var(--panel-bg)] p-6">
         <h3 class="text-lg font-semibold">Import Subject JSON</h3>
         <p class="mt-2 text-sm text-white/50">
           Paste a full subject tree JSON payload. List-style blocks must use data.items with { title,
@@ -156,7 +156,7 @@
               rows="10"
               placeholder="{ ... }"
               required
-              class="min-h-[220px] rounded-md bg-[#101114] p-3 font-mono text-xs text-white"
+              class="min-h-[220px] rounded-md bg-[var(--app-bg)] p-3 font-mono text-xs text-[var(--app-text)]"
             />
             <span v-for="error in importErrors" :key="error" class="text-xs text-rose-300">
               {{ error }}
@@ -211,14 +211,14 @@
     </div>
 
     <div v-if="confirmingDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-6" @click="cancelDelete">
-      <div class="w-full max-w-md rounded-md bg-[#1a1b21] p-6" @click.stop>
+      <div class="w-full max-w-md rounded-md bg-[var(--panel-bg)] p-6" @click.stop>
         <h3 class="text-lg font-semibold">Confirm Delete</h3>
         <p class="mt-2 text-sm text-white/50">
           Are you sure you want to delete "{{ confirmingDelete.title }}"?
         </p>
         <p class="mt-3 text-sm text-amber-300">This action cannot be undone.</p>
         <div class="mt-4 flex gap-2">
-          <button @click="executeDelete" class="rounded-md bg-rose-500 px-4 py-2 text-sm">
+          <button @click="executeDelete" class="rounded-md bg-rose-500 px-4 py-2 text-sm text-white">
             Delete
           </button>
           <button @click="cancelDelete" class="rounded-md border border-white/10 px-4 py-2 text-sm">

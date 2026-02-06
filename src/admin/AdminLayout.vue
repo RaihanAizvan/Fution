@@ -1,34 +1,65 @@
 <template>
-  <div class="min-h-screen bg-[#0f0f12] text-white">
-    <aside class="fixed left-0 top-0 hidden h-screen w-72 border-r border-white/10 bg-[#141414] lg:block">
+  <div class="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
+    <aside class="fixed left-0 top-0 hidden h-screen w-72 border-r border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] lg:block">
       <div class="flex h-full flex-col px-6 py-8">
         <div>
-          <p class="text-xs uppercase tracking-[0.3em] text-white/40">Admin</p>
+          <p class="text-xs uppercase tracking-[0.3em] text-[var(--app-muted)]">Admin</p>
           <h1 class="mt-2 text-xl font-semibold">Content Studio</h1>
-          <p class="mt-1 text-xs text-white/40">Premium CMS Workspace</p>
+          <p class="mt-1 text-xs text-[var(--app-muted)]">Premium CMS Workspace</p>
         </div>
 
         <div class="mt-10">
-          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-white/30">Workspace</p>
+          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">Workspace</p>
           <nav class="mt-4 grid gap-1 text-sm">
             <RouterLink
               to="/admin"
-              class="rounded-md px-3 py-2 text-white/70 hover:bg-white/5"
-              active-class="bg-white/10 text-white"
+              class="rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
             >
               Dashboard
             </RouterLink>
+            <div class="grid gap-1">
+              <div class="flex items-center justify-between rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
+                <RouterLink
+                  to="/admin/content/subjects"
+                  class="flex-1 text-left"
+                >
+                  Subjects
+                </RouterLink>
+                <button
+                  type="button"
+                  class="ml-2 text-[var(--app-text)]/50"
+                  @click.stop="toggleSubjects"
+                >
+                  <span
+                    class="inline-flex h-5 w-5 items-center justify-center transition-transform"
+                    :class="{ 'rotate-180': isSubjectsOpen }"
+                  >
+                    <svg viewBox="0 0 20 20" fill="none" class="h-3 w-3" stroke="currentColor" stroke-width="2">
+                      <path d="M5 7.5l5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </button>
+              </div>
+              <div v-if="isSubjectsOpen" class="max-h-52 overflow-y-auto pl-4">
+                <RouterLink
+                  v-for="subject in sidebarSubjects"
+                  :key="subject.id"
+                  :to="`/admin/subjects/${subject.id}/topics`"
+                  class="block rounded-md px-3 py-1.5 text-xs text-[var(--app-text)]/60 hover:bg-[var(--sidebar-active)]"
+                  :class="{
+                    'bg-[var(--sidebar-active)] text-[var(--app-text)]':
+                      subject.id === activeSubjectId
+                  }"
+                >
+                  {{ subject.title }}
+                </RouterLink>
+              </div>
+            </div>
             <RouterLink
               to="/admin/subjects"
-              class="rounded-md px-3 py-2 text-white/70 hover:bg-white/5"
-              active-class="bg-white/10 text-white"
-            >
-              Content
-            </RouterLink>
-            <RouterLink
-              to="/admin/subjects"
-              class="rounded-md px-3 py-2 text-white/70 hover:bg-white/5"
-              active-class="bg-white/10 text-white"
+              class="rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
             >
               Blocks
             </RouterLink>
@@ -36,24 +67,28 @@
         </div>
 
         <div class="mt-10">
-          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-white/30">System</p>
+          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">System</p>
           <nav class="mt-4 grid gap-1 text-sm">
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            <button class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
               Media
             </button>
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            <button class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
               Users
             </button>
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            <RouterLink
+              to="/admin/settings"
+              class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
+            >
               Settings
-            </button>
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            </RouterLink>
+            <button class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
               Logs
             </button>
           </nav>
         </div>
 
-        <div class="mt-auto rounded-md bg-black/40 p-4 text-xs text-white/50">
+        <div class="mt-auto rounded-md bg-[var(--app-bg)]/40 p-4 text-xs text-[var(--app-muted)]">
           Live environment • Synced with production APIs
         </div>
       </div>
@@ -65,41 +100,41 @@
       @click="isSidebarOpen = false"
     />
     <aside
-      class="fixed left-0 top-0 z-50 h-screen w-72 bg-[#141414] px-6 py-8 transition-transform lg:hidden"
+      class="fixed left-0 top-0 z-50 h-screen w-72 bg-[var(--sidebar-bg)] px-6 py-8 transition-transform lg:hidden"
       :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full'"
     >
       <div class="flex h-full flex-col">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-xs uppercase tracking-[0.3em] text-white/40">Admin</p>
+            <p class="text-xs uppercase tracking-[0.3em] text-[var(--app-muted)]">Admin</p>
             <h1 class="mt-2 text-xl font-semibold">Content Studio</h1>
           </div>
-          <button class="text-white/60" @click="isSidebarOpen = false">✕</button>
+          <button class="text-[var(--app-muted)]" @click="isSidebarOpen = false">✕</button>
         </div>
 
         <div class="mt-10">
-          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-white/30">Workspace</p>
+          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">Workspace</p>
           <nav class="mt-4 grid gap-1 text-sm">
             <RouterLink
               to="/admin"
-              class="rounded-md px-3 py-2 text-white/70 hover:bg-white/5"
-              active-class="bg-white/10 text-white"
+              class="rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
               @click="isSidebarOpen = false"
             >
               Dashboard
             </RouterLink>
             <RouterLink
               to="/admin/subjects"
-              class="rounded-md px-3 py-2 text-white/70 hover:bg-white/5"
-              active-class="bg-white/10 text-white"
+              class="rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
               @click="isSidebarOpen = false"
             >
               Content
             </RouterLink>
             <RouterLink
               to="/admin/subjects"
-              class="rounded-md px-3 py-2 text-white/70 hover:bg-white/5"
-              active-class="bg-white/10 text-white"
+              class="rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
               @click="isSidebarOpen = false"
             >
               Blocks
@@ -108,34 +143,39 @@
         </div>
 
         <div class="mt-10">
-          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-white/30">System</p>
+          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">System</p>
           <nav class="mt-4 grid gap-1 text-sm">
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            <button class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
               Media
             </button>
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            <button class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
               Users
             </button>
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            <RouterLink
+              to="/admin/settings"
+              class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
+              @click="isSidebarOpen = false"
+            >
               Settings
-            </button>
-            <button class="rounded-md px-3 py-2 text-left text-white/70 hover:bg-white/5">
+            </RouterLink>
+            <button class="rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
               Logs
             </button>
           </nav>
         </div>
 
-        <div class="mt-auto rounded-md bg-black/40 p-4 text-xs text-white/50">
+        <div class="mt-auto rounded-md bg-[var(--app-bg)]/40 p-4 text-xs text-[var(--app-muted)]">
           Live environment • Synced with production APIs
         </div>
       </div>
     </aside>
 
     <div class="min-h-screen lg:ml-72">
-      <header class="border-b border-white/10 bg-[#141414] px-6 py-6 lg:px-10">
+      <header class="border-b border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] px-6 py-6 lg:px-10">
         <div class="mx-auto flex w-full max-w-6xl flex-col gap-4">
           <div class="flex items-center justify-between lg:hidden">
-            <button class="rounded-md border border-white/10 px-3 py-2 text-xs" @click="isSidebarOpen = true">
+            <button class="rounded-md border border-[var(--sidebar-border)] px-3 py-2 text-xs" @click="isSidebarOpen = true">
               ☰ Menu
             </button>
           </div>
@@ -151,8 +191,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import { subjectsApi, type SubjectRecord } from './api/subjectsApi'
 
 const isSidebarOpen = ref(false)
+const isSubjectsOpen = ref(true)
+const sidebarSubjects = ref<SubjectRecord[]>([])
+const route = useRoute()
+
+const activeSubjectId = computed(() => route.params.subjectId as string | undefined)
+
+const toggleSubjects = () => {
+  isSubjectsOpen.value = !isSubjectsOpen.value
+}
+
+const loadSubjects = async () => {
+  try {
+    sidebarSubjects.value = await subjectsApi.list()
+  } catch (error) {
+    sidebarSubjects.value = []
+  }
+}
+
+onMounted(() => {
+  void loadSubjects()
+})
 </script>
