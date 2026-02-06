@@ -14,135 +14,137 @@
         </RouterLink>
       </header>
 
-      <div class="grid gap-6 rounded-2xl bg-[var(--panel-bg)] p-6">
-        <h3 class="text-lg font-semibold">Add new topic</h3>
-        <form class="grid gap-4" @submit.prevent="createTopic">
-          <label class="grid gap-1 text-sm">
-            Title
-            <input v-model="newTopic.title" type="text" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
-            <span v-for="error in fieldErrors.title" :key="error" class="text-xs text-rose-300">
-              {{ error }}
-            </span>
-          </label>
-          <label class="grid gap-1 text-sm">
-            Slug
-            <input v-model="newTopic.slug" type="text" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
-            <span v-for="error in fieldErrors.slug" :key="error" class="text-xs text-rose-300">
-              {{ error }}
-            </span>
-          </label>
-          <label class="grid gap-1 text-sm">
-            Level
-            <select v-model="newTopic.level" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2">
-              <option value="">Select a level...</option>
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
-            <span v-for="error in fieldErrors.level" :key="error" class="text-xs text-rose-300">
-              {{ error }}
-            </span>
-          </label>
-          <button type="submit" class="w-fit rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">Create topic</button>
-        </form>
-      </div>
-
-      <div class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <h3 class="text-lg font-semibold">All topics</h3>
-          <div class="flex items-center gap-2">
-            <button
-              v-if="!isReordering && topics.length > 1"
-              @click="startReorder"
-              class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs"
-            >
-              Reorder Topics
-            </button>
-            <div v-if="isReordering" class="flex gap-2">
-              <button @click="saveReorder" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">
-                Save Order
-              </button>
-              <button @click="cancelReorder" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
-                Cancel
-              </button>
-            </div>
-          </div>
+      <div class="grid gap-6 lg:grid-cols-[minmax(260px,360px)_1fr]">
+        <div class="grid gap-6 rounded-2xl bg-[var(--panel-bg)] p-6">
+          <h3 class="text-lg font-semibold">Add new topic</h3>
+          <form class="grid gap-4" @submit.prevent="createTopic">
+            <label class="grid gap-1 text-sm">
+              Title
+              <input v-model="newTopic.title" type="text" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+              <span v-for="error in fieldErrors.title" :key="error" class="text-xs text-rose-300">
+                {{ error }}
+              </span>
+            </label>
+            <label class="grid gap-1 text-sm">
+              Slug
+              <input v-model="newTopic.slug" type="text" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2" />
+              <span v-for="error in fieldErrors.slug" :key="error" class="text-xs text-rose-300">
+                {{ error }}
+              </span>
+            </label>
+            <label class="grid gap-1 text-sm">
+              Level
+              <select v-model="newTopic.level" required class="rounded-xl bg-[var(--app-bg)] px-3 py-2">
+                <option value="">Select a level...</option>
+                <option value="beginner">Beginner</option>
+                <option value="intermediate">Intermediate</option>
+                <option value="advanced">Advanced</option>
+              </select>
+              <span v-for="error in fieldErrors.level" :key="error" class="text-xs text-rose-300">
+                {{ error }}
+              </span>
+            </label>
+            <button type="submit" class="w-fit rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">Create topic</button>
+          </form>
         </div>
 
-        <p v-if="isLoading" class="text-sm text-[var(--app-muted)]">Loading topics…</p>
-        <p v-else-if="errorMessage" class="text-sm text-rose-300">{{ errorMessage }}</p>
-        <ul v-else class="grid gap-3">
-          <li v-for="(topic, index) in topics" :key="topic.id" class="rounded-2xl bg-[var(--app-bg)] p-4">
-            <div v-if="editingId !== topic.id" class="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <p class="text-sm font-semibold">{{ topic.title }}</p>
-                <p class="text-xs text-[var(--app-muted)]">{{ topic.slug }}</p>
-                <span class="mt-2 inline-flex rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">
-                  {{ topic.level }}
-                </span>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <div v-if="isReordering" class="flex gap-1">
-                  <button
-                    @click="moveUp(index)"
-                    :disabled="index === 0"
-                    class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs disabled:opacity-50"
-                  >
-                    ↑
-                  </button>
-                  <button
-                    @click="moveDown(index)"
-                    :disabled="index === topics.length - 1"
-                    class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs disabled:opacity-50"
-                  >
-                    ↓
-                  </button>
-                </div>
-                <template v-else>
-                  <RouterLink
-                    :to="`/admin/topics/${topic.id}/versions?subjectId=${subjectId}`"
-                    class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs"
-                  >
-                    Manage Versions
-                  </RouterLink>
-                  <button @click="startEdit(topic)" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
-                    Edit
-                  </button>
-                  <button @click="confirmDelete(topic)" class="rounded-full border border-rose-400 px-3 py-1 text-xs text-rose-200">
-                    Delete
-                  </button>
-                </template>
-              </div>
-            </div>
-
-            <form v-else class="grid gap-3" @submit.prevent="saveEdit(topic)">
-              <label class="grid gap-1 text-sm">
-                Title
-                <input v-model="topic.title" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
-              </label>
-              <label class="grid gap-1 text-sm">
-                Slug
-                <input v-model="topic.slug" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
-              </label>
-              <label class="grid gap-1 text-sm">
-                Level
-                <select v-model="topic.level" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2">
-                  <option value="">Select a level...</option>
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                </select>
-              </label>
-              <div class="flex flex-wrap gap-2">
-                <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">Save</button>
-                <button type="button" @click="cancelEdit" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+        <div class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h3 class="text-lg font-semibold">All topics</h3>
+            <div class="flex items-center gap-2">
+              <button
+                v-if="!isReordering && topics.length > 1"
+                @click="startReorder"
+                class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs"
+              >
+                Reorder Topics
+              </button>
+              <div v-if="isReordering" class="flex gap-2">
+                <button @click="saveReorder" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">
+                  Save Order
+                </button>
+                <button @click="cancelReorder" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
                   Cancel
                 </button>
               </div>
-              <p v-if="editError" class="text-xs text-rose-300">{{ editError }}</p>
-            </form>
-          </li>
-        </ul>
+            </div>
+          </div>
+
+          <p v-if="isLoading" class="text-sm text-[var(--app-muted)]">Loading topics…</p>
+          <p v-else-if="errorMessage" class="text-sm text-rose-300">{{ errorMessage }}</p>
+          <ul v-else class="grid gap-3">
+            <li v-for="(topic, index) in topics" :key="topic.id" class="rounded-2xl bg-[var(--app-bg)] p-4">
+              <div v-if="editingId !== topic.id" class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p class="text-sm font-semibold">{{ topic.title }}</p>
+                  <p class="text-xs text-[var(--app-muted)]">{{ topic.slug }}</p>
+                  <span class="mt-2 inline-flex rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">
+                    {{ topic.level }}
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <div v-if="isReordering" class="flex gap-1">
+                    <button
+                      @click="moveUp(index)"
+                      :disabled="index === 0"
+                      class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs disabled:opacity-50"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      @click="moveDown(index)"
+                      :disabled="index === topics.length - 1"
+                      class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs disabled:opacity-50"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                  <template v-else>
+                    <RouterLink
+                      :to="`/admin/topics/${topic.id}/versions?subjectId=${subjectId}`"
+                      class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs"
+                    >
+                      Manage Versions
+                    </RouterLink>
+                    <button @click="startEdit(topic)" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+                      Edit
+                    </button>
+                    <button @click="confirmDelete(topic)" class="rounded-full border border-rose-400 px-3 py-1 text-xs text-rose-200">
+                      Delete
+                    </button>
+                  </template>
+                </div>
+              </div>
+
+              <form v-else class="grid gap-3" @submit.prevent="saveEdit(topic)">
+                <label class="grid gap-1 text-sm">
+                  Title
+                  <input v-model="topic.title" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                </label>
+                <label class="grid gap-1 text-sm">
+                  Slug
+                  <input v-model="topic.slug" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                </label>
+                <label class="grid gap-1 text-sm">
+                  Level
+                  <select v-model="topic.level" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2">
+                    <option value="">Select a level...</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </label>
+                <div class="flex flex-wrap gap-2">
+                  <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">Save</button>
+                  <button type="button" @click="cancelEdit" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+                    Cancel
+                  </button>
+                </div>
+                <p v-if="editError" class="text-xs text-rose-300">{{ editError }}</p>
+              </form>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
 
