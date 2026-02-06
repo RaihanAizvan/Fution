@@ -15,128 +15,132 @@
         </button>
       </header>
 
-      <div class="grid gap-6 rounded-2xl bg-[var(--panel-bg)] p-6">
-        <h3 class="text-lg font-semibold">Add new subject</h3>
-        <form class="grid gap-4" @submit.prevent="createSubject">
-          <label class="grid gap-1 text-sm">
-            Title
-            <input
-              v-model="newSubject.title"
-              type="text"
-              required
-              class="rounded-xl bg-[var(--app-bg)] px-3 py-2 text-[var(--app-text)]"
-            />
-            <span v-for="error in fieldErrors.title" :key="error" class="text-xs text-rose-300">
-              {{ error }}
-            </span>
-          </label>
-          <label class="grid gap-1 text-sm">
-            Slug
-            <input
-              v-model="newSubject.slug"
-              type="text"
-              required
-              class="rounded-xl bg-[var(--app-bg)] px-3 py-2 text-[var(--app-text)]"
-            />
-            <span v-for="error in fieldErrors.slug" :key="error" class="text-xs text-rose-300">
-              {{ error }}
-            </span>
-          </label>
-          <button type="submit" class="w-fit rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">
-            Create subject
-          </button>
-        </form>
-
-        <div v-if="showImport" class="grid gap-4 rounded-2xl bg-[var(--app-bg)] p-5">
-          <div>
-            <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--app-muted)]">
-              Upload subject JSON
-            </h4>
-            <p class="mt-2 text-sm text-[var(--app-muted)]">
-              Paste a full subject tree JSON payload. List-style blocks (accordion/checklist/pitfalls)
-              must use data.items with { title, description? }. Resources remain { title, url }.
-            </p>
-          </div>
-          <form class="grid gap-4" @submit.prevent="submitImport">
-            <label class="grid gap-1 text-sm">
-              JSON Payload
-              <textarea
-                v-model="importPayload"
-                rows="10"
-                placeholder="{ ... }"
-                required
-                class="min-h-[200px] rounded-xl bg-[var(--app-bg)] p-3 font-mono text-xs"
-              />
-              <span v-for="error in importErrors" :key="error" class="text-xs text-rose-300">
-                {{ error }}
-              </span>
-            </label>
-            <div class="flex flex-wrap gap-3">
-              <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">
-                Import JSON
-              </button>
-              <button
-                type="button"
-                class="rounded-full border border-[var(--sidebar-active)] px-4 py-2 text-sm"
-                @click="resetImport"
-              >
-                Clear
-              </button>
-            </div>
-            <p v-if="importMessage" class="text-sm text-emerald-300">{{ importMessage }}</p>
-            <p v-if="importErrorMessage" class="text-sm text-rose-300">{{ importErrorMessage }}</p>
-          </form>
-        </div>
-      </div>
-
-      <div class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6">
-        <div class="flex items-center justify-between">
-          <h3 class="text-lg font-semibold">All subjects</h3>
-          <span v-if="isLoading" class="text-sm text-[var(--app-muted)]">Loading…</span>
-        </div>
-        <p v-if="errorMessage" class="text-sm text-rose-300">{{ errorMessage }}</p>
-        <ul v-else class="grid gap-3">
-          <li v-for="subject in subjects" :key="subject.id" class="rounded-2xl bg-[var(--app-bg)] p-4">
-            <div v-if="editingId !== subject.id" class="flex flex-wrap items-start justify-between gap-4">
-              <div>
-                <p class="text-sm font-semibold">{{ subject.title }}</p>
-                <p class="text-xs text-[var(--app-muted)]">{{ subject.slug }}</p>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <RouterLink
-                  :to="`/admin/subjects/${subject.id}/topics`"
-                  class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs"
-                >
-                  Manage Topics
-                </RouterLink>
-                <button @click="startEdit(subject)" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
-                  Edit
-                </button>
-                <button @click="confirmDelete(subject)" class="rounded-full border border-rose-400 px-3 py-1 text-xs text-rose-200">
-                  Delete
-                </button>
-              </div>
-            </div>
-
-            <form v-else class="grid gap-3" @submit.prevent="saveEdit(subject)">
+      <div class="grid gap-6 lg:grid-cols-[minmax(260px,360px)_1fr]">
+        <div class="grid gap-6">
+          <div class="grid gap-6 rounded-2xl bg-[var(--panel-bg)] p-6">
+            <h3 class="text-lg font-semibold">Add new subject</h3>
+            <form class="grid gap-4" @submit.prevent="createSubject">
               <label class="grid gap-1 text-sm">
                 Title
-                <input v-model="subject.title" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                <input
+                  v-model="newSubject.title"
+                  type="text"
+                  required
+                  class="rounded-xl bg-[var(--app-bg)] px-3 py-2 text-[var(--app-text)]"
+                />
+                <span v-for="error in fieldErrors.title" :key="error" class="text-xs text-rose-300">
+                  {{ error }}
+                </span>
               </label>
               <label class="grid gap-1 text-sm">
                 Slug
-                <input v-model="subject.slug" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                <input
+                  v-model="newSubject.slug"
+                  type="text"
+                  required
+                  class="rounded-xl bg-[var(--app-bg)] px-3 py-2 text-[var(--app-text)]"
+                />
+                <span v-for="error in fieldErrors.slug" :key="error" class="text-xs text-rose-300">
+                  {{ error }}
+                </span>
               </label>
-              <div class="flex flex-wrap gap-2">
-                <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">Save</button>
-                <button type="button" @click="cancelEdit" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
-                  Cancel
+              <button type="submit" class="w-fit rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">
+                Create subject
+              </button>
+            </form>
+          </div>
+
+          <div v-if="showImport" class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6">
+            <div>
+              <h4 class="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--app-muted)]">
+                Upload subject JSON
+              </h4>
+              <p class="mt-2 text-sm text-[var(--app-muted)]">
+                Paste a full subject tree JSON payload. List-style blocks (accordion/checklist/pitfalls)
+                must use data.items with { title, description? }. Resources remain { title, url }.
+              </p>
+            </div>
+            <form class="grid gap-4" @submit.prevent="submitImport">
+              <label class="grid gap-1 text-sm">
+                JSON Payload
+                <textarea
+                  v-model="importPayload"
+                  rows="10"
+                  placeholder="{ ... }"
+                  required
+                  class="min-h-[200px] rounded-xl bg-[var(--app-bg)] p-3 font-mono text-xs"
+                />
+                <span v-for="error in importErrors" :key="error" class="text-xs text-rose-300">
+                  {{ error }}
+                </span>
+              </label>
+              <div class="flex flex-wrap gap-3">
+                <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-4 py-2 text-sm">
+                  Import JSON
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full border border-[var(--sidebar-active)] px-4 py-2 text-sm"
+                  @click="resetImport"
+                >
+                  Clear
                 </button>
               </div>
-              <p v-if="editError" class="text-xs text-rose-300">{{ editError }}</p>
+              <p v-if="importMessage" class="text-sm text-emerald-300">{{ importMessage }}</p>
+              <p v-if="importErrorMessage" class="text-sm text-rose-300">{{ importErrorMessage }}</p>
             </form>
-          </li>
-        </ul>
+          </div>
+        </div>
+
+        <div class="grid gap-4 rounded-2xl bg-[var(--panel-bg)] p-6">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">All subjects</h3>
+            <span v-if="isLoading" class="text-sm text-[var(--app-muted)]">Loading…</span>
+          </div>
+          <p v-if="errorMessage" class="text-sm text-rose-300">{{ errorMessage }}</p>
+          <ul v-else class="grid gap-3">
+            <li v-for="subject in subjects" :key="subject.id" class="rounded-2xl bg-[var(--app-bg)] p-4">
+              <div v-if="editingId !== subject.id" class="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p class="text-sm font-semibold">{{ subject.title }}</p>
+                  <p class="text-xs text-[var(--app-muted)]">{{ subject.slug }}</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <RouterLink
+                    :to="`/admin/subjects/${subject.id}/topics`"
+                    class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs"
+                  >
+                    Manage Topics
+                  </RouterLink>
+                  <button @click="startEdit(subject)" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+                    Edit
+                  </button>
+                  <button @click="confirmDelete(subject)" class="rounded-full border border-rose-400 px-3 py-1 text-xs text-rose-200">
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <form v-else class="grid gap-3" @submit.prevent="saveEdit(subject)">
+                <label class="grid gap-1 text-sm">
+                  Title
+                  <input v-model="subject.title" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                </label>
+                <label class="grid gap-1 text-sm">
+                  Slug
+                  <input v-model="subject.slug" type="text" required class="rounded-xl bg-[var(--panel-bg)] px-3 py-2" />
+                </label>
+                <div class="flex flex-wrap gap-2">
+                  <button type="submit" class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs">Save</button>
+                  <button type="button" @click="cancelEdit" class="rounded-full border border-[var(--sidebar-active)] px-3 py-1 text-xs">
+                    Cancel
+                  </button>
+                </div>
+                <p v-if="editError" class="text-xs text-rose-300">{{ editError }}</p>
+              </form>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
 
