@@ -16,7 +16,7 @@
               class="flex items-center gap-2 rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
               active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
             >
-              <LayoutDashboard class="h-4 w-4" />
+              <LayoutDashboardIcon class="h-4 w-4" />
               Dashboard
             </RouterLink>
             <div class="grid gap-1">
@@ -25,7 +25,7 @@
                   to="/admin/content/subjects"
                   class="flex flex-1 items-center gap-2 text-left"
                 >
-                  <Layers class="h-4 w-4" />
+                  <LayersIcon class="h-4 w-4" />
                   Subjects
                 </RouterLink>
                 <button
@@ -63,7 +63,7 @@
               class="flex items-center gap-2 rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
               active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
             >
-              <Blocks class="h-4 w-4" />
+              <BlocksIcon class="h-4 w-4" />
               Blocks
             </RouterLink>
           </nav>
@@ -73,11 +73,11 @@
           <p class="text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">System</p>
           <nav class="mt-4 grid gap-1 text-sm">
             <button class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
-              <Image class="h-4 w-4" />
+              <ImageIcon class="h-4 w-4" />
               Media
             </button>
             <button class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
-              <Users class="h-4 w-4" />
+              <UsersIcon class="h-4 w-4" />
               Users
             </button>
             <RouterLink
@@ -85,11 +85,11 @@
               class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
               active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
             >
-              <Settings class="h-4 w-4" />
+              <SettingsIcon class="h-4 w-4" />
               Settings
             </RouterLink>
             <button class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
-              <ClipboardList class="h-4 w-4" />
+              <ClipboardListIcon class="h-4 w-4" />
               Logs
             </button>
           </nav>
@@ -201,13 +201,13 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import {
-  Blocks,
-  ClipboardList,
-  Image,
-  Layers,
-  LayoutDashboard,
-  Settings,
-  Users
+  BlocksIcon,
+  ClipboardListIcon,
+  ImageIcon,
+  LayersIcon,
+  LayoutDashboardIcon,
+  SettingsIcon,
+  UsersIcon
 } from 'lucide-vue-next'
 import { subjectsApi, type SubjectRecord } from './api/subjectsApi'
 
