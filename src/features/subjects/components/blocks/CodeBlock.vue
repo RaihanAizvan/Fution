@@ -1,12 +1,19 @@
 <template>
-  <section class="rounded-lg bg-[var(--panel-bg)] px-6 py-5">
-    <header class="mb-3">
-      <h3 class="text-sm font-medium text-[var(--app-muted)]">
-        {{ languageLabel }}
-      </h3>
-    </header>
+  <section class="rounded-2xl bg-[var(--panel-bg)] px-4 py-3">
+    <header class="mb-2 flex items-center justify-between">
+  <h3 class="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-[var(--app-muted)]">
+    {{ languageLabel }}
+  </h3>
 
-    <div class="overflow-x-auto rounded-md bg-[var(--code-bg)] px-5 py-4 text-sm leading-relaxed">
+  <button
+    @click="copyCode"
+    class="text-[0.65rem] font-medium uppercase tracking-[0.2em] text-[var(--app-muted)] transition-colors hover:text-[var(--app-text)]"
+  >
+    {{ copied ? 'Copied ✓' : 'Copy' }}
+  </button>
+</header>
+
+    <div class="overflow-x-auto rounded-xl bg-[var(--code-bg)] px-3 py-6 text-[0.82rem] leading-relaxed">
       <div v-if="isLoading" class="text-[var(--app-muted)]">Loading syntax highlighting…</div>
       <div v-else v-html="highlighted" class="shiki-output" />
     </div>
@@ -29,6 +36,21 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+  const copied = ref(false)
+
+const copyCode = async () => {
+  try {
+    await navigator.clipboard.writeText(props.code)
+    copied.value = true
+
+    setTimeout(() => {
+      copied.value = false
+    }, 2000)
+  } catch (err) {
+    console.error('Copy failed', err)
+  }
+}
 
 const highlighted = ref('')
 const isLoading = ref(true)
@@ -97,8 +119,14 @@ watch(() => [props.code, props.language], () => {
 }
 
 .shiki-output :deep(code) {
-  font-family: 'SF Mono', 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-family: 'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 0;
+  color:inherit !important;
 }
+
+.shiki-output :deep(.line) {
+  display: block;
+}
+
 </style>

@@ -16,7 +16,6 @@ export const versionsApi = {
   createDraft: (topicId: string, version: number) =>
     adminClient.post<TopicVersionRecord>(`/admin/topics/${topicId}/versions`, {
       version,
-      isPublished: false
     }),
   publish: (topicId: string, versionId: string) =>
     adminClient.post<TopicVersionRecord>(

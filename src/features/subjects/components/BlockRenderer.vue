@@ -50,6 +50,7 @@ interface CodeBlock {
 interface ListItemBlock {
   title: string
   description?: string
+  content: string
 }
 
 interface AccordionBlockType {
