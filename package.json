@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.19",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
