@@ -19,31 +19,31 @@
               <LayoutDashboardIcon class="h-4 w-4" />
               Dashboard
             </RouterLink>
-            <div class="grid gap-1">
-              <div class="flex items-center justify-between rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
-                <RouterLink
-                  to="/admin/content/subjects"
-                  class="flex flex-1 items-center gap-2 text-left"
-                >
-                  <LayersIcon class="h-4 w-4" />
-                  Subjects
-                </RouterLink>
+
+            <RouterLink
+              to="/admin/subjects"
+              class="flex items-center gap-2 rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
+            >
+              <LayersIcon class="h-4 w-4" />
+              Subject Library
+            </RouterLink>
+
+            <div class="mt-4">
+              <div class="flex items-center justify-between px-3 py-2 text-[0.65rem] uppercase tracking-wider text-[var(--app-muted)]">
+                Recent Subjects
                 <button
                   type="button"
-                  class="ml-2 text-[var(--app-text)]/50"
-                  @click.stop="toggleSubjects"
+                  class="transition-transform"
+                  :class="{ 'rotate-180': isSubjectsOpen }"
+                  @click="toggleSubjects"
                 >
-                  <span
-                    class="inline-flex h-5 w-5 items-center justify-center transition-transform"
-                    :class="{ 'rotate-180': isSubjectsOpen }"
-                  >
-                    <svg viewBox="0 0 20 20" fill="none" class="h-3 w-3" stroke="currentColor" stroke-width="2">
-                      <path d="M5 7.5l5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                  </span>
+                  <svg viewBox="0 0 20 20" fill="none" class="h-3 w-3" stroke="currentColor" stroke-width="2">
+                    <path d="M5 7.5l5 5 5-5" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
                 </button>
               </div>
-              <div v-if="isSubjectsOpen" class="max-h-52 overflow-y-auto pl-4">
+              <div v-if="isSubjectsOpen" class="mt-1 max-h-52 overflow-y-auto pl-2 space-y-1">
                 <RouterLink
                   v-for="subject in sidebarSubjects"
                   :key="subject.id"
@@ -58,14 +58,6 @@
                 </RouterLink>
               </div>
             </div>
-            <RouterLink
-              to="/admin/subjects"
-              class="flex items-center gap-2 rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
-              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
-            >
-              <BlocksIcon class="h-4 w-4" />
-              Blocks
-            </RouterLink>
           </nav>
         </div>
 
