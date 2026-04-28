@@ -55,11 +55,13 @@
           </div>
           <div 
             v-else
-            class="prose lg:prose-lg dark:prose-invert max-w-none 
-                   prose-headings:text-[var(--app-text)] 
-                   prose-p:text-[var(--app-muted)] 
-                   prose-a:text-blue-400 
-                   prose-code:text-pink-400" 
+            class="prose prose-neutral dark:prose-invert max-w-none 
+                   prose-h1:text-4xl prose-h1:font-bold
+                   prose-h2:text-2xl prose-h2:mt-10 prose-h2:font-semibold
+                   prose-p:text-[var(--app-muted)] prose-p:leading-relaxed
+                   prose-li:marker:text-orange-400
+                   prose-code:bg-neutral-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-pink-400 prose-code:font-medium
+                   prose-pre:bg-black prose-pre:border prose-pre:border-neutral-800 prose-pre:rounded-xl"
             v-html="renderedHtml"
           ></div>
         </div>
@@ -128,3 +130,27 @@ onMounted(() => {
   void loadContent()
 })
 </script>
+
+<style>
+/* Modern vertical rhythm and micro-adjustments for preview */
+.prose pre {
+  @apply shadow-2xl;
+  padding: 1.25rem !important;
+  margin-top: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+.prose h2, .prose h3 {
+  @apply tracking-tight font-semibold;
+}
+
+.prose code::before,
+.prose code::after {
+  content: "";
+}
+
+.prose p {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+</style>
