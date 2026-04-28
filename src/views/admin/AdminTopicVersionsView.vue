@@ -42,7 +42,7 @@
                   :to="`/admin/topics/${topicId}/versions/${version.id}?subjectId=${subjectId}`"
                   class="rounded-full bg-[var(--sidebar-active)] px-3 py-1 text-xs"
                 >
-                  Manage blocks
+                  Edit Content
                 </RouterLink>
                 <button
                   v-if="!version.isPublished"
