@@ -9,10 +9,11 @@
         <SubjectSidebar />
       </template>
       <SubjectMainContent
-        :title="subject.title"
-        :blocks="selectedBlocks"
+        :title="content?.topic.title || subject.title"
+        :html="content?.html || null"
         :isLoading="blocksLoading"
         :hasError="blocksHasError"
+        :errorMessage="blocksError"
       />
     </SubjectLayout>
   </section>
@@ -25,15 +26,16 @@ import SubjectMainContent from '../features/subjects/components/SubjectMainConte
 import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
 import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
 import { useSubjectDetail } from '../composables/useSubjectDetail'
-import { useTopicBlocks } from '../composables/useTopicBlocks'
+import { useTopicContent } from '../composables/useTopicContent'
 
 const route = useRoute()
 const { subject, isLoading, hasError } = useSubjectDetail()
 
 const selectedTopicSlug = computed(() => route.params.topicSlug as string | null)
 const {
-  blocks: selectedBlocks,
+  content,
   isLoading: blocksLoading,
+  error: blocksError,
   hasError: blocksHasError
-} = useTopicBlocks(() => selectedTopicSlug.value)
+} = useTopicContent(() => selectedTopicSlug.value)
 </script>
