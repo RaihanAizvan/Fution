@@ -1,3 +1,5 @@
 export { createApiTopicsSource } from './topicsApiSource'
 export { createMockTopicsSource } from './topicsMockSource'
 export type { TopicSummary, TopicsSource } from './topicsMockSource'
+export { fetchTopicContent } from './topicContentService'
+export type { TopicContent } from './topicContentService'
