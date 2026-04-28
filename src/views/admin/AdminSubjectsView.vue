@@ -61,6 +61,12 @@
           </span>
 
           <div class="flex gap-2">
+            <RouterLink
+              :to="`/admin/subjects/${subject.id}/topics`"
+              class="rounded-md bg-[var(--app-bg)] px-3 py-1 text-xs text-[var(--app-text)] hover:shadow-md"
+            >
+              Topics
+            </RouterLink>
             <button
               class="rounded-md border border-[var(--sidebar-border)] px-3 py-1 text-xs text-[var(--app-text)]/70 hover:border-[var(--app-text)]/30"
               @click="startEdit(subject)"
