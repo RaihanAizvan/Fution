@@ -19,6 +19,19 @@
     </div>
 
     <article v-else class="mx-auto max-w-3xl px-4 space-y-6">
+      <div class="flex items-center justify-between">
+        <button
+          type="button"
+          @click="goBack"
+          class="inline-flex items-center gap-2 text-sm text-[var(--app-muted)] transition hover:text-[var(--app-text)]"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Back
+        </button>
+      </div>
+
       <header class="pb-6 border-b border-[var(--app-border)]/50">
         <h1 class="text-4xl font-bold text-[var(--app-text)] tracking-tight">
           {{ title }}
@@ -49,28 +62,16 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const emit = defineEmits<{
+  back: []
+}>()
+
+const goBack = () => {
+  emit('back')
+}
 </script>
 
 <style>
 /* Modern vertical rhythm and micro-adjustments */
-.prose pre {
-  @apply shadow-2xl;
-  padding: 1.25rem !important;
-  margin-top: 2rem !important;
-  margin-bottom: 2rem !important;
-}
-
-.prose h2, .prose h3 {
-  @apply tracking-tight;
-}
-
-.prose code::before,
-.prose code::after {
-  content: "";
-}
-
-.prose p {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-}
 </style>

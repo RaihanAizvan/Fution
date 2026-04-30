@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import HomeView from '../views/HomeView.vue'
 import SubjectDetailView from '../views/SubjectDetailView.vue'
 import SubjectsView from '../views/SubjectsView.vue'
 import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
@@ -11,6 +12,11 @@ import AdminSettingsView from '../views/admin/AdminSettingsView.vue'
 import SettingsView from '../views/SettingsView.vue'
 
 const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: HomeView
+  },
   {
     path: '/subjects',
     name: 'subjects',

@@ -11,15 +11,24 @@ export interface TopicContent {
 }
 
 export async function fetchTopicContent(slug: string): Promise<TopicContent> {
-    const response = await fetch(`${API_BASE_URL}/topics/${slug}/content`)
+    // Use mock data for development
+    const { createMockTopicContentSource } = await import('./topicsContentMockSource')
+    const mockSource = createMockTopicContentSource()
 
-    if (response.status === 404) {
-        throw new Error('Content not found')
+    try {
+        return await mockSource.getTopicContent(slug)
+    } catch (error) {
+        // Fallback to API if mock fails
+        const response = await fetch(`${API_BASE_URL}/topics/${slug}/content`)
+
+        if (response.status === 404) {
+            throw new Error('Content not found')
+        }
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch topic content')
+        }
+
+        return response.json() as Promise<TopicContent>
     }
-
-    if (!response.ok) {
-        throw new Error('Failed to fetch topic content')
-    }
-
-    return response.json() as Promise<TopicContent>
 }

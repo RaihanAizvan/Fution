@@ -1,5 +1,7 @@
 Admin CMS API Reference
 
+System is now pure Markdown-driven with cached HTML rendering. Content is stored as raw Markdown and pre-rendered to HTML on write (create/update) for high-performance delivery.
+
 Base Path: /admin
 Auth: Admin-only (guarded)
 Content-Type: application/json
@@ -54,12 +56,16 @@ Delete a subject.
 
 Rules
 - Fails if any topic under the subject has a published version.
+- If allowed, deletes subject, topics, and versions in a transaction.
 
 Error
 {
   "statusCode": 400,
   "message": "Cannot delete subject with published topic content. Deactivate it instead or unpublish the content first."
 }
+
+Response
+{ "deleted": true }
 
 PUT /admin/subjects/reorder
 Bulk reorder subjects.
@@ -93,9 +99,7 @@ Body
       "versions": [
         {
           "status": "published",
-          "blocks": [
-            { "type": "intro", "data": { "title": "Functions", "description": "Reusable blocks of logic." } }
-          ]
+          "markdown": "# Functions\n\nReusable blocks of logic.\n\n```javascript\nfunction add(a, b) { return a + b; }\n```"
         }
       ]
     }
@@ -107,7 +111,7 @@ Rules
 - Topics are upserted by slug + subjectId.
 - Versions are always new (append-only).
 - status: "published" unpublishes previous version, publishes the new one.
-- Blocks are created fresh in payload order.
+- HTML is automatically rendered from markdown during import.
 - Entire import is transactional.
 
 Validation Error
@@ -115,73 +119,7 @@ Validation Error
   "error": "VALIDATION_ERROR",
   "errors": [
     "topics[0].versions must not be empty",
-    "topics[1].versions[0].blocks[2] Invalid block data"
-  ]
-}
-
-Example Bulk Import JSON (full subject tree)
-{
-  "subject": {
-    "slug": "javascript",
-    "title": "JavaScript",
-    "orderIndex": 1,
-    "isActive": true
-  },
-  "topics": [
-    {
-      "slug": "functions",
-      "title": "Functions",
-      "level": "beginner",
-      "orderIndex": 1,
-      "isActive": true,
-      "versions": [
-        {
-          "status": "published",
-          "blocks": [
-            {
-              "type": "intro",
-              "data": {
-                "title": "Functions",
-                "description": "Reusable blocks of logic."
-              }
-            },
-            {
-              "type": "code",
-              "data": {
-                "language": "javascript",
-                "code": "function add(a, b) { return a + b; }"
-              }
-            },
-            {
-              "type": "accordion",
-              "data": {
-                "items": [
-                  {
-                    "title": "Arrow Functions",
-                    "content": "Shorter syntax with lexical this."
-                  },
-                  {
-                    "title": "Closures",
-                    "content": "Functions that capture variables from their scope."
-                  }
-                ]
-              }
-            },
-            {
-              "type": "resources",
-              "data": {
-                "items": [
-                  {
-                    "title": "MDN Functions",
-                    "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions"
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    }
+    "topics[1].versions[0].markdown is required"
   ]
 }
 
@@ -214,6 +152,10 @@ Delete a topic.
 
 Rules
 - Fails if the topic has any published version.
+- If allowed, deletes topic and its versions in a transaction.
+
+Response
+{ "deleted": true }
 
 PUT /admin/subjects/:subjectId/topics/reorder
 Bulk reorder topics inside a subject.
@@ -232,112 +174,38 @@ GET /admin/topics/:topicId/versions
 List all versions for a topic.
 
 GET /admin/topics/:topicId/versions/:versionId
-Get a specific version.
+Get a specific version (includes markdown and pre-rendered html).
 
 POST /admin/topics/:topicId/versions
-Create a topic version.
+Create a draft version.
 
 Body
 {
   "version": 2,
-  "isPublished": false
+  "markdown": "# Topic Content"
+}
+
+PATCH /admin/topics/:topicId/versions/:versionId
+Update a version's content.
+
+Body
+{
+  "markdown": "# Updated Content"
 }
 
 POST /admin/topics/:topicId/versions/:versionId/publish
-Publish a version.
+Publish a version (unpublishes prior published version).
 
-Blocks
+Public Content
 
-GET /admin/versions/:versionId/blocks
-List blocks for a version.
+GET /topics/:slug/content
+Fetch published content for a topic (returns cached HTML).
 
-POST /admin/versions/:versionId/blocks
-Create a block.
-
-Body
+Response 200
 {
-  "type": "intro",
-  "orderIndex": 1,
-  "data": { "title": "Intro", "description": "..." }
-}
-
-Block type examples
-
-Intro
-{
-  "type": "intro",
-  "data": {
-    "title": "Functions",
-    "description": "Reusable blocks of logic."
-  }
-}
-
-Code
-{
-  "type": "code",
-  "data": {
-    "language": "javascript",
-    "code": "function add(a, b) { return a + b; }"
-  }
-}
-
-Accordion
-{
-  "type": "accordion",
-  "data": {
-    "items": [
-      { "title": "Arrow Functions", "content": "Shorter syntax with lexical this." },
-      { "title": "Closures", "content": "Functions that capture variables from their scope." }
-    ]
-  }
-}
-
-Checklist
-{
-  "type": "checklist",
-  "data": {
-    "items": [
-      { "text": "Use descriptive variable names" },
-      { "text": "Prefer const/let over var" }
-    ]
-  }
-}
-
-Pitfalls
-{
-  "type": "pitfalls",
-  "data": {
-    "items": [
-      { "title": "Hoisting", "description": "Function declarations are hoisted." }
-    ]
-  }
-}
-
-Resources
-{
-  "type": "resources",
-  "data": {
-    "items": [
-      { "title": "MDN Functions", "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions" }
-    ]
-  }
-}
-
-PATCH /admin/versions/:versionId/blocks/:blockId
-Update a block.
-
-DELETE /admin/versions/:versionId/blocks/:blockId
-Delete a block.
-
-PUT /admin/versions/:versionId/blocks/reorder
-Reorder blocks.
-
-Body
-{
-  "blocks": [
-    { "blockId": "uuid-1", "orderIndex": 1 },
-    { "blockId": "uuid-2", "orderIndex": 2 }
-  ]
+  "topic": { "slug": "string", "title": "string", "isActive": "boolean" },
+  "markdown": "string",
+  "html": "string (rendered HTML)"
 }
 
 Validation & Errors

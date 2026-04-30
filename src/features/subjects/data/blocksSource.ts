@@ -1,4 +1,5 @@
 import type { TopicBlock } from './topicBlocks'
+import { createMockBlocksSource } from './mockBlocksSource'
 
 export interface BlocksSource {
   getBlocksByTopic: (slug: string) => Promise<TopicBlock[]>
@@ -17,6 +18,7 @@ type BlocksApiResponse = {
 }
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA !== 'false'
 
 const mapBlocks = (response: BlocksApiResponse): TopicBlock[] =>
   response.blocks.reduce<TopicBlock[]>((acc, block) => {
@@ -68,7 +70,7 @@ const mapBlocks = (response: BlocksApiResponse): TopicBlock[] =>
     return acc
   }, [])
 
-export const createBlocksSource = (): BlocksSource => ({
+const createApiBlocksSource = (): BlocksSource => ({
   async getBlocksByTopic(slug: string) {
     const response = await fetch(`${API_BASE_URL}/topics/${slug}/content`)
 
@@ -85,3 +87,10 @@ export const createBlocksSource = (): BlocksSource => ({
     return mapBlocks(payload)
   }
 })
+
+export const createBlocksSource = (): BlocksSource => {
+  if (USE_MOCK_DATA || !API_BASE_URL) {
+    return createMockBlocksSource()
+  }
+  return createApiBlocksSource()
+}
