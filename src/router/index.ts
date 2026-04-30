@@ -68,11 +68,6 @@ const routes = [
     path: '/admin/settings',
     name: 'admin-settings',
     component: AdminSettingsView
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: SettingsView
   }
 ]
 

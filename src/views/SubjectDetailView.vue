@@ -14,6 +14,8 @@
         :isLoading="contentLoading"
         :hasError="contentHasError"
         :errorMessage="contentError"
+        :subjectTitle="subject.title"
+        :topicTitle="selectedTopicTitle"
         @back="goBack"
       />
       <template #toc>

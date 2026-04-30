@@ -19,6 +19,8 @@
     </div>
 
     <article v-else class="mx-auto max-w-3xl px-4 space-y-6">
+      <Breadcrumbs :subjectTitle="subjectTitle" :topicTitle="topicTitle" />
+
       <div class="flex items-center justify-between">
         <button
           type="button"
@@ -53,12 +55,16 @@
 </template>
 
 <script setup lang="ts">
+import Breadcrumbs from './Breadcrumbs.vue'
+
 interface Props {
   title: string
   html: string | null
   isLoading?: boolean
   hasError?: boolean
   errorMessage?: string | null
+  subjectTitle?: string
+  topicTitle?: string
 }
 
 defineProps<Props>()
