@@ -249,7 +249,6 @@ const isLoading = ref(false)
 const errorMessage = ref('')
 const fieldErrors = reactive<{ title?: string[]; slug?: string[]; description?: string[] }>({})
 const newSubject = reactive({ title: '', slug: '', description: '', isActive: true })
-const isReordering = ref(false)
 
 const showImport = ref(false)
 const showCreate = ref(false)
@@ -347,13 +346,6 @@ const dropDrag = async (index: number) => {
 
 const toggleImport = () => {
   showImport.value = !showImport.value
-  importErrorMessage.value = ''
-  importMessage.value = ''
-}
-
-const resetImport = () => {
-  importPayload.value = ''
-  importErrors.value = []
   importErrorMessage.value = ''
   importMessage.value = ''
 }

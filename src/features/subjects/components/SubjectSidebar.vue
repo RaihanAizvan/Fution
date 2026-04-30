@@ -28,9 +28,10 @@
     </div>
 
     <div class="mt-6 border-t border-[var(--sidebar-active)] pt-4">
-      <RouterLink
-        to="/settings"
-        class="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-[var(--app-text)]/70 transition hover:bg-[var(--sidebar-active)] hover:text-[var(--app-text)]"
+      <button
+        type="button"
+        @click="openSettings"
+        class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-[var(--app-text)]/70 transition hover:bg-[var(--sidebar-active)] hover:text-[var(--app-text)]"
       >
         <span
           class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[var(--sidebar-active)]"
@@ -49,7 +50,7 @@
           </svg>
         </span>
         Settings
-      </RouterLink>
+      </button>
     </div>
   </div>
 </template>
@@ -59,6 +60,10 @@ import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import { useSubjectTopics } from '../../../composables/useSubjectTopics'
 
+const emit = defineEmits<{
+  'open-settings': []
+}>()
+
 const route = useRoute()
 const { topics, isLoading, hasError } = useSubjectTopics()
 
@@ -66,4 +71,8 @@ const selectedTopicSlug = computed(() => route.params.topicSlug as string | unde
 const subjectSlug = computed(() => route.params.slug as string)
 
 const getTopicLink = (topicId: string) => `/subjects/${subjectSlug.value}/${topicId}`
+
+const openSettings = () => {
+  emit('open-settings')
+}
 </script>

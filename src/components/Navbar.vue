@@ -87,7 +87,7 @@
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 
-const emit = defineEmits<{
+defineEmits<{
   'open-settings': []
 }>()
 

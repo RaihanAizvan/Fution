@@ -6,7 +6,7 @@
 
     <SubjectLayout v-else>
       <template #sidebar>
-        <SubjectSidebar />
+        <SubjectSidebar @open-settings="openSettings" />
       </template>
       <SubjectMainContent
         :title="selectedTopicTitle || subject.title"
@@ -15,7 +15,7 @@
         :hasError="contentHasError"
         :errorMessage="contentError"
         :subjectTitle="subject.title"
-        :topicTitle="selectedTopicTitle"
+        :topicTitle="selectedTopicTitle || undefined"
         @back="goBack"
       />
       <template #toc>
@@ -35,6 +35,10 @@ import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
 import { useSubjectDetail } from '../composables/useSubjectDetail'
 import { useTopicContent } from '../composables/useTopicContent'
 
+const emit = defineEmits<{
+  'open-settings': []
+}>()
+
 const route = useRoute()
 const router = useRouter()
 const { subject, isLoading, hasError } = useSubjectDetail()
@@ -51,5 +55,9 @@ const selectedTopicTitle = computed(() => topicContent.value?.topic.title || nul
 
 const goBack = () => {
   router.back()
+}
+
+const openSettings = () => {
+  emit('open-settings')
 }
 </script>
