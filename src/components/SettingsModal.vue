@@ -12,6 +12,7 @@
         v-if="isOpen"
         class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
         @click="close"
+        role="presentation"
       >
         <Transition
           enter-active-class="transition-all duration-200"
@@ -25,10 +26,13 @@
             v-if="isOpen"
             class="relative mx-4 w-full max-w-2xl max-h-[90vh] overflow-hidden rounded-2xl bg-[var(--panel-bg)] shadow-2xl"
             @click.stop
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="settings-title"
           >
             <!-- Header -->
             <div class="flex items-center justify-between border-b border-[var(--panel-border)] px-6 py-4">
-              <h2 class="text-xl font-semibold text-[var(--app-text)]">Settings</h2>
+              <h2 id="settings-title" class="text-xl font-semibold text-[var(--app-text)]">Settings</h2>
               <button
                 type="button"
                 @click="close"
@@ -137,7 +141,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useTheme } from '../app/theme'
 
 interface Props {
@@ -156,4 +160,19 @@ const { theme, themes, setTheme } = useTheme()
 const close = () => {
   emit('close')
 }
+
+// Handle Escape key to close modal
+const handleKeyDown = (e: KeyboardEvent) => {
+  if (e.key === 'Escape') {
+    close()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown)
+})
 </script>
