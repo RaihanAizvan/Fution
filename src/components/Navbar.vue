@@ -1,5 +1,5 @@
 <template>
-  <nav class="sticky top-0 z-50 border-b border-[var(--panel-border)] bg-[var(--panel-bg)]">
+  <nav class="fixed inset-x-0 top-0 z-50 border-b border-[var(--panel-border)] bg-[var(--panel-bg)]">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
         <RouterLink

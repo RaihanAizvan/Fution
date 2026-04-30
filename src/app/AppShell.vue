@@ -5,7 +5,7 @@
   >
     <Navbar @open-settings="openSettings" />
     <main
-      class="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--app-bg-glow),transparent_45%)]"
+      class="min-h-screen pt-16 bg-[radial-gradient(circle_at_top_left,var(--app-bg-glow),transparent_45%)]"
     >
       <slot />
     </main>
