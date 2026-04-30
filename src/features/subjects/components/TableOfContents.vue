@@ -3,18 +3,24 @@
     v-if="headings.length > 0"
     class="sticky top-8 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-lg border border-[var(--panel-border)] bg-[var(--panel-bg)] p-4"
   >
-    <p class="mb-4 text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)]">
-      On this page
-    </p>
-    <ul class="space-y-2">
+    <div class="mb-4 flex items-center gap-2">
+      <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+      </svg>
+      <p class="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)]">
+        Table of Contents
+      </p>
+    </div>
+    <ul class="space-y-1">
       <li v-for="heading in headings" :key="heading.id">
         <button
           type="button"
           @click="scrollToHeading(heading.id)"
           :class="[
-            'text-left text-sm transition hover:text-blue-400',
+            'w-full text-left text-sm transition-all duration-200 hover:text-blue-400 rounded px-2 py-1',
             {
-              'font-semibold text-[var(--app-text)]': heading.level === 2,
+              'font-semibold text-[var(--app-text)] bg-blue-500/10 border-l-2 border-blue-500': activeHeading === heading.id,
+              'font-medium text-[var(--app-text)]': heading.level === 2 && activeHeading !== heading.id,
               'text-[var(--app-muted)] pl-4': heading.level === 3,
               'text-[var(--app-muted)] pl-8': heading.level === 4,
             }
@@ -26,12 +32,17 @@
     </ul>
   </nav>
   <div v-else class="rounded-lg border border-[var(--panel-border)] bg-[var(--panel-bg)] p-4">
-    <p class="text-xs text-[var(--app-muted)]">No headings available</p>
+    <div class="flex items-center gap-2">
+      <svg class="h-4 w-4 text-[var(--app-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+      </svg>
+      <p class="text-xs text-[var(--app-muted)]">No table of contents available</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
 
 interface Heading {
   id: string
@@ -45,6 +56,7 @@ interface Props {
 
 const props = defineProps<Props>()
 const headings = ref<Heading[]>([])
+const activeHeading = ref<string>('')
 
 const extractHeadings = () => {
   headings.value = []
@@ -76,9 +88,6 @@ const extractHeadings = () => {
       })
     }
   })
-
-  // Update the HTML in the DOM with the new IDs
-  // This is a bit hacky but necessary to ensure headings have IDs for scrolling
 }
 
 const scrollToHeading = (id: string) => {
@@ -89,14 +98,45 @@ const scrollToHeading = (id: string) => {
   }
 }
 
+const updateActiveHeading = () => {
+  const headingElements = headings.value.map(heading => document.getElementById(heading.id)).filter(Boolean)
+  
+  for (let i = headingElements.length - 1; i >= 0; i--) {
+    const element = headingElements[i]!
+    const rect = element.getBoundingClientRect()
+    
+    // If the heading is above the viewport (with some tolerance), it's active
+    if (rect.top <= 100) {
+      activeHeading.value = element.id
+      return
+    }
+  }
+  
+  // If no heading is active, set the first one
+  activeHeading.value = headings.value[0]?.id || ''
+}
+
+const handleScroll = () => {
+  updateActiveHeading()
+}
+
 watch(
   () => props.html,
   () => {
     // Small delay to ensure DOM is updated
     setTimeout(() => {
       extractHeadings()
+      updateActiveHeading()
     }, 100)
   },
   { immediate: true }
 )
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll, { passive: true })
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
