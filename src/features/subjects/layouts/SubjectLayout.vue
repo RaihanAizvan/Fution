@@ -207,7 +207,6 @@ onUnmounted(() => {
 
 .subject-layout__sidebar-inner,
 .subject-layout__toc-inner {
-  overflow-y: auto;
   transition:
     opacity 180ms ease,
     transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -249,7 +248,6 @@ onUnmounted(() => {
   .subject-layout__sidebar-inner {
     position: sticky;
     top: 4rem;
-    max-height: calc(100vh - 4rem);
     padding: 1.5rem 1.25rem;
   }
 }
@@ -303,7 +301,6 @@ onUnmounted(() => {
   .subject-layout__toc-inner {
     position: sticky;
     top: 5rem;
-    max-height: calc(100vh - 6rem);
   }
 
   .subject-layout__sidebar-inner {

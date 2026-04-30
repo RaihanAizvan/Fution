@@ -1,7 +1,7 @@
 <template>
   <nav
     v-if="headings.length > 0"
-    class="max-h-[calc(100vh-6rem)] overflow-y-auto"
+    class="overflow-visible"
   >
     <div class="mb-4 flex items-center gap-2 text-[var(--app-text)]">
       <ListTree class="h-4 w-4 text-blue-400" />
