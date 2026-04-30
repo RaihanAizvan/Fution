@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import HomeView from '../views/HomeView.vue'
-import SubjectDetailView from '../views/SubjectDetailView.vue'
-import SubjectsView from '../views/SubjectsView.vue'
-import AdminDashboardView from '../views/admin/AdminDashboardView.vue'
-import AdminSubjectsView from '../views/admin/AdminSubjectsView.vue'
-import AdminTopicsView from '../views/admin/AdminTopicsView.vue'
-import AdminTopicVersionsView from '../views/admin/AdminTopicVersionsView.vue'
-import AdminBlocksView from '../views/admin/AdminBlocksView.vue'
-import AdminSettingsView from '../views/admin/AdminSettingsView.vue'
+const HomeView = () => import('../views/HomeView.vue')
+const SubjectDetailView = () => import('../views/SubjectDetailView.vue')
+const SubjectsView = () => import('../views/SubjectsView.vue')
+const AdminDashboardView = () => import('../views/admin/AdminDashboardView.vue')
+const AdminSubjectsView = () => import('../views/admin/AdminSubjectsView.vue')
+const AdminTopicsView = () => import('../views/admin/AdminTopicsView.vue')
+const AdminTopicVersionsView = () => import('../views/admin/AdminTopicVersionsView.vue')
+const AdminBlocksView = () => import('../views/admin/AdminBlocksView.vue')
+const AdminSettingsView = () => import('../views/admin/AdminSettingsView.vue')
 
 const routes = [
   {
