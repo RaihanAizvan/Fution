@@ -1,6 +1,8 @@
 <template>
   <SubjectsListShell>
-    <SubjectsListNavigation />
+    <template #default="{ query }">
+      <SubjectsListNavigation :query="query" />
+    </template>
   </SubjectsListShell>
 </template>
 
