@@ -40,10 +40,11 @@
         </h1>
       </header>
 
-      <div 
-        class="prose prose-neutral dark:prose-invert max-w-none 
+      <div
+        class="topic-content prose prose-neutral dark:prose-invert max-w-none
                prose-h1:text-4xl prose-h1:font-bold
-               prose-h2:text-2xl prose-h2:mt-10 prose-h2:font-semibold
+               prose-h2:text-2xl prose-h2:mt-10 prose-h2:font-semibold prose-h2:scroll-mt-24
+               prose-h3:scroll-mt-24 prose-h4:scroll-mt-24
                prose-p:text-[var(--app-muted)] prose-p:leading-relaxed
                prose-li:marker:text-orange-400
                prose-code:bg-neutral-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-pink-400 prose-code:font-medium

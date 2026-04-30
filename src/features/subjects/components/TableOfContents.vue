@@ -1,28 +1,25 @@
 <template>
   <nav
     v-if="headings.length > 0"
-    class="sticky top-8 max-h-[calc(100vh-8rem)] overflow-y-auto rounded-lg border border-[var(--panel-border)] bg-[var(--panel-bg)] p-4"
+    class="max-h-[calc(100vh-6rem)] overflow-y-auto"
   >
-    <div class="mb-4 flex items-center gap-2">
-      <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-      </svg>
-      <p class="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)]">
-        Table of Contents
-      </p>
+    <div class="mb-4 flex items-center gap-2 text-[var(--app-text)]">
+      <ListTree class="h-4 w-4 text-blue-400" />
+      <p class="text-xs font-semibold uppercase tracking-wider text-[var(--app-muted)]">On this page</p>
     </div>
-    <ul class="space-y-1">
+    <ul class="space-y-0.5 border-l border-[var(--panel-border)]">
       <li v-for="heading in headings" :key="heading.id">
         <button
           type="button"
           @click="scrollToHeading(heading.id)"
           :class="[
-            'w-full text-left text-sm transition-all duration-200 hover:text-blue-400 rounded px-2 py-1',
+            'w-full border-l-2 border-transparent px-3 py-1.5 text-left text-sm leading-snug transition hover:border-blue-400/50 hover:text-[var(--app-text)]',
             {
-              'font-semibold text-[var(--app-text)] bg-blue-500/10 border-l-2 border-blue-500': activeHeading === heading.id,
+              'border-blue-400 bg-[var(--sidebar-active)] font-semibold text-[var(--app-text)]': activeHeading === heading.id,
               'font-medium text-[var(--app-text)]': heading.level === 2 && activeHeading !== heading.id,
-              'text-[var(--app-muted)] pl-4': heading.level === 3,
-              'text-[var(--app-muted)] pl-8': heading.level === 4,
+              'text-[var(--app-muted)]': activeHeading !== heading.id,
+              'pl-6 text-xs': heading.level === 3,
+              'pl-9 text-xs': heading.level === 4,
             }
           ]"
         >
@@ -31,11 +28,9 @@
       </li>
     </ul>
   </nav>
-  <div v-else class="rounded-lg border border-[var(--panel-border)] bg-[var(--panel-bg)] p-4">
-    <div class="flex items-center gap-2">
-      <svg class="h-4 w-4 text-[var(--app-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-      </svg>
+  <div v-else class="text-[var(--app-muted)]">
+    <div class="flex items-center gap-2 rounded-md border border-[var(--panel-border)] bg-[var(--panel-bg)] px-3 py-2">
+      <ListTree class="h-4 w-4" />
       <p class="text-xs text-[var(--app-muted)]">No table of contents available</p>
     </div>
   </div>
@@ -43,6 +38,7 @@
 
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ListTree } from 'lucide-vue-next'
 
 interface Heading {
   id: string
@@ -62,12 +58,8 @@ const extractHeadings = () => {
   headings.value = []
   if (!props.html) return
 
-  // Create a temporary DOM element to parse HTML
-  const temp = document.createElement('div')
-  temp.innerHTML = props.html
-
-  // Extract all headings (h2, h3, h4)
-  const elements = temp.querySelectorAll('h2, h3, h4')
+  const content = document.querySelector('.topic-content')
+  const elements = content?.querySelectorAll('h2, h3, h4') ?? []
   let headingCounter = 0
 
   elements.forEach((element) => {
@@ -94,7 +86,6 @@ const scrollToHeading = (id: string) => {
   const element = document.getElementById(id)
   if (element) {
     element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    window.scrollBy(0, -80) // Adjust for any fixed header
   }
 }
 
