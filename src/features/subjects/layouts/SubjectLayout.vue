@@ -241,13 +241,18 @@ onUnmounted(() => {
   }
 
   .subject-layout__sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    top: 4rem;
+    z-index: 30;
+    width: var(--sidebar-track);
     border-top: 0;
     border-right: 1px solid var(--sidebar-border);
   }
 
   .subject-layout__sidebar-inner {
-    position: sticky;
-    top: 4rem;
+    height: 100%;
     padding: 1.5rem 1.25rem;
   }
 }
@@ -277,6 +282,12 @@ onUnmounted(() => {
   }
 
   .subject-layout__toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    top: 4rem;
+    z-index: 30;
+    width: var(--toc-track);
     opacity: 1;
     transform: translateX(0);
   }
@@ -299,8 +310,7 @@ onUnmounted(() => {
   }
 
   .subject-layout__toc-inner {
-    position: sticky;
-    top: 5rem;
+    height: 100%;
   }
 
   .subject-layout__sidebar-inner {
