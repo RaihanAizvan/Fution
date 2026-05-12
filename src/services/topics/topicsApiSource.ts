@@ -33,7 +33,7 @@ export const createApiTopicsSource = (): TopicsSource => ({
     }
 
     // Then fetch topics for that subject
-    const topicsResponse = await fetch(`${API_BASE_URL}/admin/subjects/${subject.id}/topics`)
+    const topicsResponse = await fetch(`${API_BASE_URL}/admin/topics?subjectId=${subject.id}`)
     
     if (!topicsResponse.ok) {
       throw new Error('Failed to fetch topics')
