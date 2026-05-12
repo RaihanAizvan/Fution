@@ -7,7 +7,7 @@
           <h2 class="text-2xl font-semibold">Topic Versions</h2>
         </div>
         <RouterLink
-          :to="`/admin/subjects/${subjectId}/topics`"
+          :to="`/admin/topics?subjectId=${subjectId}`"
           class="rounded-full border border-[var(--sidebar-active)] px-4 py-2 text-sm"
         >
           Back to topics

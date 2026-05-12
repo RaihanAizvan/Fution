@@ -62,7 +62,7 @@
 
           <div class="flex gap-2">
             <RouterLink
-              :to="`/admin/subjects/${subject.id}/topics`"
+              :to="`/admin/topics?subjectId=${subject.id}`"
               class="rounded-md bg-[var(--app-bg)] px-3 py-1 text-xs text-[var(--app-text)] hover:shadow-md"
             >
               Topics
