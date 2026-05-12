@@ -114,7 +114,7 @@
       <!-- Subjects -->
       <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <SubjectListItem v-for="subject in filteredSubjects" :key="subject.slug" :slug="subject.slug"
-          :label="subject.title" :description="subject.description" />
+              :label="subject.title" :description="(subject.description) ? subject.description : 'No description yet'" />
       </div>
 
     </div>
