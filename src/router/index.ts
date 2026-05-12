@@ -10,6 +10,8 @@ const AdminTopicVersionsView = () => import('../views/admin/AdminTopicVersionsVi
 const AdminBlocksView = () => import('../views/admin/AdminBlocksView.vue')
 const AdminSettingsView = () => import('../views/admin/AdminSettingsView.vue')
 
+import { useAuth } from '../admin/auth/authService'
+
 const routes = [
   {
     path: '/',
@@ -41,43 +43,43 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminDashboardView,
-    meta: { title: 'Admin Dashboard - Fution' }
+    meta: { title: 'Admin Dashboard - Fution', requiresAuth: true }
   },
   {
     path: '/admin/subjects',
     name: 'admin-subjects',
     component: AdminSubjectsView,
-    meta: { title: 'Admin Subjects - Fution' }
+    meta: { title: 'Admin Subjects - Fution', requiresAuth: true }
   },
   {
     path: '/admin/content/subjects',
     name: 'admin-content-subjects',
     component: AdminSubjectsView,
-    meta: { title: 'Admin Content Subjects - Fution' }
+    meta: { title: 'Admin Content Subjects - Fution', requiresAuth: true }
   },
   {
     path: '/admin/topics',
     name: 'admin-topics',
     component: AdminTopicsView,
-    meta: { title: 'Admin Topics - Fution' }
+    meta: { title: 'Admin Topics - Fution', requiresAuth: true }
   },
   {
     path: '/admin/topics/:topicId/versions',
     name: 'admin-topic-versions',
     component: AdminTopicVersionsView,
-    meta: { title: 'Admin Topic Versions - Fution' }
+    meta: { title: 'Admin Topic Versions - Fution', requiresAuth: true }
   },
   {
     path: '/admin/topics/:topicId/versions/:versionId',
     name: 'admin-blocks',
     component: AdminBlocksView,
-    meta: { title: 'Admin Blocks - Fution' }
+    meta: { title: 'Admin Blocks - Fution', requiresAuth: true }
   },
   {
     path: '/admin/settings',
     name: 'admin-settings',
     component: AdminSettingsView,
-    meta: { title: 'Admin Settings - Fution' }
+    meta: { title: 'Admin Settings - Fution', requiresAuth: true }
   }
 ]
 
@@ -86,10 +88,19 @@ const router = createRouter({
   routes
 })
 
-// Update document title based on route meta
-router.beforeEach((to) => {
+// Update document title and handle auth
+router.beforeEach((to, from, next) => {
+  const { state } = useAuth()
+
   if (to.meta.title) {
     document.title = to.meta.title as string
+  }
+
+  if (to.meta.requiresAuth && !state.isAuthenticated) {
+    // If not authenticated, redirect to home with a query param to show auth modal
+    next({ name: 'home', query: { auth: 'admin' } })
+  } else {
+    next()
   }
 })
 
