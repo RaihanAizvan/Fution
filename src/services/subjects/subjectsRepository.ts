@@ -3,11 +3,10 @@ import type { SubjectApiClient } from './subjectsApi'
 export interface SubjectSummary {
   slug: string
   title: string
-}
-
-export interface SubjectDetail extends SubjectSummary {
   description?: string
 }
+
+export interface SubjectDetail extends SubjectSummary { }
 
 export interface SubjectsRepository {
   getSubjects: () => Promise<SubjectSummary[]>
@@ -18,11 +17,11 @@ export const createSubjectsRepository = (
   client: SubjectApiClient
 ): SubjectsRepository => ({
   async getSubjects() {
-    await client.listSubjects()
-    return []
+    const subjects = await client.listSubjects()
+    return (subjects as SubjectSummary[]) || []
   },
   async getSubjectBySlug(slug: string) {
-    await client.fetchSubject(slug)
-    return null
+    const subject = await client.fetchSubject(slug)
+    return (subject as SubjectDetail) || null
   }
 })
