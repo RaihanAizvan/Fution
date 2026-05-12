@@ -97,6 +97,14 @@
               <ClipboardListIcon class="h-5 w-5 shrink-0" />
               <span v-if="!isCollapsed">Logs</span>
             </button>
+            <button
+              class="mt-4 flex items-center gap-3 rounded-xl px-3 py-2.5 text-rose-400 transition hover:bg-rose-500/10"
+              @click="handleLogout"
+              :title="isCollapsed ? 'Logout' : ''"
+            >
+              <LogOutIcon class="h-5 w-5 shrink-0" />
+              <span v-if="!isCollapsed">Logout</span>
+            </button>
           </nav>
         </div>
 
@@ -213,29 +221,38 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import {
   ChevronLeftIcon,
   ClipboardListIcon,
   ImageIcon,
   LayersIcon,
   LayoutDashboardIcon,
+  LogOutIcon,
   MenuIcon,
   SettingsIcon,
   UsersIcon
 } from 'lucide-vue-next'
 import { subjectsApi, type SubjectRecord } from './api/subjectsApi'
+import { useAuth } from './authService'
 
 const isSidebarOpen = ref(false)
 const isCollapsed = ref(false)
 const isSubjectsOpen = ref(true)
 const sidebarSubjects = ref<SubjectRecord[]>([])
 const route = useRoute()
+const router = useRouter()
+const { logout } = useAuth()
 
 const activeSubjectId = computed(() => (route.query.subjectId || route.params.subjectId) as string | undefined)
 
 const toggleSubjects = () => {
   isSubjectsOpen.value = !isSubjectsOpen.value
+}
+
+const handleLogout = () => {
+  logout()
+  router.push('/')
 }
 
 const loadSubjects = async () => {
