@@ -1,23 +1,20 @@
 <template>
   <AdminLayout>
     <template #header>
-      <div class="flex items-start justify-between">
-        <div>
-          <h2 class="text-3xl font-semibold">Edit Content</h2>
-          <div class="mt-2 text-xs uppercase tracking-[0.3em] text-[var(--app-muted)]">
-            ADMIN / CONTENT / MARKDOWN EDITOR
-          </div>
+      <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-1 min-w-0">
+          <AdminBreadcrumbs
+            :subject-id="subjectId"
+            :subject-title="subjectTitle"
+            :topic-id="topicId"
+            :topic-title="topicTitle"
+          />
+          <h2 class="text-2xl font-semibold truncate">{{ topicTitle || 'Edit Content' }}</h2>
         </div>
-        <div class="flex gap-3">
-          <RouterLink
-            :to="`/admin/subjects/${subjectId}/topics`"
-            class="rounded-md border border-[var(--sidebar-border)] px-4 py-2 text-sm"
-          >
-            Back to Topics
-          </RouterLink>
+        <div class="flex gap-3 shrink-0">
           <button
             type="button"
-            class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20"
+            class="rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-500 transition"
             @click="saveContent"
             :disabled="isSaving"
           >
@@ -72,9 +69,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute } from 'vue-router'
 import AdminLayout from '../../admin/AdminLayout.vue'
+import AdminBreadcrumbs from '../../admin/components/AdminBreadcrumbs.vue'
 import { versionsApi } from '../../admin/api/versionsApi'
+import { subjectsApi } from '../../admin/api/subjectsApi'
+import { topicsApi } from '../../admin/api/topicsApi'
 import { getErrorMessage } from '../../admin/api/adminErrors'
 
 const route = useRoute()
@@ -82,6 +82,8 @@ const topicId = route.params.topicId as string
 const versionId = route.params.versionId as string
 const subjectId = route.query.subjectId as string
 
+const subjectTitle = ref('')
+const topicTitle = ref('')
 const markdown = ref('')
 const renderedHtml = ref('')
 const isLoading = ref(false)
@@ -93,6 +95,19 @@ let debounceTimer: ReturnType<typeof setTimeout> | null = null
 const loadContent = async () => {
   isLoading.value = true
   try {
+    // Load metadata
+    if (subjectId) {
+      subjectsApi.list().then(subjects => {
+        const s = subjects.find(item => item.id === subjectId)
+        if (s) subjectTitle.value = s.title
+      })
+    }
+    
+    topicsApi.listBySubject(subjectId).then(topics => {
+      const t = topics.find(item => item.id === topicId)
+      if (t) topicTitle.value = t.title
+    })
+
     const version = await versionsApi.getById(topicId, versionId)
     markdown.value = version.markdown || ''
     renderedHtml.value = version.html || ''
