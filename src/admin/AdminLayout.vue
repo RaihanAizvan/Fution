@@ -1,36 +1,48 @@
 <template>
   <div class="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
-    <aside class="fixed left-0 top-0 hidden h-screen w-72 border-r border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] lg:block">
-      <div class="flex h-full flex-col px-6 py-8">
-        <div>
-          <p class="text-xs uppercase tracking-[0.3em] text-[var(--app-muted)]">Admin</p>
-          <h1 class="mt-2 text-xl font-semibold">Content Studio</h1>
-          <p class="mt-1 text-xs text-[var(--app-muted)]">Premium CMS Workspace</p>
+    <aside
+      class="fixed left-0 top-0 hidden h-screen border-r border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] transition-all duration-300 lg:block"
+      :class="isCollapsed ? 'w-20' : 'w-72'"
+    >
+      <div class="flex h-full flex-col px-4 py-8 overflow-hidden">
+        <div :class="{ 'flex flex-col items-center': isCollapsed }">
+          <p class="text-[0.6rem] uppercase tracking-[0.3em] text-[var(--app-muted)]" :class="{ 'hidden': isCollapsed }">Admin</p>
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 font-bold text-white shadow-lg">
+              F
+            </div>
+            <div v-if="!isCollapsed" class="min-w-0">
+              <h1 class="text-lg font-semibold truncate">Content Studio</h1>
+              <p class="text-[0.65rem] text-[var(--app-muted)] truncate">Premium CMS Workspace</p>
+            </div>
+          </div>
         </div>
 
         <div class="mt-10">
-          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">Workspace</p>
+          <p v-if="!isCollapsed" class="px-2 text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">Workspace</p>
           <nav class="mt-4 grid gap-1 text-sm">
             <RouterLink
               to="/admin"
-              class="flex items-center gap-2 rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
               active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
+              :title="isCollapsed ? 'Dashboard' : ''"
             >
-              <LayoutDashboardIcon class="h-4 w-4" />
-              Dashboard
+              <LayoutDashboardIcon class="h-5 w-5 shrink-0" />
+              <span v-if="!isCollapsed">Dashboard</span>
             </RouterLink>
 
             <RouterLink
               to="/admin/subjects"
-              class="flex items-center gap-2 rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
               active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
+              :title="isCollapsed ? 'Subject Library' : ''"
             >
-              <LayersIcon class="h-4 w-4" />
-              Subject Library
+              <LayersIcon class="h-5 w-5 shrink-0" />
+              <span v-if="!isCollapsed">Subject Library</span>
             </RouterLink>
 
             <div class="mt-4">
-              <div class="flex items-center justify-between px-3 py-2 text-[0.65rem] uppercase tracking-wider text-[var(--app-muted)]">
+              <div v-if="!isCollapsed" class="flex items-center justify-between px-3 py-2 text-[0.65rem] uppercase tracking-wider text-[var(--app-muted)]">
                 Recent Subjects
                 <button
                   type="button"
@@ -43,11 +55,11 @@
                   </svg>
                 </button>
               </div>
-              <div v-if="isSubjectsOpen" class="mt-1 max-h-52 overflow-y-auto pl-2 space-y-1">
+              <div v-if="isSubjectsOpen && !isCollapsed" class="mt-1 max-h-52 overflow-y-auto pl-2 space-y-1">
                 <RouterLink
                   v-for="subject in sidebarSubjects"
                   :key="subject.id"
-                  :to="`/admin/subjects/${subject.id}/topics`"
+                  :to="`/admin/topics?subjectId=${subject.id}`"
                   class="block rounded-md px-3 py-1.5 text-xs text-[var(--app-text)]/60 hover:bg-[var(--sidebar-active)]"
                   :class="{
                     'bg-[var(--sidebar-active)] text-[var(--app-text)]':
@@ -62,32 +74,33 @@
         </div>
 
         <div class="mt-10">
-          <p class="text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">System</p>
+          <p v-if="!isCollapsed" class="px-2 text-[0.65rem] uppercase tracking-[0.3em] text-[var(--app-muted)]">System</p>
           <nav class="mt-4 grid gap-1 text-sm">
-            <button class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
-              <ImageIcon class="h-4 w-4" />
-              Media
+            <button class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]" :title="isCollapsed ? 'Media' : ''">
+              <ImageIcon class="h-5 w-5 shrink-0" />
+              <span v-if="!isCollapsed">Media</span>
             </button>
-            <button class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
-              <UsersIcon class="h-4 w-4" />
-              Users
+            <button class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]" :title="isCollapsed ? 'Users' : ''">
+              <UsersIcon class="h-5 w-5 shrink-0" />
+              <span v-if="!isCollapsed">Users</span>
             </button>
             <RouterLink
               to="/admin/settings"
-              class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
+              class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
               active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
+              :title="isCollapsed ? 'Settings' : ''"
             >
-              <SettingsIcon class="h-4 w-4" />
-              Settings
+              <SettingsIcon class="h-5 w-5 shrink-0" />
+              <span v-if="!isCollapsed">Settings</span>
             </RouterLink>
-            <button class="flex items-center gap-2 rounded-md px-3 py-2 text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]">
-              <ClipboardListIcon class="h-4 w-4" />
-              Logs
+            <button class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition text-left text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]" :title="isCollapsed ? 'Logs' : ''">
+              <ClipboardListIcon class="h-5 w-5 shrink-0" />
+              <span v-if="!isCollapsed">Logs</span>
             </button>
           </nav>
         </div>
 
-        <div class="mt-auto rounded-md bg-[var(--app-bg)]/40 p-4 text-xs text-[var(--app-muted)]">
+        <div v-if="!isCollapsed" class="mt-auto rounded-2xl bg-[var(--app-bg)]/40 p-4 text-[0.65rem] text-[var(--app-muted)]">
           Live environment • Synced with production APIs
         </div>
       </div>
@@ -170,15 +183,24 @@
       </div>
     </aside>
 
-    <div class="min-h-screen lg:ml-72">
-      <header class="border-b border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] px-6 py-6 lg:px-10">
-        <div class="mx-auto flex w-full max-w-6xl flex-col gap-4">
-          <div class="flex items-center justify-between lg:hidden">
-            <button class="rounded-md border border-[var(--sidebar-border)] px-3 py-2 text-xs" @click="isSidebarOpen = true">
+    <div class="min-h-screen transition-all duration-300" :class="isCollapsed ? 'lg:ml-20' : 'lg:ml-72'">
+      <header class="sticky top-0 z-30 border-b border-[var(--sidebar-border)] bg-[var(--sidebar-bg)]/80 backdrop-blur-md px-6 py-4 lg:px-10">
+        <div class="mx-auto flex w-full max-w-6xl items-center gap-6">
+          <div class="flex items-center gap-4 shrink-0">
+            <button
+              class="hidden h-10 w-10 items-center justify-center rounded-xl border border-[var(--sidebar-border)] transition hover:bg-[var(--sidebar-active)] lg:flex"
+              @click="isCollapsed = !isCollapsed"
+            >
+              <MenuIcon v-if="isCollapsed" class="h-5 w-5" />
+              <ChevronLeftIcon v-else class="h-5 w-5" />
+            </button>
+            <button class="rounded-md border border-[var(--sidebar-border)] px-3 py-2 text-xs lg:hidden" @click="isSidebarOpen = true">
               ☰ Menu
             </button>
           </div>
-          <slot name="header" />
+          <div class="flex-1 min-w-0 overflow-hidden">
+            <slot name="header" />
+          </div>
         </div>
       </header>
 
@@ -193,21 +215,24 @@
 import { computed, onMounted, ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import {
+  ChevronLeftIcon,
   ClipboardListIcon,
   ImageIcon,
   LayersIcon,
   LayoutDashboardIcon,
+  MenuIcon,
   SettingsIcon,
   UsersIcon
 } from 'lucide-vue-next'
 import { subjectsApi, type SubjectRecord } from './api/subjectsApi'
 
 const isSidebarOpen = ref(false)
+const isCollapsed = ref(false)
 const isSubjectsOpen = ref(true)
 const sidebarSubjects = ref<SubjectRecord[]>([])
 const route = useRoute()
 
-const activeSubjectId = computed(() => route.params.subjectId as string | undefined)
+const activeSubjectId = computed(() => (route.query.subjectId || route.params.subjectId) as string | undefined)
 
 const toggleSubjects = () => {
   isSubjectsOpen.value = !isSubjectsOpen.value
