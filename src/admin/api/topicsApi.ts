@@ -9,23 +9,22 @@ export interface TopicRecord {
 }
 
 export interface TopicPayload {
+  subjectId?: string
   slug: string
   title: string
   level: string
+  markdown?: string
 }
 
 export const topicsApi = {
   listBySubject: (subjectId: string) =>
-    adminClient.get<TopicRecord[]>(`/admin/subjects/${subjectId}/topics`),
-  create: (subjectId: string, payload: TopicPayload) =>
-    adminClient.post<TopicRecord>(`/admin/subjects/${subjectId}/topics`, payload),
-  update: (subjectId: string, topicId: string, payload: TopicPayload) =>
-    adminClient.patch<TopicRecord>(
-      `/admin/subjects/${subjectId}/topics/${topicId}`,
-      payload
-    ),
-  delete: (subjectId: string, topicId: string) =>
-    adminClient.delete(`/admin/subjects/${subjectId}/topics/${topicId}`),
+    adminClient.get<TopicRecord[]>(`/admin/topics`, { params: { subjectId } }),
+  create: (payload: TopicPayload) =>
+    adminClient.post<TopicRecord>(`/admin/topics`, payload),
+  update: (topicId: string, payload: Partial<TopicPayload>) =>
+    adminClient.patch<TopicRecord>(`/admin/topics/${topicId}`, payload),
+  delete: (topicId: string) =>
+    adminClient.delete(`/admin/topics/${topicId}`),
   reorder: (subjectId: string, topics: Array<{ topicId: string; orderIndex: number }>) =>
-    adminClient.put<void>(`/admin/subjects/${subjectId}/topics/reorder`, { topics })
+    adminClient.put<void>(`/admin/topics/reorder`, { subjectId, topics })
 }
