@@ -113,6 +113,15 @@
                 <option value="advanced">Advanced</option>
               </select>
             </label>
+            <label v-if="isCreating" class="grid gap-1 text-sm">
+              Initial Markdown (Optional)
+              <textarea
+                v-model="editorMarkdown"
+                rows="5"
+                class="rounded-md bg-[var(--app-bg)] px-3 py-2 font-mono text-xs"
+                placeholder="Enter initial content for Version 1..."
+              ></textarea>
+            </label>
             <p v-if="saveStatus" class="text-xs text-[var(--app-muted)]">{{ saveStatus }}</p>
           </div>
 
@@ -191,7 +200,7 @@ import { topicsApi, type TopicRecord } from '../../admin/api/topicsApi'
 import { versionsApi, type TopicVersionRecord } from '../../admin/api/versionsApi'
 
 const route = useRoute()
-const subjectId = route.params.subjectId as string
+const subjectId = route.query.subjectId as string
 
 const topics = ref([] as Awaited<ReturnType<typeof topicsApi.listBySubject>>)
 const versions = ref<TopicVersionRecord[]>([])
@@ -205,6 +214,7 @@ const isCreating = ref(false)
 const editorTitle = ref('')
 const editorSlug = ref('')
 const editorLevel = ref('beginner')
+const editorMarkdown = ref('')
 const saveStatus = ref('')
 
 const confirmingDelete = ref<TopicRecord | null>(null)
@@ -244,6 +254,7 @@ const startCreate = () => {
   editorTitle.value = ''
   editorSlug.value = ''
   editorLevel.value = 'beginner'
+  editorMarkdown.value = ''
   saveStatus.value = ''
   versions.value = []
 }
@@ -254,6 +265,7 @@ const selectTopic = async (topic: TopicRecord) => {
   editorTitle.value = topic.title
   editorSlug.value = topic.slug
   editorLevel.value = topic.level
+  editorMarkdown.value = ''
   saveStatus.value = ''
   await loadVersions(topic.id)
 }
@@ -263,10 +275,12 @@ const createTopic = async () => {
   errorMessage.value = ''
 
   try {
-    const created = await topicsApi.create(subjectId, {
+    const created = await topicsApi.create({
+      subjectId,
       title: editorTitle.value,
       slug: editorSlug.value,
-      level: editorLevel.value
+      level: editorLevel.value,
+      markdown: editorMarkdown.value || undefined
     })
     topics.value.push(created)
     isCreating.value = false
@@ -285,7 +299,7 @@ const saveEditor = async () => {
 
   saveStatus.value = 'Saving…'
   try {
-    const updated = await topicsApi.update(subjectId, selectedTopic.value.id, {
+    const updated = await topicsApi.update(selectedTopic.value.id, {
       title: editorTitle.value,
       slug: editorSlug.value,
       level: editorLevel.value
@@ -294,7 +308,7 @@ const saveEditor = async () => {
     selectedTopic.value = updated
     saveStatus.value = 'Saved'
   } catch (error) {
-    saveStatus.value = 'Failed to save'
+    saveStatus.value = 'Failed to save: ' + getErrorMessage(error)
   }
 }
 
@@ -314,7 +328,7 @@ const executeDelete = async () => {
   deleteError.value = ''
 
   try {
-    await topicsApi.delete(subjectId, confirmingDelete.value.id)
+    await topicsApi.delete(confirmingDelete.value.id)
     topics.value = topics.value.filter(t => t.id !== confirmingDelete.value!.id)
     if (selectedTopic.value?.id === confirmingDelete.value.id) {
       selectedTopic.value = null
