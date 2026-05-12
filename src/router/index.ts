@@ -56,7 +56,7 @@ const routes = [
     meta: { title: 'Admin Content Subjects - Fution' }
   },
   {
-    path: '/admin/subjects/:subjectId/topics',
+    path: '/admin/topics',
     name: 'admin-topics',
     component: AdminTopicsView,
     meta: { title: 'Admin Topics - Fution' }
