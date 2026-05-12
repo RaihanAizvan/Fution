@@ -6,14 +6,15 @@ export type ValidationError = {
 }
 
 export type ApiError = {
-  error: string
+  message?: string
+  error?: string
   errors?: ValidationError[]
 }
 
 const handleResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     const payload = (await response.json().catch(() => null)) as ApiError | null
-    const error = new Error(payload?.error ?? 'REQUEST_FAILED')
+    const error = new Error(payload?.message || payload?.error || 'REQUEST_FAILED')
     ;(error as Error & { details?: ApiError }).details = payload ?? undefined
     throw error
   }
@@ -22,8 +23,13 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 }
 
 export const adminClient = {
-  get: async <T>(path: string) => {
-    const response = await fetch(`${API_BASE_URL}${path}`)
+  get: async <T>(path: string, options?: { params?: Record<string, string> }) => {
+    let url = `${API_BASE_URL}${path}`
+    if (options?.params) {
+      const searchParams = new URLSearchParams(options.params)
+      url += `?${searchParams.toString()}`
+    }
+    const response = await fetch(url)
     return handleResponse<T>(response)
   },
   post: async <T>(path: string, body: unknown) => {
