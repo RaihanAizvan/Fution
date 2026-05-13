@@ -1,198 +1,226 @@
 <template>
-  <div class="min-h-screen bg-[var(--app-bg)]">
+  <div class="min-h-screen bg-[var(--app-bg)] selection:bg-indigo-500/30 text-[var(--app-text)] font-sans">
     <!-- Hero Section -->
-    <section class="relative px-6 py-20 text-center md:py-32">
-      <div class="mx-auto max-w-4xl">
-        <div class="mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--panel-border)] bg-[var(--panel-bg)] px-4 py-2 text-sm text-[var(--app-muted)]">
-          <svg class="h-4 w-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-          Welcome to Fution
-        </div>
+    <section class="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-40">
+      <!-- Ambient Background Glows -->
+      <div class="absolute -top-24 -left-20 h-[500px] w-[500px] rounded-full bg-[var(--hero-glow)] blur-[120px]"></div>
+      <div class="absolute top-1/2 -right-20 h-[400px] w-[400px] -translate-y-1/2 rounded-full bg-[var(--hero-glow-secondary)] blur-[100px]"></div>
 
-        <h1 class="text-5xl font-bold tracking-tight text-[var(--app-text)] md:text-7xl">
-          Master Web Development
-          <span class="block text-blue-500">at Your Own Pace</span>
-        </h1>
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="flex flex-col items-center text-center">
+          <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--app-border)] bg-[var(--panel-bg)]/50 px-4 py-1.5 text-xs font-medium tracking-wide text-[var(--app-muted)] md:text-sm animate-fade-in">
+            <span class="flex h-2 w-2 rounded-full bg-[var(--cta-bg)] animate-pulse"></span>
+            NEW: Interactive Markdown Studio is Live
+          </div>
 
-        <p class="mx-auto mt-6 max-w-2xl text-lg text-[var(--app-muted)] md:text-xl">
-          Build real skills with interactive learning paths. Track your progress, explore topics, and grow at your own pace with our comprehensive web development curriculum.
-        </p>
+          <h1 class="max-w-4xl text-5xl font-extrabold tracking-tight text-[var(--app-text)] md:text-8xl lg:leading-[1.1]">
+            The <span :style="{ backgroundImage: 'var(--accent-gradient)' }" class="bg-clip-text text-transparent">FUT</span>ure of Educat<span :style="{ backgroundImage: 'var(--accent-gradient)' }" class="bg-clip-text text-transparent">ION</span> Is Here.
+          </h1>
 
-        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <RouterLink
-            to="/subjects"
-            class="group inline-flex items-center gap-3 rounded-xl bg-blue-500 px-8 py-4 font-semibold text-white transition hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-500/25"
-          >
-            <span>Start Learning</span>
-            <svg class="h-5 w-5 transition group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </RouterLink>
-
-          <button
-            type="button"
-            @click="$emit('open-settings')"
-            class="inline-flex items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-[var(--panel-bg)] px-8 py-4 font-semibold text-[var(--app-text)] transition hover:bg-[var(--sidebar-active)]"
-          >
-            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            <span>Customize Theme</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Scroll indicator -->
-      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <svg class="h-6 w-6 text-[var(--app-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="px-6 py-16 md:py-24">
-      <div class="mx-auto max-w-7xl">
-        <div class="text-center">
-          <h2 class="text-3xl font-bold text-[var(--app-text)] md:text-5xl">
-            Why Choose Fution?
-          </h2>
-          <p class="mx-auto mt-4 max-w-2xl text-[var(--app-muted)] md:text-lg">
-            Everything you need to become a proficient web developer, all in one place.
+          <p class="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-[var(--app-muted)] md:text-xl">
+            Fution is a high-performance, markdown-driven learning engine designed for the next generation of developers. Experience content that's not just read, but mastered.
           </p>
-        </div>
 
-        <div class="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <!-- Feature 1 -->
-          <div class="group rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-8 transition hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10">
-            <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20">
-              <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-[var(--app-text)]">Progress Tracking</h3>
-            <p class="mt-3 text-[var(--app-muted)] leading-relaxed">
-              Visual progress indicators and completion tracking help you stay motivated and see your growth over time.
-            </p>
+          <div class="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <RouterLink
+              to="/subjects"
+              class="group relative inline-flex items-center gap-3 overflow-hidden rounded-2xl bg-[var(--app-text)] px-8 py-4 font-bold text-[var(--app-bg)] transition-all hover:scale-[1.02] hover:shadow-[0_0_40px_var(--hero-glow)] active:scale-[0.98]"
+            >
+              <span>Explore Curriculum</span>
+              <ArrowRight class="h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </RouterLink>
+
+            <button
+              type="button"
+              @click="$emit('open-settings')"
+              class="group inline-flex items-center gap-3 rounded-2xl border border-[var(--app-border)] bg-[var(--panel-bg)]/50 px-8 py-4 font-bold text-[var(--app-text)] transition-all hover:bg-[var(--sidebar-active)] active:scale-[0.98]"
+            >
+              <Palette class="h-5 w-5 text-[var(--app-muted)]" />
+              <span>Personalize Interface</span>
+            </button>
           </div>
-
-          <!-- Feature 2 -->
-          <div class="group rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-8 transition hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10">
-            <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20">
-              <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-              </svg>
+          
+          <!-- Social Proof / Trusted By -->
+          <div class="mt-20 flex flex-col items-center gap-6">
+            <p class="text-xs font-bold uppercase tracking-[0.3em] text-[var(--app-muted)]/60">Built for modern stacks</p>
+            <div class="flex flex-wrap justify-center gap-8 opacity-40 grayscale transition hover:grayscale-0 hover:opacity-100 md:gap-12">
+              <div class="flex items-center gap-2 font-bold text-[var(--app-text)]">VUE.JS</div>
+              <div class="flex items-center gap-2 font-bold text-[var(--app-text)]">VITE</div>
+              <div class="flex items-center gap-2 font-bold text-[var(--app-text)]">PRISMA</div>
+              <div class="flex items-center gap-2 font-bold text-[var(--app-text)]">TAILWIND</div>
             </div>
-            <h3 class="text-xl font-semibold text-[var(--app-text)]">Customizable Experience</h3>
-            <p class="mt-3 text-[var(--app-muted)] leading-relaxed">
-              Choose from multiple themes, customize your learning environment, and adapt the platform to your preferences.
-            </p>
-          </div>
-
-          <!-- Feature 3 -->
-          <div class="group rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-8 transition hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10">
-            <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20">
-              <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-[var(--app-text)]">Responsive Design</h3>
-            <p class="mt-3 text-[var(--app-muted)] leading-relaxed">
-              Learn on any device with our beautiful, responsive interface that works perfectly on desktop, tablet, and mobile.
-            </p>
-          </div>
-
-          <!-- Feature 4 -->
-          <div class="group rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-8 transition hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10">
-            <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20">
-              <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-[var(--app-text)]">Interactive Learning</h3>
-            <p class="mt-3 text-[var(--app-muted)] leading-relaxed">
-              Engage with interactive examples, code playgrounds, and hands-on exercises that reinforce your learning.
-            </p>
-          </div>
-
-          <!-- Feature 5 -->
-          <div class="group rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-8 transition hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10">
-            <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20">
-              <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-10.747S17.5 6.253 12 6.253z" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-[var(--app-text)]">Comprehensive Curriculum</h3>
-            <p class="mt-3 text-[var(--app-muted)] leading-relaxed">
-              From HTML basics to advanced JavaScript concepts, our structured curriculum covers everything you need to know.
-            </p>
-          </div>
-
-          <!-- Feature 6 -->
-          <div class="group rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-8 transition hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-500/10">
-            <div class="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20">
-              <svg class="h-6 w-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-              </svg>
-            </div>
-            <h3 class="text-xl font-semibold text-[var(--app-text)]">Community Driven</h3>
-            <p class="mt-3 text-[var(--app-muted)] leading-relaxed">
-              Join a community of learners and developers. Share your progress, ask questions, and learn together.
-            </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="border-t border-[var(--panel-border)] bg-[var(--panel-bg)] px-6 py-16 md:py-24">
-      <div class="mx-auto max-w-7xl">
-        <div class="grid gap-8 md:grid-cols-3">
-          <div class="text-center">
-            <div class="text-4xl font-bold text-blue-500 md:text-5xl">50+</div>
-            <div class="mt-2 text-[var(--app-muted)]">Learning Topics</div>
+    <!-- Bento Grid Features Section -->
+    <section class="px-6 py-20 bg-[var(--panel-bg)]/40 border-y border-[var(--app-border)]">
+      <div class="container mx-auto max-w-7xl">
+        <div class="mb-16">
+          <h2 class="text-3xl font-bold tracking-tight text-[var(--app-text)] md:text-5xl">Engineered for Mastery.</h2>
+          <p class="mt-4 text-lg text-[var(--app-muted)]">A learning platform that feels like a professional IDE.</p>
+        </div>
+
+        <div class="grid gap-6 md:grid-cols-12 md:grid-rows-2">
+          <!-- Main Feature Card -->
+          <div class="relative overflow-hidden rounded-[2.5rem] border border-[var(--app-border)] bg-gradient-to-br from-[var(--panel-bg)] to-[var(--app-bg)] p-8 md:col-span-8 md:row-span-1 group">
+            <div class="relative z-10">
+              <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--hero-glow)] text-[var(--app-text)]">
+                <Code2 class="h-6 w-6" />
+              </div>
+              <h3 class="text-2xl font-bold text-[var(--app-text)]">Markdown-Driven content</h3>
+              <p class="mt-3 max-w-md text-[var(--app-muted)] leading-relaxed">
+                Experience high-fidelity learning materials pre-rendered for performance. Our engine handles complex code blocks and typography flawlessly.
+              </p>
+            </div>
+            <div class="absolute right-0 bottom-0 top-0 hidden w-1/3 overflow-hidden lg:block">
+               <div class="absolute inset-0 bg-gradient-to-l from-[var(--app-bg)] to-transparent z-10"></div>
+               <div class="h-full w-full bg-[var(--hero-glow)] opacity-20 transition-transform group-hover:scale-110 duration-700"></div>
+            </div>
           </div>
-          <div class="text-center">
-            <div class="text-4xl font-bold text-blue-500 md:text-5xl">3</div>
-            <div class="mt-2 text-[var(--app-muted)]">Themes Available</div>
+
+          <!-- Secondary Card 1 -->
+          <div class="rounded-[2.5rem] border border-[var(--app-border)] bg-[var(--panel-bg)]/30 p-8 md:col-span-4 transition hover:bg-[var(--panel-bg)]/60 group">
+            <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--hero-glow)] text-[var(--app-text)] transition-all group-hover:scale-110">
+              <Sparkles class="h-6 w-6" />
+            </div>
+            <h3 class="text-xl font-bold text-[var(--app-text)]">Dynamic Themes</h3>
+            <p class="mt-3 text-sm text-[var(--app-muted)] leading-relaxed">
+              Tailor your focus with curated themes. Dark, Light, Blue Ocean, or Cyber Purple.
+            </p>
           </div>
-          <div class="text-center">
-            <div class="text-4xl font-bold text-blue-500 md:text-5xl">∞</div>
-            <div class="mt-2 text-[var(--app-muted)]">Learning Possibilities</div>
+
+          <!-- Secondary Card 2 -->
+          <div class="rounded-[2.5rem] border border-[var(--app-border)] bg-[var(--panel-bg)]/30 p-8 md:col-span-4 transition hover:bg-[var(--panel-bg)]/60 group">
+            <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--hero-glow)] text-[var(--app-text)] transition-all group-hover:scale-110">
+              <Zap class="h-6 w-6" />
+            </div>
+            <h3 class="text-xl font-bold text-[var(--app-text)]">Real-time Sync</h3>
+            <p class="mt-3 text-sm text-[var(--app-muted)] leading-relaxed">
+              Your progress and preferences are synced instantly across all your devices.
+            </p>
+          </div>
+
+          <!-- Tertiary Card (Long) -->
+          <div class="flex flex-col justify-between rounded-[2.5rem] border border-[var(--app-border)] bg-gradient-to-tr from-[var(--hero-glow)] to-[var(--app-bg)] p-8 md:col-span-8 group">
+            <div>
+              <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--panel-bg)] text-[var(--app-text)]">
+                <Layout class="h-6 w-6" />
+              </div>
+              <h3 class="text-2xl font-bold text-[var(--app-text)]">Premium Content Studio</h3>
+              <p class="mt-3 max-w-sm text-[var(--app-muted)] leading-relaxed">
+                For educators and admins: a split-pane markdown editor with instant preview and versioning support.
+              </p>
+            </div>
+            <div class="mt-8 flex items-center gap-4 overflow-hidden rounded-2xl bg-[var(--panel-bg)]/40 p-4 border border-[var(--app-border)]">
+                <div class="flex -space-x-3">
+                  <div class="h-8 w-8 rounded-full border-2 border-[var(--app-bg)] bg-blue-500"></div>
+                  <div class="h-8 w-8 rounded-full border-2 border-[var(--app-bg)] bg-purple-500"></div>
+                  <div class="h-8 w-8 rounded-full border-2 border-[var(--app-bg)] bg-emerald-500"></div>
+                </div>
+                <div class="text-xs text-[var(--app-muted)]">Trusted by over <span class="text-[var(--app-text)] font-bold">12,000+</span> knowledge seekers.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats / Trust Indicators -->
+    <section class="py-20">
+      <div class="container mx-auto px-6">
+        <div class="grid gap-12 md:grid-cols-3 text-center">
+          <div class="flex flex-col items-center">
+            <span class="text-5xl font-black text-[var(--app-text)] md:text-7xl">12+</span>
+            <p class="mt-2 text-sm font-bold uppercase tracking-[0.2em] text-[var(--app-muted)]">Primary Subjects</p>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-5xl font-black text-[var(--app-text)] md:text-7xl">84%</span>
+            <p class="mt-2 text-sm font-bold uppercase tracking-[0.2em] text-[var(--app-muted)]">Completion rate</p>
+          </div>
+          <div class="flex flex-col items-center">
+            <span class="text-5xl font-black text-[var(--app-text)] md:text-7xl">0ms</span>
+            <p class="mt-2 text-sm font-bold uppercase tracking-[0.2em] text-[var(--app-muted)]">Latency rendering</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="border-t border-[var(--panel-border)] px-6 py-16 md:py-24">
-      <div class="mx-auto max-w-4xl text-center">
-        <h2 class="text-3xl font-bold text-[var(--app-text)] md:text-5xl">
-          Ready to Start Your Journey?
-        </h2>
-        <p class="mx-auto mt-4 max-w-2xl text-[var(--app-muted)] md:text-lg">
-          Join thousands of developers who have accelerated their careers with Fution. Start learning today and unlock your potential.
-        </p>
-        <RouterLink
-          to="/subjects"
-          class="mt-8 inline-flex items-center gap-3 rounded-xl bg-blue-500 px-10 py-4 font-semibold text-white transition hover:bg-blue-600 hover:shadow-2xl hover:shadow-blue-500/25"
-        >
-          <span>Explore Subjects</span>
-          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </RouterLink>
+    <section class="relative px-6 py-24 mb-20">
+      <div class="mx-auto max-w-5xl overflow-hidden rounded-[3rem] bg-[var(--cta-bg)] p-12 text-center md:p-24 shadow-2xl">
+        <div class="relative z-10">
+          <h2 class="text-4xl font-black text-[var(--cta-text)] md:text-6xl">Unlock Your Future.</h2>
+          <p class="mx-auto mt-6 max-w-xl text-[var(--cta-text)]/80 md:text-xl font-medium">
+            Don't just learn, transform. Join Fution today and build the skills that matter.
+          </p>
+          <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <RouterLink
+              to="/subjects"
+              class="rounded-2xl bg-[var(--cta-text)] px-10 py-5 font-black text-[var(--cta-bg)] transition hover:scale-105 active:scale-95"
+            >
+              Start Your Journey
+            </RouterLink>
+            <RouterLink
+              to="/admin"
+              class="rounded-2xl border border-[var(--cta-text)]/20 bg-black/10 px-10 py-5 font-black text-[var(--cta-text)] transition hover:bg-black/20 active:scale-95"
+            >
+              Admin Dashboard
+            </RouterLink>
+          </div>
+        </div>
+        <!-- Decorative bg -->
+        <div class="absolute top-0 right-0 h-full w-1/2 bg-[var(--cta-text)]/5 skew-x-12 translate-x-1/2"></div>
       </div>
     </section>
+
+    <!-- Footer Simple -->
+    <footer class="border-t border-[var(--app-border)] py-12 px-6">
+      <div class="container mx-auto flex flex-col items-center justify-between gap-6 md:flex-row">
+        <div class="flex flex-col leading-none">
+          <span class="text-xl font-black text-[var(--app-text)]">FUTION</span>
+          <span class="text-[10px] mt-1 uppercase tracking-[0.2em] text-[var(--app-muted)]">Future of Education</span>
+        </div>
+        <p class="text-sm text-[var(--app-muted)]">© 2024 Fution Engine. All rights reserved.</p>
+        <div class="flex gap-6 text-sm font-medium text-[var(--app-muted)] hover:text-[var(--app-text)] transition cursor-pointer">
+           <span>Terms</span>
+           <span>Privacy</span>
+           <span>Github</span>
+        </div>
+      </div>
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import { 
+  ArrowRight, 
+  Code2, 
+  Layout, 
+  Palette, 
+  Sparkles, 
+  Zap 
+} from 'lucide-vue-next'
 
 defineEmits<{
   'open-settings': []
 }>()
 </script>
+
+<style scoped>
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Custom selection color */
+::selection {
+  background-color: var(--hero-glow);
+  color: var(--app-text);
+}
+</style>
