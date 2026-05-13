@@ -23,11 +23,18 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   if (!response.ok) {
     const payload = (await response.json().catch(() => null)) as ApiError | null
     const error = new Error(payload?.message || payload?.error || 'REQUEST_FAILED')
-      ; (error as Error & { details?: ApiError }).details = payload ?? undefined
+    const apiError = error as Error & { details?: ApiError; status?: number }
+    apiError.details = payload ?? undefined
+    apiError.status = response.status
     throw error
   }
 
-  return (await response.json()) as T
+  if (response.status === 204) {
+    return undefined as T
+  }
+
+  const text = await response.text()
+  return text ? (JSON.parse(text) as T) : (undefined as T)
 }
 
 
@@ -76,11 +83,11 @@ export const adminClient = {
     })
     return handleResponse<T>(response)
   },
-  delete: async (path: string) => {
+  delete: async <T = void>(path: string) => {
     const response = await fetch(`${API_BASE_URL}${path}`, {
       method: 'DELETE',
       headers: getHeaders()
     })
-    return handleResponse<void>(response)
+    return handleResponse<T>(response)
   }
 }
