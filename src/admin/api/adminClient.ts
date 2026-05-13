@@ -11,7 +11,15 @@ export type ApiError = {
   errors?: ValidationError[]
 }
 
+import { logout } from '../auth/authService'
+
 const handleResponse = async <T>(response: Response): Promise<T> => {
+  if (response.status === 401) {
+    logout()
+    // No redirect needed since AdminLayout shows the modal when isAuthenticated is false
+    throw new Error('UNAUTHORIZED')
+  }
+
   if (!response.ok) {
     const payload = (await response.json().catch(() => null)) as ApiError | null
     const error = new Error(payload?.message || payload?.error || 'REQUEST_FAILED')
@@ -21,6 +29,7 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
 
   return (await response.json()) as T
 }
+
 
 const getHeaders = (headers: Record<string, string> = {}) => {
   const token = localStorage.getItem('fution_admin_token')
