@@ -13,7 +13,7 @@ interface SubjectApiRecord {
 
 export const createApiSubjectsSource = (): SubjectsSource => ({
   async listSubjects(): Promise<SubjectSummary[]> {
-    const response = await fetch(`${API_BASE_URL}/admin/subjects`, { cache: 'no-cache' })
+    const response = await fetch(`${API_BASE_URL}/subjects`, { cache: 'no-cache' })
 
     // Debug: log status/headers to help diagnose 304 caching issues
     // eslint-disable-next-line no-console
@@ -37,7 +37,8 @@ export const createApiSubjectsSource = (): SubjectsSource => ({
   },
 
   async getSubject(slug: string): Promise<SubjectDetail | null> {
-    const response = await fetch(`${API_BASE_URL}/admin/subjects`, { cache: 'no-cache' })
+    const response = await fetch(`${API_BASE_URL}/subjects`, { cache: 'no-cache' })
+
 
     // Debug: log status/headers for getSubject
     // eslint-disable-next-line no-console
