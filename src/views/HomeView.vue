@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[var(--app-bg)] selection:bg-indigo-500/30 text-[var(--app-text)] font-sans">
+  <div class="min-h-screen overflow-x-hidden bg-[var(--app-bg)] selection:bg-indigo-500/30 text-[var(--app-text)] font-sans">
     <!-- Hero Section -->
     <section class="relative overflow-hidden pt-24 pb-20 md:pt-32 md:pb-40">
       <!-- Ambient Background Glows -->
@@ -148,7 +148,7 @@
 
     <!-- CTA Section -->
     <section class="relative px-6 py-24 mb-20">
-      <div class="mx-auto max-w-5xl overflow-hidden rounded-[3rem] bg-[var(--cta-bg)] p-12 text-center md:p-24 shadow-2xl">
+      <div class="relative mx-auto max-w-5xl overflow-hidden rounded-[3rem] bg-[var(--cta-bg)] p-12 text-center md:p-24 shadow-2xl">
         <div class="relative z-10">
           <h2 class="text-4xl font-black text-[var(--cta-text)] md:text-6xl">Unlock Your Future.</h2>
           <p class="mx-auto mt-6 max-w-xl text-[var(--cta-text)]/80 md:text-xl font-medium">
