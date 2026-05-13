@@ -148,29 +148,47 @@
 
     <!-- CTA Section -->
     <section class="relative px-6 py-24 mb-20">
-      <div class="relative mx-auto max-w-5xl overflow-hidden rounded-[3rem] bg-[var(--cta-bg)] p-12 text-center md:p-24 shadow-2xl">
-        <div class="relative z-10">
-          <h2 class="text-4xl font-black text-[var(--cta-text)] md:text-6xl">Unlock Your Future.</h2>
-          <p class="mx-auto mt-6 max-w-xl text-[var(--cta-text)]/80 md:text-xl font-medium">
-            Don't just learn, transform. Join Fution today and build the skills that matter.
+      <div class="relative mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-[var(--app-border)] bg-[var(--panel-bg)] p-8 shadow-2xl md:grid-cols-[1.15fr_0.85fr] md:p-12">
+        <div class="relative z-10 text-left">
+          <p class="text-xs font-bold uppercase tracking-[0.24em] text-[var(--app-muted)]">Start learning today</p>
+          <h2 class="mt-4 max-w-2xl text-4xl font-black tracking-tight text-[var(--app-text)] md:text-6xl">
+            Build skill with a cleaner learning workspace.
+          </h2>
+          <p class="mt-6 max-w-xl text-[var(--app-muted)] md:text-xl">
+            Explore structured lessons, readable code examples, and an admin studio built for keeping content fresh.
           </p>
-          <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div class="mt-10 flex flex-col gap-4 sm:flex-row">
             <RouterLink
               to="/subjects"
-              class="rounded-2xl bg-[var(--cta-text)] px-10 py-5 font-black text-[var(--cta-bg)] transition hover:scale-105 active:scale-95"
+              class="inline-flex justify-center rounded-xl bg-[var(--app-text)] px-7 py-4 font-bold text-[var(--app-bg)] transition hover:opacity-90 active:scale-95"
             >
-              Start Your Journey
+              Explore Subjects
             </RouterLink>
             <RouterLink
               to="/admin"
-              class="rounded-2xl border border-[var(--cta-text)]/20 bg-black/10 px-10 py-5 font-black text-[var(--cta-text)] transition hover:bg-black/20 active:scale-95"
+              class="inline-flex justify-center rounded-xl border border-[var(--app-border)] bg-[var(--app-bg)]/40 px-7 py-4 font-bold text-[var(--app-text)] transition hover:bg-[var(--sidebar-active)] active:scale-95"
             >
-              Admin Dashboard
+              Open Admin
             </RouterLink>
           </div>
         </div>
-        <!-- Decorative bg -->
-        <div class="absolute top-0 right-0 h-full w-1/2 bg-[var(--cta-text)]/5 skew-x-12 translate-x-1/2"></div>
+        <div class="relative z-10 mt-10 grid content-end gap-3 md:mt-0">
+          <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)]/45 p-5">
+            <p class="text-sm font-semibold text-[var(--app-text)]">Published content</p>
+            <div class="mt-4 h-2 rounded-full bg-[var(--sidebar-active)]">
+              <div class="h-full w-4/5 rounded-full bg-emerald-400"></div>
+            </div>
+          </div>
+          <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)]/45 p-5">
+            <p class="text-sm font-semibold text-[var(--app-text)]">Drafts ready</p>
+            <div class="mt-4 flex gap-2">
+              <span class="h-2 flex-1 rounded-full bg-sky-400"></span>
+              <span class="h-2 flex-1 rounded-full bg-violet-400"></span>
+              <span class="h-2 flex-1 rounded-full bg-amber-300"></span>
+            </div>
+          </div>
+        </div>
+        <div class="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-[var(--app-bg-glow)]"></div>
       </div>
     </section>
 
