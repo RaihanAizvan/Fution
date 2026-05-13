@@ -128,7 +128,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
-import { BookOpen, Home, Layers3, LayoutDashboard, Menu, Settings, X } from 'lucide-vue-next'
+import { BookOpen, Home, LayoutDashboard, Menu, Settings, X } from 'lucide-vue-next'
 
 defineEmits<{
   'open-settings': []
