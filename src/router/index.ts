@@ -88,7 +88,7 @@ const router = createRouter({
 })
 
 // Update document title and handle auth
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title as string
   }
