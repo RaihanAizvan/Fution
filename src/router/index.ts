@@ -10,7 +10,6 @@ const AdminTopicVersionsView = () => import('../views/admin/AdminTopicVersionsVi
 const AdminBlocksView = () => import('../views/admin/AdminBlocksView.vue')
 const AdminSettingsView = () => import('../views/admin/AdminSettingsView.vue')
 
-import { useAuth } from '../admin/auth/authService'
 
 const routes = [
   {
@@ -90,18 +89,10 @@ const router = createRouter({
 
 // Update document title and handle auth
 router.beforeEach((to, from, next) => {
-  const { state } = useAuth()
-
   if (to.meta.title) {
     document.title = to.meta.title as string
   }
-
-  if (to.meta.requiresAuth && !state.isAuthenticated) {
-    // If not authenticated, redirect to home with a query param to show auth modal
-    next({ name: 'home', query: { auth: 'admin' } })
-  } else {
-    next()
-  }
+  next()
 })
 
 export default router
