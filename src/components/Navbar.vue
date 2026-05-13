@@ -19,7 +19,7 @@
           </span>
 
           <span class="text-[10px] uppercase tracking-[0.28em] text-[var(--app-muted)]">
-            Future of Education
+            <span class="font-bold text-[var(--app-text)]">Fut</span>ure of Educat<span class="font-bold text-[var(--app-text)]">ion</span>
           </span>
         </div>
       </RouterLink>
