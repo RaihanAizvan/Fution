@@ -60,13 +60,9 @@ interface Props {
 
 defineProps<Props>()
 
-const emit = defineEmits<{
+defineEmits<{
   back: []
 }>()
-
-const goBack = () => {
-  emit('back')
-}
 </script>
 
 <style>
