@@ -1,5 +1,9 @@
 <template>
-  <div class="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)]">
+  <div class="min-h-screen bg-[var(--app-bg)] text-[var(--app-text)] font-sans">
+    <!-- Admin Auth Modal (triggered by state) -->
+    <AdminAuthModal :isOpen="!state.isAuthenticated" />
+
+    <!-- Sidebar (Visible even if not authenticated, backdrop will cover it) -->
     <aside
       class="fixed left-0 top-0 hidden h-screen border-r border-[var(--sidebar-border)] bg-[var(--sidebar-bg)] transition-all duration-300 lg:block"
       :class="isCollapsed ? 'w-20' : 'w-72'"
@@ -13,7 +17,9 @@
             </div>
             <div v-if="!isCollapsed" class="min-w-0">
               <h1 class="text-lg font-semibold truncate">Content Studio</h1>
-              <p class="text-[0.65rem] text-[var(--app-muted)] truncate">Premium CMS Workspace</p>
+              <p class="text-[0.65rem] uppercase tracking-wider text-[var(--app-muted)] transition-opacity duration-300">
+                <span class="font-bold text-[var(--app-text)]">Fut</span>ure of Educat<span class="font-bold text-[var(--app-text)]">ion</span>
+              </p>
             </div>
           </div>
         </div>
@@ -151,14 +157,6 @@
             >
               Content
             </RouterLink>
-            <RouterLink
-              to="/admin/subjects"
-              class="rounded-md px-3 py-2 text-[var(--app-text)]/70 hover:bg-[var(--sidebar-active)]"
-              active-class="bg-[var(--sidebar-active)] text-[var(--app-text)]"
-              @click="isSidebarOpen = false"
-            >
-              Blocks
-            </RouterLink>
           </nav>
         </div>
 
@@ -191,6 +189,7 @@
       </div>
     </aside>
 
+    <!-- Main Content Area -->
     <div class="min-h-screen transition-all duration-300" :class="isCollapsed ? 'lg:ml-20' : 'lg:ml-72'">
       <header class="sticky top-0 z-30 border-b border-[var(--sidebar-border)] bg-[var(--sidebar-bg)]/80 backdrop-blur-md px-6 py-4 lg:px-10">
         <div class="mx-auto flex w-full max-w-6xl items-center gap-6">
@@ -213,14 +212,26 @@
       </header>
 
       <main class="mx-auto w-full max-w-6xl px-6 py-10 lg:px-10">
-        <slot />
+        <!-- Render slot only if authenticated to prevent data leaks/crashes -->
+        <slot v-if="state.isAuthenticated" />
+        
+        <!-- Blur placeholder if not authenticated -->
+        <div v-else class="flex flex-col items-center justify-center space-y-4 py-20 opacity-20 blur-sm pointer-events-none select-none">
+          <div class="h-12 w-48 rounded-full bg-[var(--sidebar-active)]"></div>
+          <div class="grid grid-cols-3 gap-4 w-full max-w-2xl">
+            <div class="h-32 rounded-3xl bg-[var(--sidebar-active)]"></div>
+            <div class="h-32 rounded-3xl bg-[var(--sidebar-active)]"></div>
+            <div class="h-32 rounded-3xl bg-[var(--sidebar-active)]"></div>
+          </div>
+          <div class="h-64 w-full max-w-2xl rounded-3xl bg-[var(--sidebar-active)]"></div>
+        </div>
       </main>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import {
   ChevronLeftIcon,
@@ -234,7 +245,8 @@ import {
   UsersIcon
 } from 'lucide-vue-next'
 import { subjectsApi, type SubjectRecord } from './api/subjectsApi'
-import { useAuth } from './authService'
+import { useAuth } from './auth/authService'
+import AdminAuthModal from './auth/AdminAuthModal.vue'
 
 const isSidebarOpen = ref(false)
 const isCollapsed = ref(false)
@@ -242,7 +254,7 @@ const isSubjectsOpen = ref(true)
 const sidebarSubjects = ref<SubjectRecord[]>([])
 const route = useRoute()
 const router = useRouter()
-const { logout } = useAuth()
+const { logout, state } = useAuth()
 
 const activeSubjectId = computed(() => (route.query.subjectId || route.params.subjectId) as string | undefined)
 
@@ -257,13 +269,25 @@ const handleLogout = () => {
 
 const loadSubjects = async () => {
   try {
-    sidebarSubjects.value = await subjectsApi.list()
+    const res = await subjectsApi.list()
+    // Handle both direct array and wrapped { data: [] } patterns
+    sidebarSubjects.value = Array.isArray(res) ? res : (res as any).data || []
   } catch (error) {
     sidebarSubjects.value = []
   }
 }
 
+watch(() => state.isAuthenticated, (isAuth) => {
+  if (isAuth) {
+    void loadSubjects()
+  } else {
+    sidebarSubjects.value = []
+  }
+})
+
 onMounted(() => {
-  void loadSubjects()
+  if (state.isAuthenticated) {
+    void loadSubjects()
+  }
 })
 </script>
