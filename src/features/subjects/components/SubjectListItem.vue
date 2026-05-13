@@ -1,85 +1,70 @@
 <template>
   <RouterLink
     :to="destination"
-    class="group relative overflow-hidden rounded-3xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:bg-[var(--sidebar-active)]"
+    class="group block rounded-2xl border border-[var(--panel-border)] bg-[var(--panel-bg)] p-5 transition-colors duration-200 hover:border-[var(--app-text)]/10 hover:bg-[var(--sidebar-active)]"
   >
-
-    <!-- Glow -->
-    <div
-      class="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100"
-    >
-      <div
-        class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-blue-500/10 blur-3xl"
-      />
-    </div>
-
-    <!-- Content -->
-    <div class="relative flex items-start gap-4">
+    <div class="flex items-start gap-4">
 
       <!-- Icon -->
       <div
-        class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20"
+        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--panel-border)] bg-[var(--app-bg)]"
       >
         <component
           :is="iconComponent"
-          class="h-7 w-7 text-blue-400 transition group-hover:scale-110"
+          class="h-5 w-5 text-[var(--app-muted)]"
         />
       </div>
 
-      <!-- Text -->
+      <!-- Content -->
       <div class="min-w-0 flex-1">
 
-        <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start justify-between gap-3">
 
-          <div>
+          <div class="min-w-0">
             <h3
-              class="truncate text-lg font-semibold tracking-tight text-[var(--app-text)]"
+              class="truncate text-base font-semibold tracking-tight text-[var(--app-text)]"
             >
               {{ label }}
             </h3>
 
             <p
-              class="mt-2 line-clamp-2 text-sm leading-relaxed text-[var(--app-muted)]"
+              class="mt-1 line-clamp-2 text-sm leading-relaxed text-[var(--app-muted)]"
             >
               {{ description }}
             </p>
           </div>
 
           <!-- Arrow -->
-          <div
-            class="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--sidebar-active)] text-[var(--app-muted)] transition group-hover:bg-blue-500/10 group-hover:text-blue-400"
+          <svg
+            class="mt-0.5 h-4 w-4 shrink-0 text-[var(--app-muted)] transition-transform duration-200 group-hover:translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              class="h-4 w-4 transition group-hover:translate-x-0.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </div>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
 
         </div>
 
         <!-- Footer -->
         <div
-          class="mt-5 flex items-center justify-between border-t border-[var(--panel-border)] pt-4"
+          class="mt-4 flex items-center justify-between border-t border-[var(--panel-border)] pt-3"
         >
           <span
-            class="text-xs font-medium uppercase tracking-[0.2em] text-[var(--app-muted)]"
+            class="text-[11px] font-medium uppercase tracking-[0.18em] text-[var(--app-muted)]"
           >
-            Open Subject
+            Subject
           </span>
 
           <span
-            class="text-xs text-blue-400 opacity-0 transition duration-300 group-hover:opacity-100"
+            class="text-xs text-[var(--app-muted)]"
           >
-            Explore →
+            View
           </span>
         </div>
 
