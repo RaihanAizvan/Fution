@@ -147,50 +147,72 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="relative px-6 py-24 mb-20">
-      <div class="relative mx-auto grid max-w-5xl overflow-hidden rounded-[2rem] border border-[var(--app-border)] bg-[var(--panel-bg)] p-8 shadow-2xl md:grid-cols-[1.15fr_0.85fr] md:p-12">
-        <div class="relative z-10 text-left">
-          <p class="text-xs font-bold uppercase tracking-[0.24em] text-[var(--app-muted)]">Start learning today</p>
-          <h2 class="mt-4 max-w-2xl text-4xl font-black tracking-tight text-[var(--app-text)] md:text-6xl">
-            Build skill with a cleaner learning workspace.
-          </h2>
-          <p class="mt-6 max-w-xl text-[var(--app-muted)] md:text-xl">
-            Explore structured lessons, readable code examples, and an admin studio built for keeping content fresh.
-          </p>
-          <div class="mt-10 flex flex-col gap-4 sm:flex-row">
-            <RouterLink
-              to="/subjects"
-              class="inline-flex justify-center rounded-xl bg-[var(--app-text)] px-7 py-4 font-bold text-[var(--app-bg)] transition hover:opacity-90 active:scale-95"
-            >
-              Explore Subjects
-            </RouterLink>
-            <RouterLink
-              to="/admin"
-              class="inline-flex justify-center rounded-xl border border-[var(--app-border)] bg-[var(--app-bg)]/40 px-7 py-4 font-bold text-[var(--app-text)] transition hover:bg-[var(--sidebar-active)] active:scale-95"
-            >
-              Open Admin
-            </RouterLink>
-          </div>
-        </div>
-        <div class="relative z-10 mt-10 grid content-end gap-3 md:mt-0">
-          <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)]/45 p-5">
-            <p class="text-sm font-semibold text-[var(--app-text)]">Published content</p>
-            <div class="mt-4 h-2 rounded-full bg-[var(--sidebar-active)]">
-              <div class="h-full w-4/5 rounded-full bg-emerald-400"></div>
-            </div>
-          </div>
-          <div class="rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)]/45 p-5">
-            <p class="text-sm font-semibold text-[var(--app-text)]">Drafts ready</p>
-            <div class="mt-4 flex gap-2">
-              <span class="h-2 flex-1 rounded-full bg-sky-400"></span>
-              <span class="h-2 flex-1 rounded-full bg-violet-400"></span>
-              <span class="h-2 flex-1 rounded-full bg-amber-300"></span>
-            </div>
-          </div>
-        </div>
-        <div class="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-[var(--app-bg-glow)]"></div>
+    <section class="relative overflow-hidden px-6 py-28">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.18),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.12),transparent_35%)]"></div>
+
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-12 rounded-[2.5rem] border border-[var(--app-border)] bg-[var(--panel-bg)]/90 p-8 shadow-[0_20px_80px_rgba(0,0,0,0.35)] backdrop-blur md:flex-row md:items-center md:justify-between md:p-14">
+    
+    <div class="max-w-2xl">
+      <span class="inline-flex items-center rounded-full border border-[var(--app-border)] bg-[var(--app-bg)]/50 px-4 py-1 text-xs font-bold uppercase tracking-[0.22em] text-[var(--app-muted)]">
+        Knowledge engineered better
+      </span>
+
+      <h2 class="mt-6 text-4xl font-black leading-tight tracking-tight text-[var(--app-text)] md:text-6xl">
+        Less clutter. <br />
+        More momentum.
+      </h2>
+
+      <p class="mt-6 max-w-xl text-lg leading-relaxed text-[var(--app-muted)]">
+        A workspace where lessons breathe, code feels readable, and progress moves like a quiet machine in the dark.
+        No noise. Just depth, structure, and flow.
+      </p>
+
+      <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+        <RouterLink
+          to="/subjects"
+          class="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-500 px-8 py-4 text-sm font-bold text-white transition duration-200 hover:scale-[1.02] active:scale-95"
+        >
+          Start Exploring
+        </RouterLink>
+
+        <RouterLink
+          to="/dashboard"
+          class="inline-flex items-center justify-center rounded-2xl border border-[var(--app-border)] bg-[var(--app-bg)]/40 px-8 py-4 text-sm font-bold text-[var(--app-text)] transition hover:bg-[var(--sidebar-active)] active:scale-95"
+        >
+          View Dashboard
+        </RouterLink>
       </div>
-    </section>
+    </div>
+
+    <div class="grid w-full max-w-sm gap-4">
+      <div class="rounded-3xl border border-[var(--app-border)] bg-[var(--app-bg)]/50 p-6">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-semibold text-[var(--app-muted)]">
+            Weekly consistency
+          </p>
+          <span class="text-sm font-bold text-emerald-400">87%</span>
+        </div>
+
+        <div class="mt-5 h-3 overflow-hidden rounded-full bg-[var(--sidebar-active)]">
+          <div class="h-full w-[87%] rounded-full bg-emerald-400"></div>
+        </div>
+      </div>
+
+      <div class="rounded-3xl border border-[var(--app-border)] bg-[var(--app-bg)]/50 p-6">
+        <p class="text-sm font-semibold text-[var(--app-muted)]">
+          Active learning paths
+        </p>
+
+        <div class="mt-5 flex items-end gap-2">
+          <span class="h-12 w-full rounded-xl bg-sky-400/80"></span>
+          <span class="h-20 w-full rounded-xl bg-violet-400/80"></span>
+          <span class="h-16 w-full rounded-xl bg-amber-300/80"></span>
+          <span class="h-24 w-full rounded-xl bg-emerald-400/80"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
     <!-- Footer Simple -->
     <footer class="border-t border-[var(--app-border)] py-12 px-6">
