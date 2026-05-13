@@ -17,10 +17,6 @@
             Back to Home
           </RouterLink>
 
-          <div
-            class="mb-4 inline-flex rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1 text-xs font-medium tracking-wide text-blue-300">
-            Learning Workspace
-          </div>
 
           <h1 class="text-5xl font-bold tracking-tight text-[var(--app-text)]">
             Explore Subjects
