@@ -27,6 +27,9 @@ export const versionsApi = {
     adminClient.post<TopicVersionRecord>(
       `/admin/topics/${topicId}/versions/${versionId}/publish`,
       {}
+    ),
+  delete: (topicId: string, versionId: string, options?: { force?: boolean }) =>
+    adminClient.delete<{ success: true }>(
+      `/admin/topics/${topicId}/versions/${versionId}${options?.force ? '?force=true' : ''}`
     )
 }
-
