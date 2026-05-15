@@ -34,7 +34,7 @@
     --accent: rgba(255, 255, 255, 0.08);
     --hero-glow: rgba(99, 102, 241, 0.15);
     --hero-glow-secondary: rgba(168, 85, 247, 0.1);
-    --accent-gradient: linear-gradient(to right, #818cf8, #a78bfa, #818cf8);
+    --accent-gradient: linear-gradient(to right, #424ac1, #7779be, #3723d0);
     --cta-bg: #4f46e5;
     --cta-text: #ffffff;
   }
