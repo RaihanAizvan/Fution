@@ -1,0 +1,89 @@
+<template>
+  <section class="subject-detail">
+    <p v-if="isLoading">Loading subject…</p>
+    <p v-else-if="hasError">Unable to load subject.</p>
+    <p v-else-if="!subject">Subject not found.</p>
+
+    <SubjectLayout v-else>
+      <template #sidebar>
+        <SubjectSidebar @open-settings="openSettings" />
+      </template>
+      <div class="subject-detail__workspace">
+        <TopicTabs
+          :subjectSlug="subject.slug"
+          :activeTopicSlug="selectedTopicSlug"
+          :activeTopicTitle="selectedTopicTitle"
+          :topics="topics"
+        />
+
+        <BlankTopicWorkspace
+          v-if="!selectedTopicSlug"
+          :subjectSlug="subject.slug"
+          :topics="topics"
+        />
+        <SubjectMainContent
+          v-else
+          :title="selectedTopicTitle || subject.title"
+          :html="topicContent?.html || null"
+          :isLoading="contentLoading"
+          :hasError="contentHasError"
+          :errorMessage="contentError"
+          :subjectTitle="subject.title"
+          :topicTitle="selectedTopicTitle || undefined"
+          @back="goBack"
+        />
+      </div>
+      <template #toc>
+        <TableOfContents :html="topicContent?.html || null" />
+      </template>
+    </SubjectLayout>
+  </section>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue'  
+import { useRoute, useRouter } from 'vue-router'
+import BlankTopicWorkspace from '../features/subjects/components/BlankTopicWorkspace.vue'
+import SubjectMainContent from '../features/subjects/components/SubjectMainContent.vue'
+import SubjectSidebar from '../features/subjects/components/SubjectSidebar.vue'
+import TableOfContents from '../features/subjects/components/TableOfContents.vue'
+import TopicTabs from '../features/subjects/components/TopicTabs.vue'
+import SubjectLayout from '../features/subjects/layouts/SubjectLayout.vue'
+import { useSubjectDetail } from '../composables/useSubjectDetail'
+import { useTopicContent } from '../composables/useTopicContent'
+import { useSubjectTopics } from '../composables/useSubjectTopics'
+
+const emit = defineEmits<{
+  'open-settings': []
+}>()
+
+const route = useRoute()
+const router = useRouter()
+const { subject, isLoading, hasError } = useSubjectDetail()
+const { topics } = useSubjectTopics()
+
+const selectedTopicSlug = computed(() => route.params.topicSlug as string | null)
+const {
+  content: topicContent,
+  isLoading: contentLoading,
+  hasError: contentHasError,
+  error: contentError
+} = useTopicContent(() => selectedTopicSlug.value)
+
+const selectedTopicTitle = computed(() => topicContent.value?.topic.title || null)
+
+const goBack = () => {
+  router.back()
+}
+
+const openSettings = () => {
+  emit('open-settings')
+}
+</script>
+
+<style scoped>
+.subject-detail__workspace {
+  display: grid;
+  gap: 1.25rem;
+}
+</style>
